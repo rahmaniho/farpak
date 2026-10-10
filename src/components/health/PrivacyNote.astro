@@ -1,0 +1,48 @@
+---
+/**
+ * حریم خصوصی و نگهداری اطلاعات فرم درخواست.
+ * کنار هر فرم نمایش داده می‌شود تا رضایت کاربر آگاهانه باشد و سیاست
+ * نگهداری/حذف اطلاعات صراحتاً اعلام شود. مدت نگهداری تا تأیید مدیریت
+ * «اعلام‌نشده» است (بدون وعده ساختگی).
+ */
+import HealthIcon from './HealthIcon.astro';
+import PendingBadge from './PendingBadge.astro';
+import { t, type Locale } from '../../i18n/utils';
+
+interface Props { locale?: Locale; id?: string }
+const { locale = 'fa', id = 'privacy-note' } = Astro.props;
+const tr = t(locale);
+
+const items = [
+  { icon: 'doc', label: tr('healthPrivacyCollectLabel'), text: tr('healthPrivacyCollect') },
+  { icon: 'check', label: tr('healthPrivacyPurposeLabel'), text: tr('healthPrivacyPurpose') },
+  { icon: 'users', label: tr('healthPrivacyAccessLabel'), text: tr('healthPrivacyAccess') },
+  { icon: 'shield', label: tr('healthPrivacySecurityLabel'), text: tr('healthPrivacySecurity') },
+] as const;
+---
+<section aria-labelledby={`${id}-h`} class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+  <h2 id={`${id}-h`} class="flex items-center gap-2 text-lg font-semibold text-navy">
+    <HealthIcon name="shield" size={18} class="text-teal" />
+    {tr('healthPrivacyTitle')}
+  </h2>
+
+  <dl class="mt-4 space-y-4 text-sm">
+    {items.map((item) => (
+      <div>
+        <dt class="flex items-center gap-1.5 font-medium text-navy">
+          <HealthIcon name={item.icon} size={14} class="text-health" />
+          {item.label}
+        </dt>
+        <dd class="mt-1 leading-7 text-slate-600">{item.text}</dd>
+      </div>
+    ))}
+    <div>
+      <dt class="flex flex-wrap items-center gap-2 font-medium text-navy">
+        <HealthIcon name="clock" size={14} class="text-health" />
+        {tr('healthPrivacyRetentionLabel')}
+        <PendingBadge />
+      </dt>
+      <dd class="mt-1 leading-7 text-slate-600">{tr('healthPrivacyRetention')}</dd>
+    </div>
+  </dl>
+</section>

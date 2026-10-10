@@ -1,0 +1,30 @@
+---
+/**
+ * فهرست مراحل دریافت خدمت — تایم‌لاین شماره‌دار.
+ * بدون JavaScript؛ شماره‌ها با ارقام فارسی نمایش داده می‌شوند.
+ */
+import { toFaDigits } from '../../lib/format';
+import type { Step } from '../../content/health';
+
+interface Props {
+  steps: Step[];
+  /** شناسه عنوان بخش (برای aria-labelledby). */
+  headingId: string;
+}
+const { steps, headingId } = Astro.props;
+---
+<ol class="mt-6 space-y-4" aria-labelledby={headingId}>
+  {steps.map((step, i) => (
+    <li class="relative flex gap-4 rounded-xl border border-slate-200 bg-white p-4 ps-5 transition hover:border-teal/60 hover:shadow-sm">
+      <span
+        aria-hidden="true"
+        class="flex size-9 shrink-0 items-center justify-center rounded-full bg-sky text-sm font-bold text-navy"
+      >{toFaDigits(i + 1)}</span>
+      <div class="min-w-0">
+        <h3 class="text-base font-semibold text-navy">{step.title}</h3>
+        {step.detail && <p class="mt-1 text-sm leading-6 text-slate-600">{step.detail}</p>}
+      </div>
+      <span class="sr-only">{`مرحله ${toFaDigits(i + 1)} از ${toFaDigits(steps.length)}`}</span>
+    </li>
+  ))}
+</ol>

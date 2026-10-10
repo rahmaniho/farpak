@@ -1,0 +1,122 @@
+---
+/**
+ * اشتراک‌گذاری صفحه: کپی لینک، اشتراک‌گذاری بومی (در صورت پشتیبانی مرورگر)
+ * و چاپ. اسکریپت کوچک است و فقط روی همین بخش اثر می‌گذارد؛ اگر JavaScript
+ * غیرفعال باشد، کنترل‌ها پنهان می‌مانند (کلاس js-only) و صفحه سالم است.
+ */
+import HealthIcon from './HealthIcon.astro';
+import { t, type Locale } from '../../i18n/utils';
+
+interface Props {
+  locale?: Locale;
+  /** نشانی مطلق صفحه (برای کپی/اشتراک). */
+  url: string;
+  title: string;
+}
+const { locale = 'fa', url, title } = Astro.props;
+const tr = t(locale);
+---
+<div
+  class="flex flex-wrap items-center gap-2"
+  data-share-row
+  data-share-url={url}
+  data-share-title={title}
+  data-share-msg-copied={tr('healthShareCopied')}
+  data-share-msg-failed={tr('healthShareCopyFailed')}
+>
+  <span class="text-xs font-medium text-slate-500">{tr('healthShareTitle')}:</span>
+
+  <button
+    type="button"
+    data-share-copy
+    class="js-only inline-flex items-center gap-1.5 rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-ink transition hover:border-teal hover:text-teal"
+  >
+    <HealthIcon name="copy" size={14} />
+    {tr('healthShareCopy')}
+  </button>
+
+  <button
+    type="button"
+    data-share-native
+    class="hidden items-center gap-1.5 rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-ink transition hover:border-teal hover:text-teal"
+  >
+    <HealthIcon name="share" size={14} />
+    {tr('healthShareNative')}
+  </button>
+
+  <button
+    type="button"
+    data-share-print
+    class="js-only inline-flex items-center gap-1.5 rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-ink transition hover:border-teal hover:text-teal"
+  >
+    <HealthIcon name="doc" size={14} />
+    {tr('healthSharePrint')}
+  </button>
+
+  <p data-share-status role="status" aria-live="polite" class="text-xs text-health"></p>
+</div>
+
+<script>
+  // Progressive enhancement: controls stay hidden until this runs.
+  document.documentElement.dataset.js = '';
+
+  async function copyText(text: string): Promise<boolean> {
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+        return true;
+      }
+    } catch {
+      /* fall through to the legacy path */
+    }
+    try {
+      const area = document.createElement('textarea');
+      area.value = text;
+      area.setAttribute('readonly', '');
+      area.style.position = 'fixed';
+      area.style.opacity = '0';
+      document.body.appendChild(area);
+      area.select();
+      const ok = document.execCommand('copy');
+      area.remove();
+      return ok;
+    } catch {
+      return false;
+    }
+  }
+
+  for (const row of document.querySelectorAll<HTMLElement>('[data-share-row]')) {
+    const url = row.dataset.shareUrl ?? location.href;
+    const title = row.dataset.shareTitle ?? document.title;
+    const status = row.querySelector<HTMLElement>('[data-share-status]');
+    const copied = row.dataset.shareMsgCopied ?? '';
+    const failed = row.dataset.shareMsgFailed ?? '';
+
+    const say = (msg: string) => {
+      if (!status) return;
+      status.textContent = msg;
+      window.setTimeout(() => {
+        if (status.textContent === msg) status.textContent = '';
+      }, 4000);
+    };
+
+    row.querySelector('[data-share-copy]')?.addEventListener('click', async () => {
+      say((await copyText(url)) ? copied : failed);
+    });
+
+    const native = row.querySelector<HTMLButtonElement>('[data-share-native]');
+    if (native && typeof navigator.share === 'function') {
+      native.classList.remove('hidden');
+      native.classList.add('inline-flex');
+      native.addEventListener('click', async () => {
+        try {
+          await navigator.share({ title, url });
+        } catch {
+          /* کاربر لغو کرد — پیامی نمایش داده نمی‌شود */
+        }
+      });
+    }
+
+    row.querySelector('[data-share-print]')?.addEventListener('click', () => window.print());
+  }
+</script>

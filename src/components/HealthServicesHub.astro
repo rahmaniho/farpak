@@ -1,0 +1,171 @@
+---
+/**
+ * صفحه اصلی بخش خدمات سلامت — «خدمات ما».
+ * معرفی دفتر، اقدام‌های تماس و مسیریابی، فهرست دسته‌بندی‌شده خدمات،
+ * روند کلی دریافت خدمت، پیش‌نمایش دوره‌های آموزشی و بخش تماس پایین صفحه.
+ */
+import HealthIcon from './health/HealthIcon.astro';
+import OfficeActions from './health/OfficeActions.astro';
+import OfficeContactSection from './health/OfficeContactSection.astro';
+import PendingBadge from './health/PendingBadge.astro';
+import ServiceCatalog from './health/ServiceCatalog.astro';
+import CourseList from './health/CourseList.astro';
+import {
+  healthOffice,
+  serviceCategories,
+  sortedHealthServices,
+  getHealthService,
+} from '../content/health';
+import { t, type Locale, localePath } from '../i18n/utils';
+import { toFaDigits } from '../lib/format';
+
+interface Props { locale?: Locale }
+const { locale = 'fa' } = Astro.props;
+const tr = t(locale);
+
+const services = sortedHealthServices();
+const training = getHealthService('hygiene-training');
+const previewCourses = (training?.courses ?? []).slice(0, 3);
+const anyPending = services.some(
+  (s) => !s.copy.documents.approved || !s.copy.conditions.approved || !s.copy.fee.approved || !s.copy.duration.approved
+);
+const howSteps = [
+  { icon: 'search', title: tr('healthHowStep1'), detail: tr('healthHowStep1Detail') },
+  { icon: 'phone', title: tr('healthHowStep2'), detail: tr('healthHowStep2Detail') },
+  { icon: 'doc', title: tr('healthHowStep3'), detail: tr('healthHowStep3Detail') },
+  { icon: 'clipboard', title: tr('healthHowStep4'), detail: tr('healthHowStep4Detail') },
+] as const;
+---
+<!-- ۱. هیرو: معرفی حرفه‌ای بخش خدمات -->
+<section class="health-grid-bg border-b border-slate-200">
+  <div class="mx-auto max-w-[1280px] px-4 py-14 md:px-8 md:py-20">
+    <nav aria-label={locale === 'fa' ? 'مسیر صفحه' : 'Breadcrumb'} class="text-sm">
+      <ol class="flex flex-wrap items-center gap-2 text-slate-500">
+        <li><a href={localePath(locale, '/')} class="hover:text-teal hover:underline">{tr('healthBreadcrumbHome')}</a></li>
+        <li aria-hidden="true"><HealthIcon name="chevron" size={13} class="rtl:rotate-180" /></li>
+        <li class="font-medium text-navy" aria-current="page">{tr('navHealth')}</li>
+      </ol>
+    </nav>
+
+    <p class="mt-6 inline-flex items-center gap-2 rounded-full border border-navy/15 bg-white/80 px-3 py-1.5 text-xs font-semibold text-navy">
+      <HealthIcon name="heart" size={14} class="text-health" />
+      {tr('healthHeroEyebrow')}
+    </p>
+
+    <h1 class="rise mt-4 max-w-3xl text-navy">{tr('healthH1')}</h1>
+    <p class="rise rise-1 mt-4 max-w-2xl text-lg leading-8 text-slate-700">{tr('healthHeroAbout')}</p>
+    <p class="mt-3 max-w-2xl text-sm font-medium text-health">{healthOffice.slogan}</p>
+
+    <div class="rise rise-2 mt-8 flex flex-wrap items-center gap-3">
+      <OfficeActions locale={locale} showSecondPhone />
+      <a
+        href="#catalog"
+        class="inline-flex items-center gap-2 rounded-md border border-slate-300 bg-white/70 px-5 py-3 font-semibold text-navy transition hover:border-teal hover:text-teal"
+      >
+        <HealthIcon name="search" size={18} />
+        {tr('healthCtaBrowse')}
+      </a>
+    </div>
+
+    <p class="mt-6 flex max-w-2xl items-start gap-2 text-sm leading-7 text-slate-600">
+      <HealthIcon name="pin" size={16} class="mt-1 shrink-0 text-teal" />
+      <span>{healthOffice.address}</span>
+    </p>
+
+    <!-- دسترسی سریع به دسته‌بندی خدمات (بدون JavaScript هم کار می‌کند) -->
+    <div class="mt-10">
+      <p class="text-xs font-semibold text-slate-500">{tr('healthCategoryLabel')}</p>
+      <ul class="mt-3 flex flex-wrap gap-2">
+        {serviceCategories.map((cat) => {
+          const count = services.filter((s) => s.category === cat.id).length;
+          return (
+            <li>
+              <a
+                href={`#catalog-cat-${cat.id}`}
+                class="inline-flex items-center gap-2 rounded-full border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-ink transition hover:border-teal hover:text-teal"
+              >
+                <HealthIcon name={cat.icon} size={15} />
+                {cat.label}
+                <span class="rounded-full bg-mist px-2 py-0.5 text-[11px] text-slate-500">{toFaDigits(count)}</span>
+              </a>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ۲. فهرست دسته‌بندی‌شده خدمات -->
+<div class="mx-auto max-w-[1280px] px-4 py-16 md:px-8">
+  <ServiceCatalog locale={locale} services={services} />
+</div>
+
+<!-- ۳. روند کلی دریافت خدمت -->
+<section aria-labelledby="how-h" class="border-y border-slate-200 bg-mist">
+  <div class="mx-auto max-w-[1280px] px-4 py-14 md:px-8">
+    <h2 id="how-h" class="text-2xl text-navy md:text-3xl">{tr('healthHowTitle')}</h2>
+    <p class="mt-3 max-w-2xl text-slate-600">{tr('healthHowIntro')}</p>
+    <ol class="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+      {howSteps.map((step, i) => (
+        <li class="health-card rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+          <div class="flex items-center justify-between">
+            <span aria-hidden="true" class="flex size-11 items-center justify-center rounded-xl bg-sky text-navy">
+              <HealthIcon name={step.icon} size={22} />
+            </span>
+            <span class="text-2xl font-bold text-slate-200">{toFaDigits(i + 1)}</span>
+          </div>
+          <h3 class="mt-4 text-base font-semibold text-navy">{step.title}</h3>
+          <p class="mt-2 text-sm leading-7 text-slate-600">{step.detail}</p>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
+
+<!-- ۴. پیش‌نمایش دوره‌های آموزش بهداشت اصناف -->
+{previewCourses.length > 0 && (
+  <section aria-labelledby="courses-preview-h" class="mx-auto max-w-[1280px] px-4 py-16 md:px-8">
+    <div class="flex flex-wrap items-end justify-between gap-4">
+      <div>
+        <h2 id="courses-preview-h" class="text-2xl text-navy md:text-3xl">{tr('healthCoursesPreviewTitle')}</h2>
+        <p class="mt-3 max-w-2xl text-slate-600">{tr('healthCoursesIntro')}</p>
+      </div>
+      {training && (
+        <a
+          href={localePath(locale, `/health/${training.slug}/`)}
+          class="inline-flex items-center gap-2 rounded-md border border-navy/25 px-4 py-2.5 text-sm font-semibold text-navy transition hover:border-navy hover:bg-sky"
+        >
+          {tr('healthCoursesPreviewMore')}
+          <HealthIcon name="chevron" size={15} class="rtl:rotate-180" />
+        </a>
+      )}
+    </div>
+    <CourseList courses={previewCourses} serviceSlug={training?.slug ?? ''} locale={locale} />
+  </section>
+)}
+
+<!-- ۵. شفاف‌سازی وضعیت محتوا -->
+{anyPending && (
+  <section aria-labelledby="pending-h" class="mx-auto max-w-[1280px] px-4 pb-4 md:px-8">
+    <div class="rounded-2xl border border-warning/35 bg-warning/5 p-6 md:p-8">
+      <h2 id="pending-h" class="flex flex-wrap items-center gap-2 text-lg font-semibold text-navy">
+        <HealthIcon name="info" size={20} class="text-warning" />
+        {tr('healthPendingSectionTitle')}
+        <PendingBadge />
+      </h2>
+      <p class="mt-3 max-w-3xl text-sm leading-7 text-slate-700">
+        بخشی از اطلاعات این بخش (فهرست مدارک، شرایط مراجعه، هزینه و مدت زمان انجام خدمت، زمان و ظرفیت دوره‌ها)
+        هنوز توسط مدیریت مجموعه تأیید نهایی نشده است و با برچسب «نیازمند تأیید مدیریت» نمایش داده می‌شود.
+        تا تکمیل شدن این موارد، برای اطمینان با دفتر تماس بگیرید.
+      </p>
+      <div class="mt-4 flex flex-wrap items-center gap-3">
+        <PendingBadge />
+        <span class="text-xs text-slate-500">{tr('healthSectionNote')}</span>
+      </div>
+    </div>
+  </section>
+)}
+
+<!-- ۶. تماس و مسیریابی -->
+<OfficeContactSection locale={locale} />

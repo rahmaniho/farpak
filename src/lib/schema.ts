@@ -4,6 +4,8 @@
  */
 import { dictionaries, type Locale } from '../i18n/utils';
 import { withBase } from './base';
+import { office477 } from '../content/office477';
+import type { Faq } from '../content/health';
 
 const ORG_ID = '#organization';
 
@@ -52,6 +54,80 @@ export function breadcrumbSchema(items: { name: string; url: string }[]) {
       position: i + 1,
       name: item.name,
       item: item.url,
+    })),
+  };
+}
+
+/* ------------------------------------------------------------------ */
+/* داده‌های ساختاریافته بخش خدمات سلامت ۴۷۷                          */
+/* فقط واقعیت‌های تأییدشده منتشر می‌شوند: ساعات کاری، هزینه و مجوزها    */
+/* تا زمان تأیید مدیریت عمداً در JSON-LD نمی‌آیند.                      */
+/* ------------------------------------------------------------------ */
+export const OFFICE477_ID = '#office477';
+
+/** شناسه گره دفتر خدمات سلامت ۴۷۷ (برای ارجاع از Service.provider). */
+export function office477NodeId(siteUrl: string) {
+  return `${siteUrl}${withBase('/health/')}${OFFICE477_ID}`;
+}
+
+/** LocalBusiness برای دفتر خدمات سلامت ۴۷۷ با نشانی، تلفن‌ها و مختصات تأییدشده. */
+export function office477Schema(siteUrl: string, pageUrl: string) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'LocalBusiness',
+    '@id': office477NodeId(siteUrl),
+    name: office477.name,
+    alternateName: office477.nameEn,
+    slogan: office477.slogan,
+    url: pageUrl,
+    image: `${siteUrl}${withBase('/images/brand/logo-512.png')}`,
+    telephone: office477.phones.map((p) => p.dial),
+    address: {
+      '@type': 'PostalAddress',
+      addressLocality: office477.city,
+      addressCountry: 'IR',
+      streetAddress: 'خیابان طالقانی، برج خلیج فارس، طبقه ششم، واحد ۶۱۹',
+    },
+    geo: {
+      '@type': 'GeoCoordinates',
+      latitude: office477.geo.latitude,
+      longitude: office477.geo.longitude,
+    },
+    areaServed: { '@type': 'City', name: office477.city },
+    inLanguage: 'fa-IR',
+  };
+}
+
+/** Service با provider = دفتر خدمات سلامت ۴۷۷. */
+export function healthServiceSchema(siteUrl: string, pageUrl: string, name: string, description: string) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Service',
+    '@id': `${pageUrl}#service`,
+    name,
+    description,
+    url: pageUrl,
+    inLanguage: 'fa-IR',
+    provider: { '@id': office477NodeId(siteUrl) },
+    areaServed: { '@type': 'City', name: office477.city },
+    availableChannel: {
+      '@type': 'ServiceChannel',
+      servicePhone: { '@type': 'ContactPoint', telephone: office477.phones[0].dial, contactType: 'customer support', availableLanguage: 'fa' },
+      serviceUrl: pageUrl,
+    },
+  };
+}
+
+/** FAQPage از پرسش‌های متداول همان صفحه (بدون ادعای تأییدنشده). */
+export function faqPageSchema(faqs: Faq[], pageUrl: string) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    '@id': `${pageUrl}#faq`,
+    mainEntity: faqs.map((f) => ({
+      '@type': 'Question',
+      name: f.q,
+      acceptedAnswer: { '@type': 'Answer', text: f.a },
     })),
   };
 }

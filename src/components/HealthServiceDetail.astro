@@ -1,0 +1,359 @@
+---
+/**
+ * صفحه اختصاصی یک خدمت از بخش خدمات سلامت ۴۷۷.
+ * همه خدمات از همین قالب ساخته می‌شوند؛ افزودن خدمت جدید فقط یعنی
+ * افزودن یک ورودی به `src/content/health.ts`.
+ *
+ * بخش‌ها: معرفی، اطلاعات سریع، مراحل، مدارک و شرایط، حوزه‌ها/مخاطبان،
+ * دوره‌ها (در صورت وجود)، توضیح مهم، پرسش‌های متداول، فرم درخواست اولیه،
+ * وضعیت پیگیری، سایر خدمات و بخش تماس.
+ */
+import HealthIcon from './health/HealthIcon.astro';
+import HealthRequestForm from './health/HealthRequestForm';
+import CourseList from './health/CourseList.astro';
+import FaqSection from './health/FaqSection.astro';
+import ManagedList from './health/ManagedList.astro';
+import OfficeActions from './health/OfficeActions.astro';
+import OfficeContactSection from './health/OfficeContactSection.astro';
+import PendingBadge from './health/PendingBadge.astro';
+import PrivacyNote from './health/PrivacyNote.astro';
+import ServiceCard from './health/ServiceCard.astro';
+import ShareRow from './health/ShareRow.astro';
+import StepsList from './health/StepsList.astro';
+import {
+  getCategory,
+  healthOffice,
+  relatedHealthServices,
+  type HealthService,
+} from '../content/health';
+import { t, type Locale, localePath } from '../i18n/utils';
+import { healthFormStrings } from '../lib/healthFormStrings';
+
+interface Props {
+  service: HealthService;
+  locale?: Locale;
+  /** نشانی مطلق صفحه برای اشتراک‌گذاری. */
+  pageUrl: string;
+}
+const { service, locale = 'fa', pageUrl } = Astro.props;
+const tr = t(locale);
+const copy = service.copy;
+const category = getCategory(service.category);
+const isActive = service.status === 'active';
+const related = relatedHealthServices(service.slug);
+const office = {
+  name: healthOffice.name,
+  phones: healthOffice.phones.map((p) => ({ label: p.label, display: p.display, dial: p.dial })),
+};
+const allowedCourses = service.courses?.length ? { course: service.courses.map((c) => c.id) } : undefined;
+---
+<article class="mx-auto max-w-[1280px] px-4 py-10 md:px-8 md:py-14">
+  <!-- مسیر صفحه -->
+  <nav aria-label={locale === 'fa' ? 'مسیر صفحه' : 'Breadcrumb'} class="text-sm">
+    <ol class="flex flex-wrap items-center gap-2 text-slate-500">
+      <li><a href={localePath(locale, '/')} class="hover:text-teal hover:underline">{tr('healthBreadcrumbHome')}</a></li>
+      <li aria-hidden="true"><HealthIcon name="chevron" size={13} class="rtl:rotate-180" /></li>
+      <li><a href={localePath(locale, '/health/')} class="hover:text-teal hover:underline">{tr('healthBreadcrumbServices')}</a></li>
+      <li aria-hidden="true"><HealthIcon name="chevron" size={13} class="rtl:rotate-180" /></li>
+      <li class="font-medium text-navy" aria-current="page">{copy.shortTitle}</li>
+    </ol>
+  </nav>
+
+  <!-- سربرگ خدمت -->
+  <header class="mt-6 grid gap-8 lg:grid-cols-[1.6fr_1fr] lg:items-start">
+    <div>
+      <div class="flex flex-wrap items-center gap-3">
+        <span aria-hidden="true" class="flex size-14 items-center justify-center rounded-2xl bg-sky text-navy">
+          <HealthIcon name={service.icon} size={28} />
+        </span>
+        <span
+          class={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold ${
+            isActive ? 'bg-health-soft text-health' : 'bg-slate-200 text-slate-600'
+          }`}
+        >
+          <span class={`size-1.5 rounded-full ${isActive ? 'bg-health' : 'bg-slate-500'}`} aria-hidden="true"></span>
+          {isActive ? tr('healthStatusActive') : tr('healthStatusInactive')}
+        </span>
+        {category && (
+          <span class="inline-flex items-center gap-1.5 rounded-full bg-mist px-3 py-1 text-xs font-medium text-slate-600">
+            <HealthIcon name={category.icon} size={13} />
+            {category.label}
+          </span>
+        )}
+      </div>
+
+      <h1 class="rise mt-5 text-navy">{copy.title}</h1>
+      <p class="rise rise-1 mt-4 max-w-2xl text-lg leading-8 text-slate-700">{copy.summary}</p>
+
+      <div class="rise rise-2 mt-7 flex flex-wrap items-center gap-3">
+        <OfficeActions locale={locale} />
+        {isActive && (
+          <a
+            href="#request"
+            class="inline-flex items-center gap-2 rounded-md bg-navy px-5 py-3 font-semibold text-white transition hover:bg-teal"
+          >
+            <HealthIcon name="clipboard" size={18} />
+            {tr('healthRequestNow')}
+          </a>
+        )}
+      </div>
+
+      <div class="mt-6">
+        <ShareRow locale={locale} url={pageUrl} title={`${copy.title} — ${healthOffice.name}`} />
+      </div>
+    </div>
+
+    <!-- کارت اطلاعات سریع -->
+    <aside class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm lg:sticky lg:top-24">
+      <h2 class="flex items-center gap-2 text-sm font-bold text-navy">
+        <HealthIcon name="info" size={16} class="text-teal" />
+        {tr('healthQuickFactsTitle')}
+      </h2>
+      <dl class="mt-4 space-y-4 text-sm">
+        <div class="flex items-start justify-between gap-3">
+          <dt class="flex items-center gap-1.5 text-slate-500"><HealthIcon name="clock" size={14} />{tr('healthDurationTitle')}</dt>
+          <dd class="text-end font-medium text-slate-800">{copy.duration.value ?? tr('healthNotAnnounced')}</dd>
+        </div>
+        <div class="flex items-start justify-between gap-3">
+          <dt class="flex items-center gap-1.5 text-slate-500"><HealthIcon name="wallet" size={14} />{tr('healthFeeTitle')}</dt>
+          <dd class="text-end font-medium text-slate-800">{copy.fee.value ?? tr('healthNotAnnounced')}</dd>
+        </div>
+        <div class="flex items-start justify-between gap-3">
+          <dt class="flex items-center gap-1.5 text-slate-500"><HealthIcon name="doc" size={14} />{tr('healthDocumentsTitle')}</dt>
+          <dd class="text-end font-medium text-slate-800">
+            {copy.documents.approved ? tr('healthValueApproved') : tr('healthValueDraft')}
+          </dd>
+        </div>
+        <div class="flex items-start justify-between gap-3">
+          <dt class="flex items-center gap-1.5 text-slate-500"><HealthIcon name="users" size={14} />{tr('healthCategoryLabel')}</dt>
+          <dd class="text-end font-medium text-slate-800">{category?.label ?? '—'}</dd>
+        </div>
+      </dl>
+
+      {(!copy.duration.approved || !copy.fee.approved || !copy.documents.approved) && (
+        <div class="mt-4 border-t border-slate-200 pt-4">
+          <PendingBadge />
+          <p class="mt-2 text-xs leading-6 text-slate-500">{tr('healthPendingNote')}</p>
+        </div>
+      )}
+
+      <div class="mt-5 space-y-2 border-t border-slate-200 pt-5">
+        {healthOffice.phones.map((p) => (
+          <a
+            href={`tel:${p.dial}`}
+            class="flex items-center justify-between gap-2 rounded-lg bg-mist px-3 py-2 text-sm font-medium text-navy transition hover:bg-sky"
+          >
+            <span class="flex items-center gap-2">
+              <HealthIcon name="phone" size={14} class="text-health" />
+              {p.label}
+            </span>
+            <span dir="ltr" class="tabular-nums">{p.display}</span>
+          </a>
+        ))}
+        <a
+          href={healthOffice.mapsUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="flex items-center justify-center gap-2 rounded-lg border border-navy/20 px-3 py-2 text-sm font-semibold text-navy transition hover:border-navy hover:bg-sky"
+        >
+          <HealthIcon name="pin" size={14} />
+          {tr('healthCtaDirections')}
+        </a>
+      </div>
+    </aside>
+  </header>
+
+  {!isActive && (
+    <p class="mt-8 rounded-2xl border border-dashed border-slate-300 bg-mist p-5 text-sm leading-7 text-slate-700">
+      {tr('healthStatusInactiveNote')}
+    </p>
+  )}
+
+  <div class="mt-14 grid gap-10 lg:grid-cols-[1.6fr_1fr] lg:items-start">
+    <!-- ستون اصلی -->
+    <div class="space-y-14">
+      <section aria-labelledby="about-h">
+        <h2 id="about-h" class="text-2xl text-navy md:text-3xl">{tr('healthAboutService')}</h2>
+        <div class="mt-4 space-y-4 text-slate-700 leading-8">
+          {copy.description.map((p) => <p>{p}</p>)}
+        </div>
+      </section>
+
+      <section aria-labelledby="steps-h">
+        <h2 id="steps-h" class="text-2xl text-navy md:text-3xl">{tr('healthStepsTitle')}</h2>
+        <StepsList steps={copy.steps} headingId="steps-h" />
+      </section>
+
+      {copy.scopes && (
+        <section aria-labelledby="scopes-h" class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm md:p-8">
+          <h2 id="scopes-h" class="flex items-center gap-2 text-xl text-navy">
+            <HealthIcon name="shield" size={20} class="text-teal" />
+            {tr('healthScopesTitle')}
+          </h2>
+          <div class="mt-4">
+            <ManagedList field={copy.scopes} locale={locale} />
+          </div>
+        </section>
+      )}
+
+      {service.courses && service.courses.length > 0 && (
+        <section aria-labelledby="courses-h">
+          <h2 id="courses-h" class="text-2xl text-navy md:text-3xl">{tr('healthCoursesTitle')}</h2>
+          <p class="mt-3 max-w-2xl text-slate-600">{tr('healthCoursesIntro')}</p>
+          <CourseList courses={service.courses} serviceSlug={service.slug} locale={locale} />
+        </section>
+      )}
+
+      <section aria-labelledby="docs-h" class="grid gap-6 md:grid-cols-2">
+        <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+          <h2 id="docs-h" class="flex items-center gap-2 text-xl text-navy">
+            <HealthIcon name="doc" size={20} class="text-teal" />
+            {tr('healthDocumentsTitle')}
+          </h2>
+          <div class="mt-4 text-sm leading-7">
+            <ManagedList field={copy.documents} locale={locale} />
+          </div>
+        </div>
+        <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+          <h2 id="cond-h" class="flex items-center gap-2 text-xl text-navy">
+            <HealthIcon name="check" size={20} class="text-teal" />
+            {tr('healthConditionsTitle')}
+          </h2>
+          <div class="mt-4 text-sm leading-7">
+            <ManagedList field={copy.conditions} locale={locale} />
+          </div>
+        </div>
+      </section>
+
+      <FaqSection faqs={copy.faqs} headingId="faq-h" title={tr('healthFaqTitle')} class="scroll-mt-24" />
+
+      <!-- فرم ثبت درخواست اولیه -->
+      <section
+        id="request"
+        aria-labelledby="request-h"
+        class="scroll-mt-24 rounded-2xl border border-slate-200 bg-mist p-6 md:p-10"
+      >
+        <h2 id="request-h" class="text-2xl text-navy md:text-3xl">{tr('healthRequestTitle')}</h2>
+        <p class="mt-3 max-w-2xl text-sm leading-7 text-slate-600">{tr('healthRequestIntro')}</p>
+
+        {isActive ? (
+          <div class="mt-8 rounded-2xl border border-slate-200 bg-white p-5 md:p-8">
+            <HealthRequestForm
+              client:visible
+              locale={locale}
+              serviceSlug={service.slug}
+              serviceTitle={copy.title}
+              requestTypes={copy.requestTypes}
+              extraFields={copy.extraFields ?? []}
+              allowedOptionValues={allowedCourses}
+              office={office}
+              t={healthFormStrings(locale)}
+            />
+          </div>
+          <div class="mt-6">
+            <PrivacyNote locale={locale} />
+          </div>
+        ) : (
+          <p class="mt-6 rounded-xl border border-dashed border-slate-300 bg-white p-5 text-sm text-slate-600">
+            {tr('healthStatusInactiveNote')}
+          </p>
+        )}
+      </section>
+
+      <!-- پیگیری درخواست: وضعیت واقعی، بدون سامانه ساختگی -->
+      <section aria-labelledby="tracking-h" class="scroll-mt-24 rounded-2xl border border-dashed border-slate-300 bg-white p-6 md:p-8">
+        <h2 id="tracking-h" class="flex items-center gap-2 text-xl text-navy">
+          <HealthIcon name="search" size={20} class="text-teal" />
+          {tr('healthTrackingTitle')}
+        </h2>
+        <p class="mt-3 max-w-3xl text-sm leading-7 text-slate-700">{tr('healthTrackingNotActive')}</p>
+        <a
+          href={`tel:${healthOffice.phones[0].dial}`}
+          class="mt-5 inline-flex items-center gap-2 rounded-md bg-health px-5 py-2.5 text-sm font-semibold text-white transition hover:brightness-95"
+        >
+          <HealthIcon name="phone" size={16} />
+          {tr('healthTrackingCall')}
+          <span dir="ltr" class="tabular-nums">{healthOffice.phones[0].display}</span>
+        </a>
+      </section>
+    </div>
+
+    <!-- ستون کناری -->
+    <div class="space-y-6">
+      {copy.audience && copy.audience.length > 0 && (
+        <section aria-labelledby="audience-h" class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+          <h2 id="audience-h" class="flex items-center gap-2 text-lg font-semibold text-navy">
+            <HealthIcon name="users" size={18} class="text-teal" />
+            {tr('healthAudienceTitle')}
+          </h2>
+          <ul class="mt-4 space-y-2.5 text-sm leading-7 text-slate-700">
+            {copy.audience.map((a) => (
+              <li class="flex gap-2">
+                <HealthIcon name="check" size={15} class="mt-1.5 shrink-0 text-health" />
+                <span>{a}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      <section aria-labelledby="disclaimer-h" class="rounded-2xl border border-alert/30 bg-alert/5 p-6">
+        <h2 id="disclaimer-h" class="flex items-center gap-2 text-base font-bold text-navy">
+          <HealthIcon name="alert" size={18} class="text-alert" />
+          {tr('healthDisclaimerTitle')}
+        </h2>
+        <p class="mt-3 text-sm leading-7 text-slate-700">{copy.disclaimer}</p>
+      </section>
+
+      {copy.reviewNote && (
+        <section aria-labelledby="review-h" class="rounded-2xl border border-warning/35 bg-warning/5 p-6">
+          <h2 id="review-h" class="flex flex-wrap items-center gap-2 text-base font-bold text-navy">
+            <HealthIcon name="info" size={18} class="text-warning" />
+            {tr('healthReviewNoteTitle')}
+            <PendingBadge />
+          </h2>
+          <p class="mt-3 text-sm leading-7 text-slate-700">{copy.reviewNote}</p>
+        </section>
+      )}
+
+      <section aria-labelledby="office-h" class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <h2 id="office-h" class="text-base font-semibold text-navy">{tr('healthOfficeTitle')}</h2>
+        <p class="mt-3 flex gap-2 text-sm leading-7 text-slate-700">
+          <HealthIcon name="pin" size={16} class="mt-1 shrink-0 text-teal" />
+          <span>{healthOffice.address}</span>
+        </p>
+        <p class="mt-3 flex gap-2 text-sm leading-7 text-slate-700">
+          <HealthIcon name="clock" size={16} class="mt-1 shrink-0 text-teal" />
+          <span>{tr('healthHoursUnknown')}</span>
+        </p>
+        <img
+          src={healthOffice.qrImage}
+          alt={tr('healthQrHint')}
+          width="120"
+          height="120"
+          loading="lazy"
+          decoding="async"
+          class="mt-4 size-[120px] rounded-xl border border-slate-200 p-1.5"
+        />
+      </section>
+    </div>
+  </div>
+
+  <!-- سایر خدمات -->
+  {related.length > 0 && (
+    <section aria-labelledby="related-h" class="mt-16">
+      <h2 id="related-h" class="text-2xl text-navy md:text-3xl">{tr('healthRelatedTitle')}</h2>
+      <ul class="mt-6 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+        {related.map((s) => (
+          <li><ServiceCard service={s} locale={locale} /></li>
+        ))}
+      </ul>
+      <a href={localePath(locale, '/health/')} class="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-teal hover:underline">
+        {tr('healthBackToIndex')}
+        <HealthIcon name="chevron" size={15} class="rtl:rotate-180" />
+      </a>
+    </section>
+  )}
+</article>
+
+<OfficeContactSection locale={locale} />

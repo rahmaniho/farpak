@@ -1,0 +1,36 @@
+---
+/**
+ * «خدمات ما» — صفحه اصلی بخش خدمات سلامت دفتر خدمات سلامت ۴۷۷.
+ * فقط فارسی (singleLocale)؛ بنابراین hreflang به همان نشانی اشاره می‌کند
+ * و سوییچ زبان پنهان است تا لینک شکسته نسازد.
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import HealthServicesHub from '../../components/HealthServicesHub.astro';
+import { healthOffice } from '../../content/health';
+import { breadcrumbSchema, office477Schema } from '../../lib/schema';
+import { t } from '../../i18n/utils';
+
+const tr = t('fa');
+const siteUrl = Astro.site!.origin;
+const pageUrl = new URL(Astro.url.pathname, Astro.site).href;
+const homeUrl = new URL('/', Astro.site).href;
+
+const jsonLd = [
+  office477Schema(siteUrl, pageUrl),
+  breadcrumbSchema([
+    { name: tr('healthBreadcrumbHome'), url: homeUrl },
+    { name: tr('navHealth'), url: pageUrl },
+  ]),
+];
+---
+<BaseLayout
+  locale="fa"
+  currentPath="/health/"
+  singleLocale
+  brand={healthOffice.name}
+  title={tr('healthIndexTitle')}
+  description={tr('healthIntro')}
+  jsonLd={jsonLd}
+>
+  <HealthServicesHub locale="fa" />
+</BaseLayout>

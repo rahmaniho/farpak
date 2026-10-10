@@ -1,0 +1,47 @@
+---
+/**
+ * صفحه اختصاصی هر خدمت بخش سلامت. مسیرها از `src/content/health.ts`
+ * ساخته می‌شوند؛ افزودن خدمت جدید = افزودن یک ورودی به همان فایل.
+ *
+ * داده ساختاریافته: LocalBusiness (دفتر ۴۷۷) + Service + FAQPage + Breadcrumb.
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import HealthServiceDetail from '../../components/HealthServiceDetail.astro';
+import { healthOffice, healthServices } from '../../content/health';
+import { breadcrumbSchema, faqPageSchema, healthServiceSchema, office477Schema } from '../../lib/schema';
+import { t } from '../../i18n/utils';
+
+export function getStaticPaths() {
+  return healthServices.map((service) => ({ params: { slug: service.slug }, props: { service } }));
+}
+
+const { service } = Astro.props;
+const copy = service.copy;
+const tr = t('fa');
+const siteUrl = Astro.site!.origin;
+const pageUrl = new URL(Astro.url.pathname, Astro.site).href;
+const homeUrl = new URL('/', Astro.site).href;
+const indexUrl = new URL('/health/', Astro.site).href;
+
+const jsonLd = [
+  office477Schema(siteUrl, indexUrl),
+  healthServiceSchema(siteUrl, pageUrl, copy.title, copy.summary),
+  faqPageSchema(copy.faqs, pageUrl),
+  breadcrumbSchema([
+    { name: tr('healthBreadcrumbHome'), url: homeUrl },
+    { name: tr('healthBreadcrumbServices'), url: indexUrl },
+    { name: copy.title, url: pageUrl },
+  ]),
+];
+---
+<BaseLayout
+  locale="fa"
+  currentPath={`/health/${service.slug}/`}
+  singleLocale
+  brand={healthOffice.name}
+  title={service.seo.title}
+  description={service.seo.description}
+  jsonLd={jsonLd}
+>
+  <HealthServiceDetail service={service} locale="fa" pageUrl={pageUrl} />
+</BaseLayout>

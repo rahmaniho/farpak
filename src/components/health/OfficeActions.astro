@@ -1,0 +1,56 @@
+---
+/**
+ * ردیف اقدام‌های مشترک همه صفحات بخش سلامت:
+ * تماس مستقیم (لینک استاندارد `tel:`) و مسیریابی به دفتر در گوگل مپ.
+ * هیچ منبع شخص ثالثی در صفحه بارگذاری نمی‌شود؛ نقشه فقط با کلیک کاربر
+ * در تب جدید باز می‌شود.
+ */
+import HealthIcon from './HealthIcon.astro';
+import { healthOffice } from '../../content/health';
+import { t, type Locale } from '../../i18n/utils';
+
+interface Props {
+  locale?: Locale;
+  /** اندازه دکمه‌ها. */
+  size?: 'sm' | 'md';
+  /** نمایش شماره دوم هم به‌عنوان دکمه جداگانه. */
+  showSecondPhone?: boolean;
+  class?: string;
+}
+const { locale = 'fa', size = 'md', showSecondPhone = false, class: className = '' } = Astro.props;
+const tr = t(locale);
+const pad = size === 'sm' ? 'px-4 py-2 text-sm' : 'px-5 py-3';
+const primary = healthOffice.phones[0];
+const secondary = healthOffice.phones[1];
+---
+<div class={`flex flex-wrap gap-3 ${className}`}>
+  <a
+    href={`tel:${primary.dial}`}
+    class={`inline-flex items-center gap-2 rounded-md bg-health font-semibold text-white transition hover:brightness-95 ${pad}`}
+  >
+    <HealthIcon name="phone" size={size === 'sm' ? 16 : 18} />
+    <span>{tr('healthCtaCall')}</span>
+    <span dir="ltr" class="hidden font-normal tabular-nums sm:inline">{primary.display}</span>
+  </a>
+
+  <a
+    href={healthOffice.mapsUrl}
+    target="_blank"
+    rel="noopener noreferrer"
+    class={`inline-flex items-center gap-2 rounded-md border border-navy/25 bg-white font-semibold text-navy transition hover:border-navy hover:bg-sky ${pad}`}
+  >
+    <HealthIcon name="pin" size={size === 'sm' ? 16 : 18} />
+    <span>{tr('healthCtaDirections')}</span>
+  </a>
+
+  {showSecondPhone && secondary && (
+    <a
+      href={`tel:${secondary.dial}`}
+      class={`inline-flex items-center gap-2 rounded-md border border-slate-300 bg-white font-medium text-ink transition hover:border-teal hover:text-teal ${pad}`}
+    >
+      <HealthIcon name="phone" size={size === 'sm' ? 16 : 18} />
+      <span class="sr-only">{secondary.label}</span>
+      <span dir="ltr" class="tabular-nums">{secondary.display}</span>
+    </a>
+  )}
+</div>

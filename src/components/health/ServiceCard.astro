@@ -1,0 +1,112 @@
+---
+/**
+ * کارت خدمت — یکسان در فهرست اصلی و در «سایر خدمات».
+ * آیکون اختصاصی، دسته‌بندی، وضعیت فعال/غیرفعال، توضیح مختصر،
+ * جزئیات کلیدی (زمان و هزینه) و دو اقدام: جزئیات بیشتر / ثبت درخواست.
+ */
+import HealthIcon from './HealthIcon.astro';
+import PendingBadge from './PendingBadge.astro';
+import { getCategory, type HealthService } from '../../content/health';
+import { t, type Locale, localePath } from '../../i18n/utils';
+
+interface Props {
+  service: HealthService;
+  locale?: Locale;
+  /** عنوان سطح بخش (کارت‌ها در فهرست h3 و در «سایر خدمات» h3 هستند). */
+  headingLevel?: 'h2' | 'h3';
+}
+const { service, locale = 'fa', headingLevel: Heading = 'h3' } = Astro.props;
+const tr = t(locale);
+const category = getCategory(service.category);
+const href = localePath(locale, `/health/${service.slug}/`);
+const isActive = service.status === 'active';
+---
+<article
+  class={`health-card relative flex h-full flex-col rounded-2xl border bg-white p-6 shadow-sm ${isActive ? 'border-slate-200' : 'border-dashed border-slate-300 bg-mist/40'}`}
+  data-service-card
+  data-service-slug={service.slug}
+  data-service-category={service.category}
+  data-service-search={`${service.copy.title} ${service.copy.shortTitle} ${service.copy.summary} ${category?.label ?? ''}`}
+>
+  <div class="flex items-start justify-between gap-3">
+    <span
+      aria-hidden="true"
+      class="flex size-12 shrink-0 items-center justify-center rounded-xl bg-sky text-navy"
+    >
+      <HealthIcon name={service.icon} size={24} />
+    </span>
+
+    <span class="flex flex-col items-end gap-1.5">
+      <span
+        class={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold ${
+          isActive ? 'bg-health-soft text-health' : 'bg-slate-200 text-slate-600'
+        }`}
+      >
+        <span class={`size-1.5 rounded-full ${isActive ? 'bg-health' : 'bg-slate-500'}`} aria-hidden="true"></span>
+        {isActive ? tr('healthStatusActive') : tr('healthStatusInactive')}
+      </span>
+      {category && (
+        <span class="text-[11px] font-medium text-slate-500">{category.label}</span>
+      )}
+    </span>
+  </div>
+
+  <Heading class="mt-4 text-xl font-semibold text-navy">
+    <a href={href} class="relative inline-block hover:text-teal after:absolute after:inset-0 after:content-['']">
+      {service.copy.title}
+    </a>
+  </Heading>
+
+  <p class="mt-2 flex-1 text-sm leading-7 text-slate-600">{service.copy.summary}</p>
+
+  {!isActive && (
+    <p class="mt-3 rounded-lg bg-slate-100 p-3 text-xs leading-6 text-slate-600">
+      {tr('healthStatusInactiveNote')}
+    </p>
+  )}
+
+  <dl class="mt-4 grid grid-cols-2 gap-2 border-t border-slate-100 pt-4 text-xs">
+    <div>
+      <dt class="flex items-center gap-1 text-slate-500">
+        <HealthIcon name="clock" size={13} />
+        {tr('healthDurationTitle')}
+      </dt>
+      <dd class="mt-1 font-medium text-slate-700">
+        {service.copy.duration.value ?? tr('healthNotAnnouncedShort')}
+      </dd>
+    </div>
+    <div>
+      <dt class="flex items-center gap-1 text-slate-500">
+        <HealthIcon name="wallet" size={13} />
+        {tr('healthFeeTitle')}
+      </dt>
+      <dd class="mt-1 font-medium text-slate-700">
+        {service.copy.fee.value ?? tr('healthNotAnnouncedShort')}
+      </dd>
+    </div>
+  </dl>
+
+  {(!service.copy.duration.approved || !service.copy.fee.approved) && (
+    <PendingBadge class="mt-3 self-start" />
+  )}
+
+  <div class="mt-5 flex flex-wrap items-center gap-3">
+    <a
+      href={href}
+      class="relative z-10 inline-flex items-center gap-1.5 rounded-md bg-navy px-4 py-2 text-sm font-semibold text-white transition hover:bg-teal"
+    >
+      {tr('healthLearnMore')}
+      <HealthIcon name="chevron" size={14} class="rtl:rotate-180" />
+      <span class="sr-only"> — {service.copy.title}</span>
+    </a>
+    {isActive && (
+      <a
+        href={`${href}#request`}
+        class="relative z-10 inline-flex items-center gap-1.5 rounded-md border border-health/40 px-4 py-2 text-sm font-semibold text-health transition hover:bg-health-soft"
+      >
+        <HealthIcon name="clipboard" size={14} />
+        {tr('healthRequestNow')}
+      </a>
+    )}
+  </div>
+</article>

@@ -3,6 +3,7 @@
  * Covers services, projects and articles.
  */
 import { services } from '../content/services';
+import { sortedHealthServices } from '../content/health';
 import { projects } from '../content/projects';
 import { articles, topicLabels } from '../content/news';
 import { localePath, type Locale } from '../i18n/utils';
@@ -25,6 +26,28 @@ export function buildSearchIndex(locale: Locale): SearchEntry[] {
       body: [c.description, ...c.process, ...c.outputs].join(' '),
       url: localePath(locale, `/services/${s.slug}/`),
     });
+  }
+
+  // بخش خدمات سلامت ۴۷۷ فعلاً فقط فارسی است، پس فقط در فهرست فارسی می‌آید.
+  if (locale === 'fa') {
+    for (const h of sortedHealthServices()) {
+      const c = h.copy;
+      entries.push({
+        type: 'service',
+        typeLabel: 'خدمات سلامت ۴۷۷',
+        title: c.title,
+        summary: c.summary,
+        body: [
+          ...c.description,
+          ...c.steps.map((step) => `${step.title} ${step.detail ?? ''}`),
+          ...(c.audience ?? []),
+          ...(c.scopes?.value ?? []),
+          ...c.faqs.flatMap((f) => [f.q, f.a]),
+          ...(h.courses ?? []).flatMap((course) => [course.title, course.audience, ...(course.outline.value ?? [])]),
+        ].join(' '),
+        url: localePath(locale, `/health/${h.slug}/`),
+      });
+    }
   }
 
   for (const p of projects) {
