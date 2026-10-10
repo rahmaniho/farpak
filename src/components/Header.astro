@@ -29,6 +29,7 @@ const nav = [
     </nav>
 
     <div class="flex items-center gap-3">
+      <a href={localePath(locale, '/search/')} class="hidden rounded-md px-3 py-1.5 text-sm font-medium text-navy hover:bg-mist md:inline-block">{tr('navSearch')}</a>
       <a
         href={switchLocalePath(currentPath, other)}
         hreflang={other}

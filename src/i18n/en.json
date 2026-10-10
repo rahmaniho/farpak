@@ -154,5 +154,13 @@
   "rateLimitMsg": "Too many requests. Please try again in a few minutes.",
   "pagePrev": "Previous",
   "pageNext": "Next",
-  "pageLabel": "Page"
+  "pageLabel": "Page",
+  "relatedTitle": "Related articles",
+  "navSearch": "Search",
+  "searchTitle": "Search the site",
+  "searchLabel": "Search services, projects and articles",
+  "searchPlaceholder": "e.g. fire protection, scaffolding, HSE",
+  "searchHint": "Type one or more words to start searching.",
+  "searchNoResults": "No results found. Try another word.",
+  "searchResults": "results"
 }

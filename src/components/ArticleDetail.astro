@@ -3,6 +3,7 @@ import { t, localePath, type Locale } from '../i18n/utils';
 import type { Article } from '../content/news';
 import { sampleBadge } from '../content/sample';
 import Picture from './Picture.astro';
+import RelatedArticles from './RelatedArticles.astro';
 
 interface Props { locale: Locale; article: Article }
 const { locale, article } = Astro.props;
@@ -25,3 +26,4 @@ const fmt = new Intl.DateTimeFormat(locale === 'fa' ? 'fa-IR-u-ca-persian' : 'en
     {c.body.map((p) => <p>{p}</p>)}
   </div>
 </article>
+<RelatedArticles locale={locale} article={article} />

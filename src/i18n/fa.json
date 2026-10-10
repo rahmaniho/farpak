@@ -154,5 +154,13 @@
   "rateLimitMsg": "تعداد درخواست‌ها زیاد است. لطفاً چند دقیقه دیگر دوباره تلاش کنید.",
   "pagePrev": "قبلی",
   "pageNext": "بعدی",
-  "pageLabel": "صفحه"
+  "pageLabel": "صفحه",
+  "relatedTitle": "مقاله‌های مرتبط",
+  "navSearch": "جستجو",
+  "searchTitle": "جستجو در سایت",
+  "searchLabel": "جستجو در خدمات، پروژه‌ها و مقالات",
+  "searchPlaceholder": "مثلاً: آتش‌نشانی، داربست، HSE",
+  "searchHint": "برای شروع جستجو، یک یا چند کلمه وارد کنید.",
+  "searchNoResults": "نتیجه‌ای یافت نشد. کلمه دیگری امتحان کنید.",
+  "searchResults": "نتیجه"
 }

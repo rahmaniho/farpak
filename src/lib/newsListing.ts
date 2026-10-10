@@ -58,3 +58,14 @@ export function allListingStates(all: Article[] = articles): ListingState[] {
   }
   return states;
 }
+
+/**
+ * Related articles: same topic first (newest first), then the newest of the rest.
+ * The article itself is never included.
+ */
+export function relatedArticles(article: Article, count = 3, all: Article[] = articles): Article[] {
+  const others = sortedArticles(all).filter((a) => a.slug !== article.slug);
+  const sameTopic = others.filter((a) => a.topic === article.topic);
+  const rest = others.filter((a) => a.topic !== article.topic);
+  return [...sameTopic, ...rest].slice(0, count);
+}
