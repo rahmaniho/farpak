@@ -162,5 +162,15 @@
   "searchPlaceholder": "مثلاً: آتش‌نشانی، داربست، HSE",
   "searchHint": "برای شروع جستجو، یک یا چند کلمه وارد کنید.",
   "searchNoResults": "نتیجه‌ای یافت نشد. کلمه دیگری امتحان کنید.",
-  "searchResults": "نتیجه"
+  "searchResults": "نتیجه",
+  "notFoundTitle": "صفحه پیدا نشد",
+  "notFoundCode": "خطای ۴۰۴",
+  "notFoundHeading": "این صفحه پیدا نشد",
+  "notFoundText": "نشانی که وارد کرده‌اید وجود ندارد یا جابه‌جا شده است. می‌توانید از لینک‌های زیر ادامه دهید یا جستجو کنید.",
+  "notFoundHome": "بازگشت به صفحه اصلی",
+  "notFoundServices": "خدمات",
+  "notFoundNews": "اخبار و مقالات",
+  "notFoundContact": "تماس با ما",
+  "notFoundSearch": "جستجو در سایت",
+  "notFoundEnglish": "نسخه انگلیسی سایت"
 }

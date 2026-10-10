@@ -12,11 +12,13 @@ interface Props {
   description?: string;
   locale: Locale;
   currentPath: string;
+  /** Used for the 404 page: no canonical/hreflang, search engines must skip it. */
+  noindex?: boolean;
   /** Extra structured data (Service, BreadcrumbList, ...) added after Organization. */
   jsonLd?: Record<string, unknown>[];
 }
 
-const { locale, currentPath, title, description, jsonLd = [] } = Astro.props;
+const { locale, currentPath, title, description, jsonLd = [], noindex = false } = Astro.props;
 const tr = t(locale);
 const dir = locale === 'fa' ? 'rtl' : 'ltr';
 const siteName = dictionaries[locale].siteName;
@@ -36,10 +38,16 @@ const ogImage = new URL(withBase('/images/hero-industrial-plant.jpg'), Astro.sit
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{pageTitle}</title>
     <meta name="description" content={pageDesc} />
-    <link rel="canonical" href={canonical} />
-    <link rel="alternate" hreflang="fa" href={altFa} />
-    <link rel="alternate" hreflang="en" href={altEn} />
-    <link rel="alternate" hreflang="x-default" href={altFa} />
+    {noindex ? (
+      <meta name="robots" content="noindex, follow" />
+    ) : (
+      <>
+        <link rel="canonical" href={canonical} />
+        <link rel="alternate" hreflang="fa" href={altFa} />
+        <link rel="alternate" hreflang="en" href={altEn} />
+        <link rel="alternate" hreflang="x-default" href={altFa} />
+      </>
+    )}
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={pageDesc} />
     <meta property="og:type" content="website" />

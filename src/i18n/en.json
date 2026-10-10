@@ -162,5 +162,14 @@
   "searchPlaceholder": "e.g. fire protection, scaffolding, HSE",
   "searchHint": "Type one or more words to start searching.",
   "searchNoResults": "No results found. Try another word.",
-  "searchResults": "results"
+  "searchResults": "results",
+  "notFoundTitle": "Page not found",
+  "notFoundCode": "Error 404",
+  "notFoundHeading": "This page could not be found",
+  "notFoundText": "The address you entered does not exist or has moved. You can continue with the links below or search the site.",
+  "notFoundHome": "Back to home page",
+  "notFoundServices": "Services",
+  "notFoundNews": "News and articles",
+  "notFoundContact": "Contact us",
+  "notFoundSearch": "Search the site"
 }

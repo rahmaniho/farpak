@@ -1,0 +1,43 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { t, localePath } from '../i18n/utils';
+
+const tr = t('fa');
+const links = [
+  { href: localePath('fa', '/services/'), label: tr('notFoundServices') },
+  { href: localePath('fa', '/news/'), label: tr('notFoundNews') },
+  { href: localePath('fa', '/contact/'), label: tr('notFoundContact') },
+  { href: localePath('fa', '/search/'), label: tr('notFoundSearch') },
+];
+---
+<BaseLayout locale="fa" currentPath="/" title={tr('notFoundTitle')} noindex>
+  <section class="mx-auto max-w-[1280px] px-4 py-16 md:px-8 md:py-24">
+    <div class="grid grid-cols-12 gap-6">
+      <div class="col-span-12 md:col-span-7">
+        <p class="text-sm font-semibold text-navy">{tr("notFoundCode")}</p>
+        <h1 class="mt-2 text-3xl font-bold text-navy md:text-4xl">{tr('notFoundHeading')}</h1>
+        <p class="mt-4 max-w-xl text-lg text-ink">{tr('notFoundText')}</p>
+        <div class="mt-8 flex flex-wrap gap-3">
+          <a href={localePath('fa', '/')} class="inline-flex min-h-11 items-center rounded-md bg-navy px-5 py-2 font-semibold text-white hover:bg-navy/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal">
+            {tr('notFoundHome')}
+          </a>
+          <a href={localePath('en', '/')} lang="en" hreflang="en" class="inline-flex min-h-11 items-center rounded-md border border-navy px-5 py-2 font-semibold text-navy hover:bg-navy/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal">
+            {tr('notFoundEnglish')}
+          </a>
+        </div>
+      </div>
+      <nav aria-label={tr('notFoundHeading')} class="col-span-12 md:col-span-5">
+        <ul class="grid gap-3">
+          {links.map((l) => (
+            <li>
+              <a href={l.href} class="flex min-h-11 items-center justify-between rounded-md border border-navy/20 px-4 py-3 text-navy hover:border-teal focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal">
+                <span>{l.label}</span>
+                <span aria-hidden="true">←</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    </div>
+  </section>
+</BaseLayout>
