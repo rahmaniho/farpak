@@ -1,16 +1,17 @@
 import { useState, type FormEvent } from 'react';
-import { isEmail, isPhone, type Errors } from '../lib/validation';
-
-type Mode = 'rfq' | 'contact';
+import { validateSubmission, type ErrorCode, type FormMode } from '../lib/validation';
 
 interface Props {
-  mode: Mode;
+  mode: FormMode;
   locale: 'fa' | 'en';
   services: { slug: string; title: string }[];
   defaultService?: string;
   /** All UI strings, passed from Astro so this island has no i18n dependency. */
   t: Record<string, string>;
 }
+
+type FieldKey = 'name' | 'company' | 'phone' | 'email' | 'subject' | 'message' | 'service' | 'location' | 'volume' | 'attachment';
+type Errors = Partial<Record<FieldKey, string>>;
 
 interface Values {
   name: string;
@@ -24,13 +25,12 @@ interface Values {
   volume: string;
   deadline: string;
   hse: boolean;
+  website: string; // honeypot, must stay empty
 }
 
-type FieldKey = keyof Values | 'file';
-
-const MAX_FILE_BYTES = 10 * 1024 * 1024;
-// Set PUBLIC_FORM_ENDPOINT to a server route/webhook that re-validates the payload.
-const ENDPOINT: string | undefined = import.meta.env.PUBLIC_FORM_ENDPOINT || undefined;
+// Same-origin by default. The dev server proxies /api to the form server.
+// Trailing slash matches the site's trailingSlash: 'always' setting.
+const ENDPOINT: string = import.meta.env.PUBLIC_FORM_ENDPOINT || '/api/submit/';
 
 const fieldClass =
   'mt-1 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-ink focus:border-teal focus:ring-2 focus:ring-teal/30 aria-[invalid=true]:border-danger';
@@ -40,51 +40,98 @@ const errClass = 'mt-1 text-sm text-danger';
 export default function RequestForm({ mode, locale, services, defaultService = '', t }: Props) {
   const [values, setValues] = useState<Values>({
     name: '', company: '', phone: '', email: '', subject: '', message: '',
-    service: defaultService, location: '', volume: '', deadline: '', hse: false,
+    service: defaultService, location: '', volume: '', deadline: '', hse: false, website: '',
   });
   const [file, setFile] = useState<File | null>(null);
-  const [errors, setErrors] = useState<Errors<Record<FieldKey, string>>>({});
+  const [errors, setErrors] = useState<Errors>({});
   const [status, setStatus] = useState<'idle' | 'sending' | 'ok' | 'error'>('idle');
+  const [serverError, setServerError] = useState('');
   const isRfq = mode === 'rfq';
 
   const set = <K extends keyof Values>(k: K, v: Values[K]) =>
     setValues((prev) => ({ ...prev, [k]: v }));
 
-  function validate() {
-    const e: Errors<Record<FieldKey, string>> = {};
-    if (!values.name.trim()) e.name = t.errRequired;
-    if (!values.phone.trim()) e.phone = t.errRequired;
-    else if (!isPhone(values.phone)) e.phone = t.errPhone;
-    if (!values.email.trim()) e.email = t.errRequired;
-    else if (!isEmail(values.email)) e.email = t.errEmail;
-    if (!values.message.trim()) e.message = t.errRequired;
-    if (isRfq && !values.service) e.service = t.errRequired;
-    if (!isRfq && !values.subject.trim()) e.subject = t.errRequired;
-    if (file && (file.type !== 'application/pdf' || file.size > MAX_FILE_BYTES)) e.file = t.errFile;
-    return e;
+  // Map validation codes to translated messages.
+  const messageFor = (code: ErrorCode): string => {
+    switch (code) {
+      case 'email': return t.errEmail;
+      case 'phone': return t.errPhone;
+      case 'file': return t.errFile;
+      case 'tooLong':
+      case 'invalid':
+      case 'required':
+      default: return t.errRequired;
+    }
+  };
+
+  function validate(): Errors {
+    const codes = validateSubmission({
+      mode,
+      name: values.name,
+      company: values.company,
+      phone: values.phone,
+      email: values.email,
+      subject: values.subject,
+      message: values.message,
+      service: values.service,
+      location: values.location,
+      volume: values.volume,
+      attachment: file ? { type: file.type, size: file.size } : null,
+    });
+    const out: Errors = {};
+    (Object.keys(codes) as (keyof typeof codes)[]).forEach((k) => {
+      const code = codes[k];
+      if (code && k !== 'website') out[k as FieldKey] = messageFor(code);
+    });
+    return out;
   }
 
   async function onSubmit(ev: FormEvent<HTMLFormElement>) {
     ev.preventDefault();
+    setServerError('');
     const e = validate();
     setErrors(e);
     if (Object.keys(e).length > 0) {
       document.getElementById('form-error-summary')?.focus();
       return;
     }
-    if (!ENDPOINT) {
-      setStatus('error');
-      return;
-    }
     setStatus('sending');
     try {
       const body = new FormData();
-      Object.entries({ ...values, mode, locale }).forEach(([k, v]) => body.append(k, String(v)));
+      const fields: Record<string, string> = {
+        mode,
+        locale,
+        name: values.name,
+        company: values.company,
+        phone: values.phone,
+        email: values.email,
+        subject: values.subject,
+        message: values.message,
+        service: values.service,
+        location: values.location,
+        volume: values.volume,
+        deadline: values.deadline,
+        hse: String(values.hse),
+        website: values.website,
+      };
+      Object.entries(fields).forEach(([k, v]) => body.append(k, v));
       if (file) body.append('attachment', file);
       const res = await fetch(ENDPOINT, { method: 'POST', body });
+      if (res.status === 429) {
+        setServerError(t.rateLimitMsg);
+        setStatus('error');
+        return;
+      }
+      if (res.status === 422) {
+        // Server found something the client did not; show a general error.
+        setServerError(t.errorMsg);
+        setStatus('error');
+        return;
+      }
       if (!res.ok) throw new Error(String(res.status));
       setStatus('ok');
     } catch {
+      setServerError(t.errorMsg);
       setStatus('error');
     }
   }
@@ -108,6 +155,13 @@ export default function RequestForm({ mode, locale, services, defaultService = '
           </ul>
         </div>
       )}
+
+      {/* Honeypot: hidden from people and assistive tech, filled only by bots. */}
+      <div aria-hidden="true" className="absolute -start-[9999px] h-0 overflow-hidden">
+        <label htmlFor="f-website">Website</label>
+        <input id="f-website" name="website" tabIndex={-1} autoComplete="off" value={values.website}
+          onChange={(ev) => set('website', ev.target.value)} />
+      </div>
 
       <div>
         <label htmlFor="f-name" className={labelClass}>{t.fieldName}</label>
@@ -180,9 +234,9 @@ export default function RequestForm({ mode, locale, services, defaultService = '
           <div>
             <label htmlFor="f-file" className={labelClass}>{t.fieldAttachment}</label>
             <input id="f-file" name="attachment" type="file" accept="application/pdf" className="mt-1 block w-full text-sm"
-              aria-invalid={!!errors.file} aria-describedby={errors.file ? 'e-file' : undefined}
+              aria-invalid={!!errors.attachment} aria-describedby={errors.attachment ? 'e-file' : undefined}
               onChange={(ev) => setFile(ev.target.files?.[0] ?? null)} />
-            {errors.file && <p id="e-file" className={errClass}>{errors.file}</p>}
+            {errors.attachment && <p id="e-file" className={errClass}>{errors.attachment}</p>}
           </div>
           <label className="flex items-start gap-3 text-sm md:col-span-2">
             <input type="checkbox" name="hse" className="mt-1 size-4 accent-teal" checked={values.hse}
@@ -209,9 +263,7 @@ export default function RequestForm({ mode, locale, services, defaultService = '
       </div>
 
       {status === 'error' && (
-        <p role="alert" className="text-danger md:col-span-2">
-          {ENDPOINT ? t.errorMsg : t.notConfiguredMsg}
-        </p>
+        <p role="alert" className="text-danger md:col-span-2">{serverError || t.errorMsg}</p>
       )}
     </form>
   );

@@ -30,6 +30,8 @@ export default defineConfig({
     server: {
       // Allow the sandbox live-preview host (dev only).
       allowedHosts: ['.e2b.app'],
+      // Form API (form-server/). Browser calls /api/*; only the dev server reaches the Node service.
+      proxy: { '/api': { target: `http://127.0.0.1:${process.env.FORM_PORT ?? 8787}`, changeOrigin: false } },
     },
   },
 });

@@ -150,5 +150,6 @@
   "readArticle": "Read article",
   "articleDate": "Published",
   "newsRssTitle": "Farapak Sanat Salamat news and technical articles",
-  "statsNote": "Sample figures for design review only."
+  "statsNote": "Sample figures for design review only.",
+  "rateLimitMsg": "Too many requests. Please try again in a few minutes."
 }

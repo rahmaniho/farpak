@@ -30,9 +30,13 @@
 - [ ] راهنمای مدیریت محتوا برای تیم غیرفنی
 
 ## فاز ۵ — فرم‌ها و CRM
-- [ ] فرم RFQ، فرم تماس، فرم دانلود کاتالوگ با اعتبارسنجی کلاینت و سرور
-- [ ] CSRF، Rate Limiting، reCAPTCHA v3
-- [ ] اتصال به CRM (Webhook) و اعلان ایمیل/اسلک
+- [x] فرم RFQ و فرم تماس با اعتبارسنجی مشترک کلاینت و سرور (`src/lib/validation.ts`)
+- [x] سرویس form-server: honeypot، محدودیت نرخ، بررسی مبدأ، ذخیره در inbox یا webhook
+- [ ] فرم دانلود کاتالوگ
+- [ ] ذخیره پیوست PDF (فعلاً فقط بررسی و ثبت نام)
+- [x] Rate Limiting و honeypot
+- [ ] توکن CSRF و reCAPTCHA v3 (نیاز به کلید سرویس)
+- [ ] اتصال به CRM (Webhook) و اعلان ایمیل/اسلک (آماده: `FORM_WEBHOOK_URL`)
 
 ## فاز ۶ — SEO، کیفیت و استقرار
 - [x] Schema.org: Organization، Service، BreadcrumbList (LocalBusiness و FAQPage پس از تأیید اطلاعات)

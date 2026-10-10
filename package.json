@@ -9,7 +9,8 @@
     "preview": "astro preview --host 0.0.0.0 --port 4321",
     "check": "astro check",
     "images": "node scripts/optimize-images.mjs",
-    "test": "node --test tests/validation.test.ts"
+    "test": "node --test tests/validation.test.ts",
+    "form-server": "node form-server/server.ts"
   },
   "dependencies": {
     "@astrojs/react": "^4.4.2",
