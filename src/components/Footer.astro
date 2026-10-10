@@ -1,6 +1,7 @@
 ---
 import { t, type Locale, localePath } from '../i18n/utils';
 import { sampleContact } from '../content/sample';
+import { withBase } from '../lib/base';
 
 interface Props { locale: Locale }
 const { locale } = Astro.props;
@@ -10,7 +11,10 @@ const year = new Date().getFullYear();
 <footer class="mt-24 bg-navy text-white">
   <div class="mx-auto grid max-w-[1280px] gap-10 px-4 py-14 md:grid-cols-3 md:px-8">
     <div>
-      <p class="text-lg font-semibold">{tr('siteName')}</p>
+      <div class="flex items-center gap-3">
+        <img src={withBase("/images/brand/logo-256.webp")} alt="" width="56" height="56" class="size-14 shrink-0 rounded-md bg-white p-1" decoding="async" />
+        <p class="text-lg font-semibold">{tr('siteName')}</p>
+      </div>
       <p class="mt-2 text-sm text-slate-300">{tr('footerTagline')}</p>
     </div>
     <div>

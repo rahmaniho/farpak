@@ -3,6 +3,7 @@
  * (address, phone, email, logo sameAs) are added once they are confirmed.
  */
 import { dictionaries, type Locale } from '../i18n/utils';
+import { withBase } from './base';
 
 const ORG_ID = '#organization';
 
@@ -16,6 +17,8 @@ export function organizationSchema(siteUrl: string, locale: Locale) {
     legalName: locale === 'fa' ? 'فرپاک صنعت سلامت' : 'Farapak Sanat Salamat',
     alternateName: locale === 'fa' ? 'Farapak Sanat Salamat' : 'فرپاک صنعت سلامت',
     url: siteUrl,
+    logo: { '@type': 'ImageObject', url: `${siteUrl}${withBase('/images/brand/logo-512.png')}`, width: 512, height: 512 },
+    image: `${siteUrl}${withBase('/images/brand/logo-512.png')}`,
     description: d.siteDescription,
     inLanguage: locale === 'fa' ? 'fa-IR' : 'en-US',
     identifier: [
