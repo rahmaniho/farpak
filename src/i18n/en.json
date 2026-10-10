@@ -247,5 +247,16 @@
   "fieldSubjectOptional": "Request subject",
   "fieldMessageOptional": "Additional details",
   "trackingCodeLabel": "Request tracking code",
-  "trackingCodeNote": "Keep this code and quote it when following up with the office."
+  "trackingCodeNote": "Keep this code and quote it when following up with the office.",
+  "trackLabel": "Tracking code",
+  "trackHint": "The unique id you received after submitting the form.",
+  "trackSubmit": "Check status",
+  "trackFound": "Your request is on file at the office.",
+  "trackStatus": "Status",
+  "trackStatusReceived": "Received by the office",
+  "trackReceivedAt": "Received at",
+  "trackService": "Service",
+  "trackNote": "This lookup only confirms registration; no personal data is displayed.",
+  "trackNotFound": "Code not found; enter it exactly or call the office.",
+  "trackLinkLabel": "Track request"
 }

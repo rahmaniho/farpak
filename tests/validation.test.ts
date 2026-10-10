@@ -53,3 +53,24 @@ test('validateSubmission enforces length limits', () => {
   });
   assert.equal(errors.name, 'tooLong');
 });
+
+import type { SubmissionInput } from '../src/lib/validation.ts';
+
+const h477Base: SubmissionInput = {
+  mode: 'h477', name: 'A', phone: '09121234567', service: 'health-card', consent: 'true',
+};
+
+test('h477 accepts a request without email or message when consent is given', () => {
+  assert.deepEqual(validateSubmission(h477Base), {});
+});
+
+test('h477 requires consent and service', () => {
+  assert.equal(validateSubmission({ ...h477Base, consent: '' }).consent, 'required');
+  assert.equal(validateSubmission({ ...h477Base, service: '' }).service, 'required');
+  assert.equal(validateSubmission({ ...h477Base, service: 'BAD SLUG' }).service, 'invalid');
+});
+
+test('h477 keeps email optional but validates it when provided', () => {
+  assert.deepEqual(validateSubmission({ ...h477Base, email: 'a@b.co' }), {});
+  assert.equal(validateSubmission({ ...h477Base, email: 'nope' }).email, 'email');
+});

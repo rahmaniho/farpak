@@ -1,0 +1,42 @@
+---
+import S477Layout from '../../../layouts/S477Layout.astro';
+import TrackBox from '../../../components/TrackBox';
+import { withBase } from '../../../lib/base';
+import { dictionaries } from '../../../i18n/utils';
+import { BIZ, s477Services } from '../../../content/s477';
+
+const currentPath = '/477/track/';
+const services = s477Services.map((s) => ({ slug: s.slug, title: s.title }));
+---
+<S477Layout currentPath={currentPath} title="پیگیری درخواست" description="پیگیری وضعیت درخواست ثبت‌شده در دفتر خدمات سلامت ۴۷۷ قزوین با کد رهگیری.">
+  <section class="relative isolate overflow-hidden border-b border-line">
+    <div class="shell-wide relative py-14 md:py-20">
+      <p class="mb-5 flex flex-wrap items-center gap-3 enter" style="--d: 60ms">
+        <span class="index-chip" style="--acc: var(--color-flux)" aria-hidden="true">05</span>
+        <span class="mono-label mono-label-bare">سامانه پیگیری</span>
+      </p>
+      <h1 class="max-w-2xl enter" style="--d: 140ms">پیگیری درخواست</h1>
+      <p class="mt-5 max-w-xl text-[1.05rem] leading-relaxed text-fog enter" style="--d: 240ms">
+        پس از ثبت هر درخواست، یک کد پیگیری یکتا دریافت می‌کنید. همان کد را اینجا وارد کنید تا وضعیت ثبت آن را ببینید.
+      </p>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="track-h">
+    <div class="shell-read">
+      <h2 id="track-h" class="sr-only">پیگیری درخواست</h2>
+      <div class="glass panel ticks" style="--acc: var(--color-flux)">
+        <TrackBox client:load t={dictionaries.fa} services={services} />
+      </div>
+      <p class="callout mt-6 text-sm">
+        <span>
+          کد را پیدا نمی‌کنید؟ با دفتر تماس بگیرید:
+          <a class="link-arrow mx-1" style="--acc: var(--color-flux)" href={`tel:${BIZ.phones[0].tel}`} dir="ltr">{BIZ.phones[0].display}</a>
+          یا از
+          <a class="link-arrow mx-1" style="--acc: var(--color-flux)" href={withBase('/477/services/')}>صفحه خدمات</a>
+          درخواست جدید ثبت کنید.
+        </span>
+      </p>
+    </div>
+  </section>
+</S477Layout>

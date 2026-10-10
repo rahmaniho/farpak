@@ -247,5 +247,16 @@
   "fieldSubjectOptional": "موضوع درخواست",
   "fieldMessageOptional": "توضیحات تکمیلی",
   "trackingCodeLabel": "کد پیگیری درخواست",
-  "trackingCodeNote": "این کد را نگه دارید و برای پیگیری درخواست به دفتر اعلام کنید."
+  "trackingCodeNote": "این کد را نگه دارید و برای پیگیری درخواست به دفتر اعلام کنید.",
+  "trackLabel": "کد پیگیری",
+  "trackHint": "کد، همان شناسه یکتایی است که پس از ارسال فرم دریافت کردید.",
+  "trackSubmit": "بررسی وضعیت",
+  "trackFound": "درخواست شما در دفتر ثبت شده است.",
+  "trackStatus": "وضعیت",
+  "trackStatusReceived": "ثبت‌شده در دفتر",
+  "trackReceivedAt": "تاریخ ثبت",
+  "trackService": "خدمت",
+  "trackNote": "این سامانه فقط وضعیت ثبت درخواست را نشان می‌دهد و هیچ اطلاعات شخصی نمایش داده نمی‌شود.",
+  "trackNotFound": "کد پیدا نشد؛ آن را دقیق وارد کنید یا با دفتر تماس بگیرید.",
+  "trackLinkLabel": "پیگیری درخواست"
 }

@@ -1,5 +1,6 @@
 import { useState, type CSSProperties, type FormEvent } from 'react';
 import { validateSubmission, type ErrorCode, type FormMode } from '../lib/validation';
+import { withBase } from '../lib/base';
 
 interface Props {
   mode: FormMode;
@@ -156,6 +157,13 @@ export default function RequestForm({ mode, locale, services, defaultService = '
               <code className="text-base" dir="ltr">{trackingId}</code>
               <br />
               <span className="text-xs opacity-80">{t.trackingCodeNote}</span>
+            </p>
+          )}
+          {is477 && (
+            <p className="mt-3">
+              <a className="link-arrow" style={{ '--acc': 'var(--color-volt)' } as CSSProperties} href={withBase('/477/track/')}>
+                {t.trackLinkLabel}
+              </a>
             </p>
           )}
         </div>
