@@ -16,7 +16,8 @@
 
 ## فاز ۳ — صفحات محتوایی
 - [ ] `/services/` و ۶ صفحه خدمات (مهندسی، پیمانکاری، آتش‌نشانی، HSE، نگهداری، شهری)
-- [ ] `/about/`، `/projects/` و `/projects/[slug]`، `/certifications/`، `/news/` و `/news/[slug]`
+- [x] `/about/`، `/projects/`، `/certifications/`، `/news/` (فارسی و انگلیسی؛ محتوای واقعی هنوز placeholder)
+- [ ] `/projects/[slug]` و `/news/[slug]`
 - [x] `/contact/` و `/rfq/` (فرم‌ها، اعتبارسنجی کلاینت)
 - [ ] نسخه انگلیسی همه صفحات
 
