@@ -17,9 +17,12 @@
 ## فاز ۳ — صفحات محتوایی
 - [ ] `/services/` و ۶ صفحه خدمات (مهندسی، پیمانکاری، آتش‌نشانی، HSE، نگهداری، شهری)
 - [x] `/about/`، `/projects/`، `/certifications/`، `/news/` (فارسی و انگلیسی؛ محتوای واقعی هنوز placeholder)
-- [ ] `/projects/[slug]` و `/news/[slug]`
+- [x] `/projects/[slug]` و `/news/[slug]` (داده‌های نمونه، برچسب «نمونه»)
 - [x] `/contact/` و `/rfq/` (فرم‌ها، اعتبارسنجی کلاینت)
 - [ ] نسخه انگلیسی همه صفحات
+
+- [x] RSS خبری فارسی و انگلیسی (`/news/rss.xml`، `/en/news/rss.xml`)
+- [x] آمار، پروژه‌ها، مقالات و اطلاعات تماس نمونه (با پرچم `SAMPLE_DATA`)
 
 ## فاز ۴ — محتوا (Sanity)
 - [ ] تعریف schemaهای Sanity: Service, Project, Certificate, Article, SiteSettings (هر فیلد fa/en)

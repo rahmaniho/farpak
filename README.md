@@ -10,8 +10,17 @@ npm run dev       # http://localhost:4321
 npm run build     # خروجی در dist/ (شامل sitemap-index.xml)
 npm run preview
 npm run check     # بررسی تایپ و Astro
+npm test          # تست‌های اعتبارسنجی فرم‌ها
 npm run images    # تولید AVIF/WebP (800w و 1600w) از JPG های public/images
 ```
+
+## داده‌های نمونه
+سایت فعلاً با داده‌های **نمونه** کامل شده است. این داده‌ها با پرچم `SAMPLE_DATA` در `src/content/sample.ts` کنترل می‌شوند و روی صفحات با برچسب «نمونه» نمایش داده می‌شوند:
+- پروژه‌ها: `src/content/projects.ts`
+- مقالات: `src/content/news.ts`
+- آمار و اطلاعات تماس: `src/content/sample.ts`
+
+قبل از انتشار، داده‌ها را با اطلاعات واقعی و تأییدشده جایگزین و `SAMPLE_DATA` را `false` کنید.
 
 ## متغیرهای محیطی
 
@@ -28,13 +37,15 @@ src/
   components/   Header, Footer, HomeView (بخش‌های صفحه)
   i18n/         fa.json, en.json (همه متن‌های UI)، utils.ts (مسیرها و سوییچ زبان)
   layouts/      BaseLayout.astro (lang/dir، متا، hreflang، skip link)
-  pages/        index.astro (fa)، en/index.astro (en)
+  pages/        صفحات fa در ریشه، صفحات en در en/ (خدمات، پروژه‌ها، اخبار، تماس، RFQ، درباره ما، گواهینامه‌ها)
+  content/      داده‌های خدمات، پروژه‌ها، مقالات و نمونه (sample.ts)
   styles/       global.css (توکن‌های برند، فوکوس، reduced motion)
 public/
   images/       تصاویر تولیدشده با متدولوژی SCHEMA (JPG، نیازمند تبدیل به AVIF/WebP)
   favicon.svg, robots.txt
 docs/
   ROADMAP.md    نقشه راه و وضعیت فازها
+tests/          تست‌های واحد اعتبارسنجی
 ```
 
 ## اصول فنی

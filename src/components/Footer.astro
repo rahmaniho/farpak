@@ -1,5 +1,6 @@
 ---
 import { t, type Locale, localePath } from '../i18n/utils';
+import { sampleContact } from '../content/sample';
 
 interface Props { locale: Locale }
 const { locale } = Astro.props;
@@ -15,9 +16,9 @@ const year = new Date().getFullYear();
     <div>
       <h2 class="mb-3 text-base font-semibold">{tr('footerContact')}</h2>
       <ul class="space-y-2 text-sm text-slate-200">
-        <li>{tr('footerAddress')}</li>
-        <li>{tr('footerPhone')}</li>
-        <li>{tr('footerEmail')}</li>
+        <li>{sampleContact.address[locale]}</li>
+        <li dir="ltr">{sampleContact.phone}</li>
+        <li dir="ltr">{sampleContact.email}</li>
       </ul>
     </div>
     <div>
