@@ -196,6 +196,28 @@ function initMobileNav(): void {
   });
 }
 
+/* ── 6. Copy-link buttons ([data-copy] holds the text to copy) ───────────── */
+function initCopy(): void {
+  const buttons = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-copy]'));
+  if (buttons.length === 0 || !navigator.clipboard) return;
+  for (const btn of buttons) {
+    btn.addEventListener('click', async () => {
+      const label = btn.textContent ?? '';
+      try {
+        await navigator.clipboard.writeText(btn.dataset.copy ?? '');
+        btn.textContent = btn.dataset.copiedLabel ?? '✓';
+        btn.disabled = true;
+        setTimeout(() => {
+          btn.textContent = label;
+          btn.disabled = false;
+        }, 1800);
+      } catch {
+        /* Clipboard denied: the visible URL stays as the fallback. */
+      }
+    });
+  }
+}
+
 function boot(): void {
   initHeader();
   initScrollProgress();
@@ -203,6 +225,7 @@ function boot(): void {
   initSpotlight();
   initClock();
   initMobileNav();
+  initCopy();
 }
 
 if (document.readyState === 'loading') {

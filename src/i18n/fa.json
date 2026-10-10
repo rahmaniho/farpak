@@ -242,5 +242,10 @@
   "searchSuggest3": "آتش‌نشانی",
   "specSheetLabel": "برگه مشخصات",
   "newsFilterAll": "همه",
-  "detailSheet": "برگه"
+  "detailSheet": "برگه",
+  "fieldConsent": "رضایت می‌دهم اطلاعات این درخواست مطابق سیاست حریم خصوصی ثبت و پردازش شود *",
+  "fieldSubjectOptional": "موضوع درخواست",
+  "fieldMessageOptional": "توضیحات تکمیلی",
+  "trackingCodeLabel": "کد پیگیری درخواست",
+  "trackingCodeNote": "این کد را نگه دارید و برای پیگیری درخواست به دفتر اعلام کنید."
 }

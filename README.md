@@ -12,6 +12,15 @@
 - قرارداد حرکت: بدون JS صفحه کامل است؛ `prefers-reduced-motion` حرکت را حذف می‌کند نه محتوا را.
 - رنگ اکسنت هر بلوک با متغیر `--acc` ست می‌شود؛ روی پرکننده‌های اسیدی فقط تایپ تیره (`#070B18`).
 
+## میکروسایت «دفتر خدمات سلامت ۴۷۷ قزوین» (`/477/`)
+
+سایت دوم، fa-only و محلی، با هویت «Clean Health Local» ولی همان DNA: چون Tailwind v4 و کامپوننت‌ها همه از طریق CSS variable.resolve می‌شوند، `src/styles/s477.css` با scope کردن پالت زیر `.site-477` کل زبان اشیا را بازرقم‌سازی می‌کند — بدون تکرار هیچ کامپوننت.
+
+- صفحات: `/477/`، `/477/services/` و ۴ صفحه اختصاصی خدمات با فرم درخواست واقعی
+- فرم‌ها با mode `h477` به همان `form-server` می‌روند (inbox/webhook) و **کد پیگیری واقعی** برمی‌گردانند
+- Local SEO: Schema `LocalBusiness` + `Service` + `BreadcrumbList`، NAP یکسان، نوار تبدیل موبایل
+- راهنمای Google Business Profile: [`docs/477/GBP-GUIDE.md`](docs/477/GBP-GUIDE.md)
+
 ## راه‌اندازی
 
 ```bash

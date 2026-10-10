@@ -55,3 +55,55 @@ export function breadcrumbSchema(items: { name: string; url: string }[]) {
     })),
   };
 }
+
+/* ── دفتر خدمات سلامت ۴۷۷ قزوین — Local SEO ────────────────────────────────
+   Every value below is client-provided. Fields we do not have (opening hours,
+   price range, postal code) are omitted rather than invented. */
+const OFFICE_ID = '#office477';
+
+export function localBusiness477Schema(siteUrl: string, imagePath: string) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'LocalBusiness',
+    '@id': `${siteUrl}${OFFICE_ID}`,
+    name: 'دفتر خدمات سلامت ۴۷۷ قزوین',
+    description:
+      'ثبت و صدور کارت بهداشت، آموزش بهداشت اصناف، صلاحیت بهداشتی، طرح خودکنترلی و خوداظهاری بهداشت و قراردادهای ممیزی بهداشتی در قزوین.',
+    image: `${siteUrl}${imagePath}`,
+    url: `${siteUrl}/477/`,
+    telephone: '+989398520150',
+    hasMap: 'https://www.google.com/maps?q=36.2678594,50.0135519',
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: 'خیابان طالقانی، برج خلیج فارس، طبقه ششم، واحد ۶۱۹',
+      addressLocality: 'قزوین',
+      addressRegion: 'قزوین',
+      addressCountry: 'IR',
+    },
+    geo: { '@type': 'GeoCoordinates', latitude: 36.2678594, longitude: 50.0135519 },
+    areaServed: { '@type': 'City', name: 'قزوین' },
+    sameAs: ['https://www.instagram.com/daftar_khadamatsalamat_qazvin'],
+    inLanguage: 'fa-IR',
+    knowsAbout: [
+      'کارت بهداشت',
+      'آموزش بهداشت اصناف',
+      'صلاحیت بهداشتی',
+      'خودکنترلی و خوداظهاری بهداشت',
+      'ممیزی بهداشتی',
+    ],
+  };
+}
+
+export function s477ServiceSchema(siteUrl: string, pageUrl: string, name: string, description: string) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Service',
+    '@id': `${pageUrl}#service`,
+    name,
+    description,
+    url: pageUrl,
+    inLanguage: 'fa-IR',
+    provider: { '@id': `${siteUrl}${OFFICE_ID}` },
+    areaServed: { '@type': 'City', name: 'قزوین' },
+  };
+}

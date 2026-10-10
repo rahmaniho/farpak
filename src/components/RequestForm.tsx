@@ -10,7 +10,7 @@ interface Props {
   t: Record<string, string>;
 }
 
-type FieldKey = 'name' | 'company' | 'phone' | 'email' | 'subject' | 'message' | 'service' | 'location' | 'volume' | 'attachment';
+type FieldKey = 'name' | 'company' | 'phone' | 'email' | 'subject' | 'message' | 'service' | 'location' | 'volume' | 'attachment' | 'consent';
 type Errors = Partial<Record<FieldKey, string>>;
 
 interface Values {
@@ -26,6 +26,7 @@ interface Values {
   deadline: string;
   hse: boolean;
   website: string; // honeypot, must stay empty
+  consent: boolean;
 }
 
 // Same-origin by default. The dev server proxies /api to the form server.
@@ -39,13 +40,15 @@ const errClass = 'field-error';
 export default function RequestForm({ mode, locale, services, defaultService = '', t }: Props) {
   const [values, setValues] = useState<Values>({
     name: '', company: '', phone: '', email: '', subject: '', message: '',
-    service: defaultService, location: '', volume: '', deadline: '', hse: false, website: '',
+    service: defaultService, location: '', volume: '', deadline: '', hse: false, website: '', consent: false,
   });
   const [file, setFile] = useState<File | null>(null);
   const [errors, setErrors] = useState<Errors>({});
   const [status, setStatus] = useState<'idle' | 'sending' | 'ok' | 'error'>('idle');
   const [serverError, setServerError] = useState('');
+  const [trackingId, setTrackingId] = useState('');
   const isRfq = mode === 'rfq';
+  const is477 = mode === 'h477';
 
   const set = <K extends keyof Values>(k: K, v: Values[K]) =>
     setValues((prev) => ({ ...prev, [k]: v }));
@@ -75,6 +78,7 @@ export default function RequestForm({ mode, locale, services, defaultService = '
       service: values.service,
       location: values.location,
       volume: values.volume,
+      consent: values.consent ? 'true' : '',
       attachment: file ? { type: file.type, size: file.size } : null,
     });
     const out: Errors = {};
@@ -111,6 +115,7 @@ export default function RequestForm({ mode, locale, services, defaultService = '
         volume: values.volume,
         deadline: values.deadline,
         hse: String(values.hse),
+        consent: String(values.consent),
         website: values.website,
       };
       Object.entries(fields).forEach(([k, v]) => body.append(k, v));
@@ -128,6 +133,8 @@ export default function RequestForm({ mode, locale, services, defaultService = '
         return;
       }
       if (!res.ok) throw new Error(String(res.status));
+      const data: { id?: string } | null = await res.json().catch(() => null);
+      setTrackingId(data?.id ?? '');
       setStatus('ok');
     } catch {
       setServerError(t.errorMsg);
@@ -139,9 +146,20 @@ export default function RequestForm({ mode, locale, services, defaultService = '
 
   if (status === 'ok') {
     return (
-      <p role="status" className="callout callout-ok font-medium">
-        {t.successMsg}
-      </p>
+      <div role="status" className="callout callout-ok font-medium">
+        <div>
+          <p>{t.successMsg}</p>
+          {trackingId && (
+            <p className="mt-3">
+              <span className="mono text-[0.625rem] uppercase tracking-[0.18em] opacity-70">{t.trackingCodeLabel}</span>
+              <br />
+              <code className="text-base" dir="ltr">{trackingId}</code>
+              <br />
+              <span className="text-xs opacity-80">{t.trackingCodeNote}</span>
+            </p>
+          )}
+        </div>
+      </div>
     );
   }
 
@@ -184,6 +202,7 @@ export default function RequestForm({ mode, locale, services, defaultService = '
         {errors.phone && <p id="e-phone" className={errClass}>{errors.phone}</p>}
       </div>
 
+      {!is477 && (
       <div>
         <label htmlFor="f-email" className={labelClass}>{t.fieldEmail}</label>
         <input id="f-email" name="email" type="email" autoComplete="email" dir="ltr" className={fieldClass} value={values.email}
@@ -191,8 +210,9 @@ export default function RequestForm({ mode, locale, services, defaultService = '
           onChange={(ev) => set('email', ev.target.value)} />
         {errors.email && <p id="e-email" className={errClass}>{errors.email}</p>}
       </div>
+      )}
 
-      {isRfq ? (
+      {isRfq || is477 ? (
         <div>
           <label htmlFor="f-service" className={labelClass}>{t.fieldService}</label>
           <select id="f-service" name="service" className={fieldClass} value={values.service}
@@ -205,7 +225,7 @@ export default function RequestForm({ mode, locale, services, defaultService = '
         </div>
       ) : (
         <div>
-          <label htmlFor="f-subject" className={labelClass}>{t.fieldSubject}</label>
+          <label htmlFor="f-subject" className={labelClass}>{is477 ? t.fieldSubjectOptional : t.fieldSubject}</label>
           <input id="f-subject" name="subject" className={fieldClass} value={values.subject}
             aria-invalid={!!errors.subject} aria-describedby={errors.subject ? 'e-subject' : undefined}
             onChange={(ev) => set('subject', ev.target.value)} />
@@ -246,12 +266,24 @@ export default function RequestForm({ mode, locale, services, defaultService = '
       )}
 
       <div className="md:col-span-2">
-        <label htmlFor="f-message" className={labelClass}>{t.fieldMessage}</label>
+        <label htmlFor="f-message" className={labelClass}>{is477 ? t.fieldMessageOptional : t.fieldMessage}</label>
         <textarea id="f-message" name="message" rows={5} className={fieldClass} value={values.message}
           aria-invalid={!!errors.message} aria-describedby={errors.message ? 'e-message' : undefined}
           onChange={(ev) => set('message', ev.target.value)} />
         {errors.message && <p id="e-message" className={errClass}>{errors.message}</p>}
       </div>
+
+      {is477 && (
+        <div className="md:col-span-2">
+          <label className="flex items-start gap-3 text-sm">
+            <input type="checkbox" name="consent" className="mt-1" checked={values.consent}
+              aria-invalid={!!errors.consent} aria-describedby={errors.consent ? 'e-consent' : undefined}
+              onChange={(ev) => set('consent', ev.target.checked)} />
+            <span className="text-fog">{t.fieldConsent}</span>
+          </label>
+          {errors.consent && <p id="e-consent" className={errClass}>{errors.consent}</p>}
+        </div>
+      )}
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between md:col-span-2">
         <p id="form-privacy" className="field-hint mt-0">{t.privacy}</p>

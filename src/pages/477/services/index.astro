@@ -1,0 +1,81 @@
+---
+import S477Layout from '../../../layouts/S477Layout.astro';
+import Picture from '../../../components/Picture.astro';
+import { withBase } from '../../../lib/base';
+import { BIZ, s477Services } from '../../../content/s477';
+---
+<S477Layout
+  currentPath="/477/services/"
+  title="خدمات ما"
+  description={`خدمات دفتر خدمات سلامت ۴۷۷ قزوین: ${s477Services.map((s) => s.title).join('، ')}.`}
+>
+  <section class="relative isolate overflow-hidden border-b border-line">
+    <div class="duotone absolute inset-0 -z-10">
+      <Picture src={withBase('/images/s477-hero.jpg')} alt="" width={1600} height={900} loading="eager" fetchpriority="high" sizes="100vw" class="size-full" />
+    </div>
+    <div class="absolute inset-0 -z-10 bg-[linear-gradient(180deg,rgba(244,248,252,0.88),rgba(244,248,252,0.97))]" aria-hidden="true"></div>
+    <div class="shell-wide relative py-14 md:py-20">
+      <p class="mb-5 flex flex-wrap items-center gap-3 enter" style="--d: 60ms">
+        <span class="index-chip" style="--acc: var(--color-flux)" aria-hidden="true">01</span>
+        <span class="mono-label mono-label-bare">خدمات دفتر</span>
+      </p>
+      <h1 class="max-w-3xl enter" style="--d: 140ms">خدمات دفتر خدمات سلامت ۴۷۷</h1>
+      <p class="mt-5 max-w-2xl text-[1.05rem] leading-relaxed text-fog enter md:text-[1.2rem]" style="--d: 240ms">
+        خدمات سلامت، بهداشت و آموزش اصناف برای صاحبان کسب‌وکار، کارکنان و کارفرمایان قزوین. هر خدمت را با مراحل روشن، مدارک مورد نیاز و راه درخواست کردن معرفی کرده‌ایم.
+      </p>
+      <div class="mt-8 flex flex-wrap gap-3 enter" style="--d: 340ms">
+        <a href={`tel:${BIZ.phones[0].tel}`} class="btn btn-primary" style="--acc: var(--color-flux)">تماس با دفتر</a>
+        <a href={BIZ.maps} target="_blank" rel="noopener noreferrer" class="btn btn-ghost" style="--acc: var(--color-volt)">مشاهده موقعیت دفتر</a>
+      </div>
+      <nav aria-label="دسته‌بندی خدمات" class="mt-8 enter" style="--d: 440ms">
+        <ul class="flex flex-wrap gap-2">
+          {s477Services.map((s) => (
+            <li>
+              <a href={`#${s.slug}`} class="chip chip-accent transition-all duration-200 hover:-translate-y-0.5" style={`--acc: ${s.accent}`}>
+                {s.title}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    </div>
+  </section>
+
+  <section class="section" aria-label="فهرست خدمات">
+    <div class="shell-wide grid gap-10">
+      {s477Services.map((s, i) => (
+        <article id={s.slug} class="card ticks scroll-mt-28" style={`--acc: ${s.accent}`} data-reveal data-spot>
+          <div class="grid gap-0 md:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)]">
+            <div class="card-body">
+              <div class="flex items-start justify-between gap-4">
+                <span class="svc-icon" style={`--acc: ${s.accent}`}>
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={s.icon} />
+                </span>
+                <span class="chip chip-accent" style={`--acc: ${s.accent}`}>{s.active === false ? 'غیرفعال' : 'خدمت فعال'}</span>
+              </div>
+              <h2 class="mt-3 text-[1.35rem] font-extrabold">{s.title}</h2>
+              <p class="mt-2 leading-relaxed text-fog">{s.short}</p>
+              <ol class="mt-5 grid gap-2">
+                {s.steps.slice(0, 3).map((step, k) => (
+                  <li class="flex gap-3 text-sm text-fog">
+                    <span class="mono shrink-0 font-bold" style={`color: ${s.accent}`}>{k + 1}.</span>
+                    <span>{step}</span>
+                  </li>
+                ))}
+              </ol>
+            </div>
+            <div class="flex flex-col justify-center gap-4 border-t border-line bg-white/50 p-6 md:border-s md:border-t-0">
+              <p class="mono text-[0.625rem] uppercase tracking-[0.2em] text-ash" aria-hidden="true">SVC-477-0{i + 1}</p>
+              <a href={withBase(`/477/services/${s.slug}/`)} class="btn btn-ghost" style={`--acc: ${s.accent}`}>جزئیات بیشتر</a>
+              <a href={`${withBase(`/477/services/${s.slug}/`)}#request`} class="btn btn-primary" style={`--acc: ${s.accent}`}>{s.cta}</a>
+              <a href={`tel:${BIZ.phones[0].tel}`} class="link-arrow mx-auto" style={`--acc: ${s.accent}`}>
+                تماس مستقیم
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2Z" /></svg>
+              </a>
+            </div>
+          </div>
+        </article>
+      ))}
+    </div>
+  </section>
+</S477Layout>

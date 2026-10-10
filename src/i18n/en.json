@@ -242,5 +242,10 @@
   "specSheetLabel": "Spec sheet",
   "newsFilterAll": "All",
   "detailSheet": "Sheet",
-  "notFoundEnglish": "English version"
+  "notFoundEnglish": "English version",
+  "fieldConsent": "I consent to this request being stored and processed according to the privacy policy *",
+  "fieldSubjectOptional": "Request subject",
+  "fieldMessageOptional": "Additional details",
+  "trackingCodeLabel": "Request tracking code",
+  "trackingCodeNote": "Keep this code and quote it when following up with the office."
 }

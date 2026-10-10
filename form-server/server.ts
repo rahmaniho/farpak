@@ -88,7 +88,8 @@ async function handleSubmit(req: http.IncomingMessage, res: http.ServerResponse)
   };
   const attachment = form.get('attachment');
   const file = attachment instanceof File && attachment.size > 0 ? attachment : null;
-  const mode: FormMode = get('mode') === 'contact' ? 'contact' : 'rfq';
+  const rawMode = get('mode');
+  const mode: FormMode = rawMode === 'contact' ? 'contact' : rawMode === 'h477' ? 'h477' : 'rfq';
 
   const input: SubmissionInput = {
     mode,
@@ -101,6 +102,7 @@ async function handleSubmit(req: http.IncomingMessage, res: http.ServerResponse)
     service: get('service'),
     location: get('location'),
     volume: get('volume'),
+    consent: get('consent'),
     website: get('website'),
     attachment: file ? { type: file.type, size: file.size } : null,
   };
@@ -125,6 +127,7 @@ async function handleSubmit(req: http.IncomingMessage, res: http.ServerResponse)
     service: input.service,
     location: input.location,
     volume: input.volume,
+    consent: input.consent === 'true',
     hse: get('hse') === 'true',
     attachmentName: file ? file.name : null,
   };
