@@ -1,3 +1,4 @@
+import { withBase } from '../lib/base';
 import type { Locale } from '../i18n/utils';
 
 /**
@@ -23,7 +24,7 @@ export interface Service {
 export const services: Service[] = [
   {
     slug: 'engineering',
-    image: '/images/service-engineering.jpg',
+    image: withBase('/images/service-engineering.jpg'),
     imageAlt: { fa: 'مهندسان در حال بررسی نقشه‌ها روی تبلت', en: 'Engineers reviewing blueprints on a tablet' },
     copy: {
       fa: {
@@ -46,7 +47,7 @@ export const services: Service[] = [
   },
   {
     slug: 'construction',
-    image: '/images/service-construction.jpg',
+    image: withBase('/images/service-construction.jpg'),
     imageAlt: { fa: 'کارگاه ساخت تأسیسات صنعتی با جرثقیل', en: 'Industrial facility construction site with crane' },
     copy: {
       fa: {
@@ -69,7 +70,7 @@ export const services: Service[] = [
   },
   {
     slug: 'fire-safety',
-    image: '/images/service-fire-safety.jpg',
+    image: withBase('/images/service-fire-safety.jpg'),
     imageAlt: { fa: 'لوله‌ها و اسپرینکلرهای سیستم اطفای حریق صنعتی', en: 'Industrial fire suppression piping and sprinklers' },
     copy: {
       fa: {
@@ -92,7 +93,7 @@ export const services: Service[] = [
   },
   {
     slug: 'hse',
-    image: '/images/service-hse-environment.jpg',
+    image: withBase('/images/service-hse-environment.jpg'),
     imageAlt: { fa: 'کارشناس محیط زیست در حال نمونه‌برداری آب', en: 'Environmental engineer sampling water near a plant' },
     copy: {
       fa: {
@@ -115,7 +116,7 @@ export const services: Service[] = [
   },
   {
     slug: 'maintenance',
-    image: '/images/service-hvac-piping.jpg',
+    image: withBase('/images/service-hvac-piping.jpg'),
     imageAlt: { fa: 'سیستم تأسیسات و لوله‌کشی صنعتی', en: 'Industrial HVAC and piping system' },
     copy: {
       fa: {
@@ -138,7 +139,7 @@ export const services: Service[] = [
   },
   {
     slug: 'urban',
-    image: '/images/project-water-treatment.jpg',
+    image: withBase('/images/project-water-treatment.jpg'),
     imageAlt: { fa: 'تأسیسات تصفیه آب با مخازن دایره‌ای', en: 'Water treatment facility with circular tanks' },
     copy: {
       fa: {

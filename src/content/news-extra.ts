@@ -1,3 +1,4 @@
+import { withBase } from '../lib/base';
 import type { Article } from './news';
 
 /**
@@ -11,7 +12,7 @@ export const extraArticles: Article[] = [
 
     topic: 'maintenance',
     date: '2026-01-12',
-    image: '/images/article-pipeline-corrosion-inspection.jpg',
+    image: withBase('/images/article-pipeline-corrosion-inspection.jpg'),
     imageAlt: { fa: 'بازرسی خوردگی خط لوله با گیج ضخامت اولتراسونیک', en: 'Ultrasonic thickness inspection of a corroded pipeline' },
     sample: true,
     copy: {
@@ -40,7 +41,7 @@ export const extraArticles: Article[] = [
 
     topic: 'safety',
     date: '2026-02-05',
-    image: '/images/article-gas-leak-detection.jpg',
+    image: withBase('/images/article-gas-leak-detection.jpg'),
     imageAlt: { fa: 'سنسور تشخیص نشت گاز روی فلنج لوله صنعتی', en: 'Gas detection sensor mounted on an industrial pipe flange' },
     sample: true,
     copy: {
@@ -69,7 +70,7 @@ export const extraArticles: Article[] = [
 
     topic: 'safety',
     date: '2026-02-20',
-    image: '/images/article-process-safety-management.jpg',
+    image: withBase('/images/article-process-safety-management.jpg'),
     imageAlt: { fa: 'اتاق کنترل واحد فرآیندی با اپراتورها', en: 'Process control room with operators' },
     sample: true,
     copy: {
@@ -98,7 +99,7 @@ export const extraArticles: Article[] = [
 
     topic: 'safety',
     date: '2026-03-10',
-    image: '/images/article-hazop-study.jpg',
+    image: withBase('/images/article-hazop-study.jpg'),
     imageAlt: { fa: 'تیم مهندسی در جلسه بررسی نقشه‌های P&ID', en: 'Engineering team reviewing P&ID drawings' },
     sample: true,
     copy: {
@@ -127,7 +128,7 @@ export const extraArticles: Article[] = [
 
     topic: 'facilities',
     date: '2026-03-28',
-    image: '/images/article-electrical-safety.jpg',
+    image: withBase('/images/article-electrical-safety.jpg'),
     imageAlt: { fa: 'تابلوهای برق صنعتی و سینی کابل', en: 'Industrial switchgear cabinets and cable trays' },
     sample: true,
     copy: {
@@ -156,7 +157,7 @@ export const extraArticles: Article[] = [
 
     topic: 'safety',
     date: '2026-04-15',
-    image: '/images/article-confined-space-entry.jpg',
+    image: withBase('/images/article-confined-space-entry.jpg'),
     imageAlt: { fa: 'دریچه ورود مخزن با سه‌پایه ایمنی و مانیتور گاز', en: 'Tank entry hatch with safety tripod and gas monitor' },
     sample: true,
     copy: {
@@ -185,7 +186,7 @@ export const extraArticles: Article[] = [
 
     topic: 'safety',
     date: '2026-05-06',
-    image: '/images/article-ppe-selection.jpg',
+    image: withBase('/images/article-ppe-selection.jpg'),
     imageAlt: { fa: 'تجهیزات حفاظت فردی شامل کلاه، عینک و دستکش', en: 'Personal protective equipment on a steel bench' },
     sample: true,
     copy: {
@@ -214,7 +215,7 @@ export const extraArticles: Article[] = [
 
     topic: 'environment',
     date: '2026-06-01',
-    image: '/images/article-wastewater-treatment.jpg',
+    image: withBase('/images/article-wastewater-treatment.jpg'),
     imageAlt: { fa: 'حوضچه هوادهی تصفیه پساب صنعتی از نمای هوایی', en: 'Aerial view of an industrial wastewater aeration basin' },
     sample: true,
     copy: {
@@ -243,7 +244,7 @@ export const extraArticles: Article[] = [
 
     topic: 'facilities',
     date: '2026-07-08',
-    image: '/images/article-fire-water-systems.jpg',
+    image: withBase('/images/article-fire-water-systems.jpg'),
     imageAlt: { fa: 'خانه پمپ آب آتش‌نشانی صنعتی', en: 'Industrial fire water pump house' },
     sample: true,
     copy: {
@@ -272,7 +273,7 @@ export const extraArticles: Article[] = [
 
     topic: 'maintenance',
     date: '2026-08-12',
-    image: '/images/article-predictive-maintenance.jpg',
+    image: withBase('/images/article-predictive-maintenance.jpg'),
     imageAlt: { fa: 'تکنسین با تبلت کنار پمپ دوار و حسگر ارتعاش', en: 'Technician with a tablet beside a rotating pump' },
     sample: true,
     copy: {

@@ -1,3 +1,4 @@
+import { withBase } from '../lib/base';
 import fa from './fa.json';
 import en from './en.json';
 
@@ -13,7 +14,7 @@ export function t(locale: Locale) {
 /** Build a localized path: fa -> /x/, en -> /en/x/ */
 export function localePath(locale: Locale, path = '/') {
   const clean = path.startsWith('/') ? path : `/${path}`;
-  return locale === 'en' ? `/en${clean === '/' ? '/' : clean}` : clean;
+  return withBase(locale === 'en' ? `/en${clean === '/' ? '/' : clean}` : clean);
 }
 
 /** Map the current path to the other locale (keeps the same page). */

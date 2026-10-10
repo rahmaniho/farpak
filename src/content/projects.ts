@@ -1,3 +1,4 @@
+import { withBase } from '../lib/base';
 import type { Locale } from '../i18n/utils';
 
 /** Project case studies. `sample: true` items show a "نمونه / Sample" badge. */
@@ -26,7 +27,7 @@ export const projects: Project[] = [
     slug: 'gas-refinery-hse-upgrade',
     year: 1404,
     sector: 'oil-gas',
-    image: '/images/project-gas-refinery.jpg',
+    image: withBase('/images/project-gas-refinery.jpg'),
     imageAlt: { fa: 'پالایشگاه گاز در غروب', en: 'Gas refinery at dusk' },
     sample: true,
     copy: {
@@ -54,7 +55,7 @@ export const projects: Project[] = [
     slug: 'petrochemical-piping-maintenance',
     year: 1404,
     sector: 'petrochemical',
-    image: '/images/project-petrochemical-aerial.jpg',
+    image: withBase('/images/project-petrochemical-aerial.jpg'),
     imageAlt: { fa: 'نمای هوایی مجتمع پتروشیمی', en: 'Aerial view of a petrochemical complex' },
     sample: true,
     copy: {
@@ -82,7 +83,7 @@ export const projects: Project[] = [
     slug: 'water-treatment-plant-engineering',
     year: 1403,
     sector: 'utilities',
-    image: '/images/project-water-treatment.jpg',
+    image: withBase('/images/project-water-treatment.jpg'),
     imageAlt: { fa: 'تأسیسات تصفیه آب صنعتی', en: 'Industrial water treatment facility' },
     sample: true,
     copy: {

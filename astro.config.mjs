@@ -9,6 +9,8 @@ const SITE = process.env.PUBLIC_SITE_URL ?? 'https://example.com';
 
 export default defineConfig({
   site: SITE,
+  // GitHub Pages project site serves under /farpak; other hosts keep '/'.
+  base: process.env.PAGES_BASE || '/',
   output: 'static',
   trailingSlash: 'always',
   i18n: {

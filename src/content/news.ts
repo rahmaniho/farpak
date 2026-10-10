@@ -1,3 +1,4 @@
+import { withBase } from '../lib/base';
 import type { Locale } from '../i18n/utils';
 
 /** Technical articles. `sample: true` items show a "نمونه / Sample" badge. */
@@ -37,7 +38,7 @@ const baseArticles: Article[] = [
 
     topic: 'safety',
     date: '2026-06-15',
-    image: '/images/service-hse-environment.jpg',
+    image: withBase('/images/service-hse-environment.jpg'),
     imageAlt: { fa: 'کارشناس محیط زیست در حال نمونه‌برداری', en: 'Environmental engineer sampling water' },
     sample: true,
     copy: {
@@ -66,7 +67,7 @@ const baseArticles: Article[] = [
 
     topic: 'safety',
     date: '2026-07-20',
-    image: '/images/service-fire-safety.jpg',
+    image: withBase('/images/service-fire-safety.jpg'),
     imageAlt: { fa: 'لوله‌ها و اسپرینکلرهای سیستم اطفای حریق', en: 'Fire suppression piping and sprinklers' },
     sample: true,
     copy: {
@@ -95,7 +96,7 @@ const baseArticles: Article[] = [
 
     topic: 'maintenance',
     date: '2026-08-30',
-    image: '/images/service-hvac-piping.jpg',
+    image: withBase('/images/service-hvac-piping.jpg'),
     imageAlt: { fa: 'سیستم تأسیسات و لوله‌کشی صنعتی', en: 'Industrial HVAC and piping system' },
     sample: true,
     copy: {

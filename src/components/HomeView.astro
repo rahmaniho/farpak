@@ -1,4 +1,5 @@
 ---
+import { withBase } from '../lib/base';
 import { t, type Locale, localePath } from '../i18n/utils';
 import Picture from './Picture.astro';
 import { projects } from '../content/projects';
@@ -35,7 +36,7 @@ const featured = projects.slice(0, 3);
 <!-- 1. Hero -->
 <section class="relative isolate overflow-hidden bg-navy text-white">
   <Picture
-    src="/images/hero-industrial-plant.jpg"
+    src={withBase("/images/hero-industrial-plant.jpg")}
     alt={tr('heroImageAlt')}
     width={1920}
     height={1080}

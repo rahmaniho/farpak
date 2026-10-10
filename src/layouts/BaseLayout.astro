@@ -5,6 +5,7 @@ import Footer from '../components/Footer.astro';
 import { t, type Locale, localePath, switchLocalePath, dictionaries } from '../i18n/utils';
 import JsonLd from '../components/JsonLd.astro';
 import { organizationSchema } from '../lib/schema';
+import { withBase } from '../lib/base';
 
 interface Props {
   title?: string;
@@ -22,11 +23,11 @@ const siteName = dictionaries[locale].siteName;
 const pageTitle = title ? `${title} | ${siteName}` : siteName;
 const pageDesc = description ?? dictionaries[locale].siteDescription;
 // currentPath is already the full public path (e.g. /en/news/), so use it as-is.
-const canonical = new URL(currentPath, Astro.site);
+const canonical = new URL(withBase(currentPath), Astro.site);
 const altFa = new URL(switchLocalePath(currentPath, 'fa'), Astro.site);
 const altEn = new URL(switchLocalePath(currentPath, 'en'), Astro.site);
 // TODO: switch to /images/og-image.jpg once generated (currently reuses hero).
-const ogImage = new URL('/images/hero-industrial-plant.jpg', Astro.site);
+const ogImage = new URL(withBase('/images/hero-industrial-plant.jpg'), Astro.site);
 ---
 <!doctype html>
 <html lang={locale} dir={dir}>
@@ -47,7 +48,7 @@ const ogImage = new URL('/images/hero-industrial-plant.jpg', Astro.site);
     <meta property="og:image:alt" content={tr('ogImageAlt')} />
     <meta property="og:locale" content={locale === 'fa' ? 'fa_IR' : 'en_US'} />
     <meta name="theme-color" content="#0a1f44" />
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href={withBase("/favicon.svg")} type="image/svg+xml" />
     <JsonLd data={[organizationSchema(Astro.site!.origin, locale), ...jsonLd]} />
   </head>
   <body class="min-h-dvh bg-white antialiased">

@@ -1,3 +1,4 @@
+import { withBase } from '../lib/base';
 import type { Article } from './news';
 
 /**
@@ -10,7 +11,7 @@ export const moreArticles: Article[] = [
 
     topic: 'safety',
     date: '2026-09-01',
-    image: '/images/article-fire-alarm-detection-systems.jpg',
+    image: withBase('/images/article-fire-alarm-detection-systems.jpg'),
     imageAlt: { fa: 'تابلوی اعلام حریق و آشکارساز دود روی سقف', en: 'Fire alarm panel and smoke detector on a ceiling' },
     sample: true,
     copy: {
@@ -39,7 +40,7 @@ export const moreArticles: Article[] = [
 
     topic: 'maintenance',
     date: '2026-09-05',
-    image: '/images/article-heat-exchanger-fouling.jpg',
+    image: withBase('/images/article-heat-exchanger-fouling.jpg'),
     imageAlt: { fa: 'تکنسین در حال تمیزکاری دسته لوله مبدل حرارتی', en: 'Technician cleaning a heat exchanger tube bundle' },
     sample: true,
     copy: {
@@ -68,7 +69,7 @@ export const moreArticles: Article[] = [
 
     topic: 'safety',
     date: '2026-09-09',
-    image: '/images/article-permit-to-work-system.jpg',
+    image: withBase('/images/article-permit-to-work-system.jpg'),
     imageAlt: { fa: 'سرپرست و کارگر در حال بررسی فرم مجوز کار', en: 'Supervisor and worker reviewing a permit-to-work form' },
     sample: true,
     copy: {
@@ -97,7 +98,7 @@ export const moreArticles: Article[] = [
 
     topic: 'facilities',
     date: '2026-09-12',
-    image: '/images/article-earthing-lightning-protection.jpg',
+    image: withBase('/images/article-earthing-lightning-protection.jpg'),
     imageAlt: { fa: 'میله صاعقه‌گیر و هادی زمین روی دودکش صنعتی', en: 'Lightning air terminal and down conductor on an industrial stack' },
     sample: true,
     copy: {
@@ -126,7 +127,7 @@ export const moreArticles: Article[] = [
 
     topic: 'safety',
     date: '2026-09-16',
-    image: '/images/article-noise-control-plants.jpg',
+    image: withBase('/images/article-noise-control-plants.jpg'),
     imageAlt: { fa: 'پانل‌های عایق صوتی در سالن کارخانه با کارگر دارای گوشی ایمنی', en: 'Acoustic panels on a plant floor with a worker wearing ear protection' },
     sample: true,
     copy: {
@@ -155,7 +156,7 @@ export const moreArticles: Article[] = [
 
     topic: 'safety',
     date: '2026-09-19',
-    image: '/images/article-emergency-response-planning.jpg',
+    image: withBase('/images/article-emergency-response-planning.jpg'),
     imageAlt: { fa: 'تیم واکنش اضطراری در نقطه تجمع کارخانه', en: 'Emergency response team at a plant assembly point' },
     sample: true,
     copy: {
@@ -184,7 +185,7 @@ export const moreArticles: Article[] = [
 
     topic: 'maintenance',
     date: '2026-09-23',
-    image: '/images/article-hydrostatic-testing.jpg',
+    image: withBase('/images/article-hydrostatic-testing.jpg'),
     imageAlt: { fa: 'مخزن تحت فشار در آزمون هیدرواستاتیک با گیج فشار', en: 'Pressure vessel during hydrostatic testing with pressure gauges' },
     sample: true,
     copy: {
@@ -213,7 +214,7 @@ export const moreArticles: Article[] = [
 
     topic: 'safety',
     date: '2026-09-26',
-    image: '/images/article-scaffolding-safety.jpg',
+    image: withBase('/images/article-scaffolding-safety.jpg'),
     imageAlt: { fa: 'داربست ساختمانی با نرده ایمنی و کارگران دارای هارنس', en: 'Scaffolding with guardrails and workers wearing harnesses' },
     sample: true,
     copy: {
@@ -242,7 +243,7 @@ export const moreArticles: Article[] = [
 
     topic: 'facilities',
     date: '2026-09-30',
-    image: '/images/article-hvac-energy-efficiency.jpg',
+    image: withBase('/images/article-hvac-energy-efficiency.jpg'),
     imageAlt: { fa: 'واحدهای تهویه و چیلر روی پشت‌بام ساختمان صنعتی', en: 'Air handling units and chillers on an industrial rooftop' },
     sample: true,
     copy: {
@@ -271,7 +272,7 @@ export const moreArticles: Article[] = [
 
     topic: 'environment',
     date: '2026-10-03',
-    image: '/images/article-hazardous-waste-management.jpg',
+    image: withBase('/images/article-hazardous-waste-management.jpg'),
     imageAlt: { fa: 'بشکه‌های پسماند خطرناک برچسب‌گذاری‌شده روی سکوی بتنی', en: 'Labeled hazardous waste drums on a bunded concrete pad' },
     sample: true,
     copy: {
