@@ -16,7 +16,7 @@ export interface Article {
   copy: Record<Locale, ArticleCopy>;
 }
 
-export const articles: Article[] = [
+const baseArticles: Article[] = [
   {
     slug: 'hse-risk-assessment-basics',
     date: '2026-06-15',
@@ -97,6 +97,11 @@ export const articles: Article[] = [
     },
   },
 ];
+
+import { extraArticles } from './news-extra';
+
+/** All articles, newest first. */
+export const articles: Article[] = [...baseArticles, ...extraArticles];
 
 export function getArticle(slug: string) {
   return articles.find((a) => a.slug === slug);
