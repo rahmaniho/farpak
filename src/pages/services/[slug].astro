@@ -1,0 +1,14 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ServiceDetail from '../../components/ServiceDetail.astro';
+import { services } from '../../content/services';
+
+export function getStaticPaths() {
+  return services.map((service) => ({ params: { slug: service.slug }, props: { service } }));
+}
+
+const { service } = Astro.props;
+---
+<BaseLayout locale="fa" currentPath={`/services/${service.slug}/`} title={service.copy.fa.title} description={service.copy.fa.summary}>
+  <ServiceDetail locale="fa" service={service} />
+</BaseLayout>

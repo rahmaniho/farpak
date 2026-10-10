@@ -1,0 +1,18 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import RequestForm from '../../../components/RequestForm';
+import { t, dictionaries } from '../../../i18n/utils';
+import { services } from '../../../content/services';
+
+const tr = t('en');
+const formServices = services.map((s) => ({ slug: s.slug, title: s.copy.en.title }));
+---
+<BaseLayout locale="en" currentPath="/en/rfq/" title={tr('rfqTitle')}>
+  <section class="mx-auto max-w-[1280px] px-4 py-16 md:px-8">
+    <h1>{tr('rfqTitle')}</h1>
+    <p class="mt-3 max-w-2xl text-slate-600">{tr('rfqIntro')}</p>
+    <div class="mt-10 max-w-4xl">
+      <RequestForm client:visible mode="rfq" locale="en" services={formServices} t={dictionaries.en} />
+    </div>
+  </section>
+</BaseLayout>

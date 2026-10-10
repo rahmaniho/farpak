@@ -1,0 +1,52 @@
+---
+import { t, dictionaries, type Locale, localePath } from '../i18n/utils';
+import type { Service } from '../content/services';
+import RequestForm from './RequestForm';
+import { services } from '../content/services';
+
+interface Props { locale: Locale; service: Service }
+const { locale, service } = Astro.props;
+const tr = t(locale);
+const copy = service.copy[locale];
+const formServices = services.map((s) => ({ slug: s.slug, title: s.copy[locale].title }));
+---
+<article class="mx-auto max-w-[1280px] px-4 py-12 md:px-8">
+  <nav aria-label={locale === 'fa' ? 'مسیر صفحه' : 'Breadcrumb'}>
+    <a href={localePath(locale, '/services/')} class="text-sm font-medium text-teal hover:underline">← {tr('backToServices')}</a>
+  </nav>
+
+  <div class="mt-6 grid gap-10 lg:grid-cols-2 lg:items-center">
+    <div>
+      <h1>{copy.title}</h1>
+      <p class="mt-4 text-lg text-slate-700">{copy.description}</p>
+    </div>
+    <img src={service.image} alt={service.imageAlt[locale]} width="800" height="600" decoding="async"
+      fetchpriority="high" class="aspect-[4/3] w-full rounded-xl object-cover" />
+  </div>
+
+  <div class="mt-16 grid gap-10 md:grid-cols-3">
+    <section aria-labelledby="process-h" class="rounded-xl bg-mist p-6">
+      <h2 id="process-h" class="text-xl">{tr('processTitle')}</h2>
+      <ol class="mt-4 list-decimal space-y-2 ps-5 text-slate-700">
+        {copy.process.map((step) => <li>{step}</li>)}
+      </ol>
+    </section>
+    <section aria-labelledby="out-h" class="rounded-xl bg-mist p-6">
+      <h2 id="out-h" class="text-xl">{tr('outputsTitle')}</h2>
+      <ul class="mt-4 list-disc space-y-2 ps-5 text-slate-700">
+        {copy.outputs.map((o) => <li>{o}</li>)}
+      </ul>
+    </section>
+    <section aria-labelledby="std-h" class="rounded-xl bg-mist p-6">
+      <h2 id="std-h" class="text-xl">{tr('standardsTitle')}</h2>
+      <p class="mt-4 text-slate-700">{copy.standards}</p>
+    </section>
+  </div>
+
+  <section aria-labelledby="quote-h" class="mt-16 rounded-xl border border-slate-200 p-6 md:p-10">
+    <h2 id="quote-h" class="text-2xl">{tr('requestQuoteForService')}</h2>
+    <div class="mt-8">
+      <RequestForm client:visible mode="rfq" locale={locale} services={formServices} defaultService={service.slug} t={dictionaries[locale]} />
+    </div>
+  </section>
+</article>
