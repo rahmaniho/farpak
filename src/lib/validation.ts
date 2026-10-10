@@ -5,7 +5,7 @@
  */
 
 export type ErrorCode = 'required' | 'email' | 'phone' | 'file' | 'tooLong' | 'invalid';
-export type FormMode = 'rfq' | 'contact';
+export type FormMode = 'rfq' | 'contact' | 'h477';
 
 export const MAX_FILE_BYTES = 10 * 1024 * 1024;
 const LIMITS = { name: 120, company: 160, subject: 200, message: 5000, location: 200, volume: 200 } as const;
@@ -46,6 +46,8 @@ export interface SubmissionInput {
   service?: string;
   location?: string;
   volume?: string;
+  /** 'true' when the requester accepted the privacy policy (mode h477). */
+  consent?: string;
   /** Honeypot: real users leave this empty. */
   website?: string;
   attachment?: FileLike | null;
@@ -69,24 +71,32 @@ export function validateSubmission(input: SubmissionInput): SubmissionErrors {
   if (!phone) e.phone = 'required';
   else if (!isPhone(phone)) e.phone = 'phone';
 
-  if (!email) e.email = 'required';
-  else if (!isEmail(email)) e.email = 'email';
-
-  if (!message) e.message = 'required';
-  else if (message.length > LIMITS.message) e.message = 'tooLong';
-
   if (str(input.company).length > LIMITS.company) e.company = 'tooLong';
+  if (str(input.subject).length > LIMITS.subject) e.subject = 'tooLong';
+  if (message.length > LIMITS.message) e.message = 'tooLong';
 
-  if (input.mode === 'rfq') {
+  if (input.mode === 'h477') {
+    // Health-office request: email is optional, consent is mandatory, and the
+    // server stores the request (inbox/webhook) so a tracking id is real.
+    if (email && !isEmail(email)) e.email = 'email';
     const service = str(input.service);
     if (!service) e.service = 'required';
     else if (!SERVICE_SLUG.test(service)) e.service = 'invalid';
-    if (str(input.location).length > LIMITS.location) e.location = 'tooLong';
-    if (str(input.volume).length > LIMITS.volume) e.volume = 'tooLong';
+    if (str(input.consent) !== 'true') e.consent = 'required';
   } else {
-    const subject = str(input.subject);
-    if (!subject) e.subject = 'required';
-    else if (subject.length > LIMITS.subject) e.subject = 'tooLong';
+    if (!email) e.email = 'required';
+    else if (!isEmail(email)) e.email = 'email';
+    if (!message) e.message = 'required';
+    if (input.mode === 'rfq') {
+      const service = str(input.service);
+      if (!service) e.service = 'required';
+      else if (!SERVICE_SLUG.test(service)) e.service = 'invalid';
+      if (str(input.location).length > LIMITS.location) e.location = 'tooLong';
+      if (str(input.volume).length > LIMITS.volume) e.volume = 'tooLong';
+    } else {
+      const subject = str(input.subject);
+      if (!subject) e.subject = 'required';
+    }
   }
 
   const file = input.attachment;

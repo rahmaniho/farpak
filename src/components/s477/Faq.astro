@@ -1,0 +1,23 @@
+---
+import type { S477Faq } from '../../content/s477';
+
+interface Props {
+  faqs: S477Faq[];
+  acc?: string;
+  title?: string;
+}
+const { faqs, acc = 'var(--color-flux)', title = 'پرسش‌های متداول' } = Astro.props;
+---
+{faqs.length > 0 && (
+  <section aria-labelledby="faq-h" class="mt-14">
+    <h2 id="faq-h" class="sec-title mb-6" style={`--acc: ${acc}`}>{title}</h2>
+    <div class="grid gap-3">
+      {faqs.map((f) => (
+        <details class="faq-item" style={`--acc: ${acc}`}>
+          <summary>{f.q}</summary>
+          <p class="faq-a">{f.a}</p>
+        </details>
+      ))}
+    </div>
+  </section>
+)}

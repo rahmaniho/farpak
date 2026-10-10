@@ -1,0 +1,120 @@
+---
+import S477Layout from '../../../layouts/S477Layout.astro';
+import RequestForm from '../../../components/RequestForm';
+import Faq from '../../../components/s477/Faq.astro';
+import { withBase } from '../../../lib/base';
+import { dictionaries } from '../../../i18n/utils';
+import { BIZ, s477Services } from '../../../content/s477';
+import { s477ServiceSchema, breadcrumbSchema } from '../../../lib/schema';
+
+export function getStaticPaths() {
+  return s477Services.map((service) => ({ params: { slug: service.slug }, props: { service } }));
+}
+
+const { service } = Astro.props;
+const currentPath = `/477/services/${service.slug}/`;
+const pageUrl = new URL(withBase(currentPath), Astro.site).href;
+const siteUrl = Astro.site!.origin;
+const formServices = s477Services.map((s) => ({ slug: s.slug, title: s.title }));
+const jsonLd = [
+  s477ServiceSchema(siteUrl, pageUrl, service.title, service.short),
+  breadcrumbSchema([
+    { name: 'دفتر خدمات سلامت ۴۷۷', url: new URL(withBase('/477/'), Astro.site).href },
+    { name: 'خدمات ما', url: new URL(withBase('/477/services/'), Astro.site).href },
+    { name: service.title, url: pageUrl },
+  ]),
+];
+const active = service.active !== false;
+---
+<S477Layout currentPath={currentPath} title={service.title} description={`${service.short} — دفتر خدمات سلامت ۴۷۷ قزوین، ${BIZ.address}.`} jsonLd={jsonLd}>
+  <section class="relative isolate overflow-hidden border-b border-line">
+    <div class="shell-wide relative py-14 md:py-20">
+      <nav aria-label="مسیر صفحه" class="enter" style="--d: 40ms">
+        <a href={withBase('/477/services/')} class="link-arrow" style={`--acc: ${service.accent}`}>
+          بازگشت به خدمات
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14" /><path d="m13 6 6 6-6 6" /></svg>
+        </a>
+      </nav>
+      <div class="mt-7 flex flex-wrap items-center gap-4 enter" style="--d: 120ms">
+        <span class="svc-icon" style={`--acc: ${service.accent}; width: 60px; height: 60px; border-radius: 16px`}>
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={service.icon} />
+        </span>
+        <span class="chip chip-accent" style={`--acc: ${service.accent}`}>{active ? 'خدمت فعال' : 'موقتاً غیرفعال'}</span>
+      </div>
+      <h1 class="mt-6 max-w-3xl enter" style="--d: 200ms; font-size: clamp(1.8rem, 4.2vw, 3.1rem)">{service.title}</h1>
+      <p class="mt-5 max-w-2xl text-[1.05rem] leading-relaxed text-fog enter md:text-[1.15rem]" style="--d: 300ms">{service.intro}</p>
+      <div class="mt-8 flex flex-wrap gap-3 enter" style="--d: 400ms">
+        <a href={`tel:${BIZ.phones[0].tel}`} class="btn btn-primary" style="--acc: var(--color-flux)">تماس برای کسب اطلاعات</a>
+        <a href="#request" class="btn btn-ghost" style={`--acc: ${service.accent}`}>{service.cta}</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-label={service.title}>
+    <div class="shell-wide grid gap-12 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
+      <div>
+        <!-- مراحل -->
+        <section aria-labelledby="steps-h">
+          <h2 id="steps-h" class="sec-title" style={`--acc: ${service.accent}`}>مراحل انجام خدمت</h2>
+          <ol class="mt-7 grid gap-4">
+            {service.steps.map((step, i) => (
+              <li class="flex items-start gap-4" data-reveal>
+                <span class="mono grid size-10 shrink-0 place-items-center rounded-full border bg-white text-sm font-bold" style={`border-color: ${service.accent}; color: ${service.accent}`}>
+                  {i + 1}
+                </span>
+                <span class="pt-2 leading-relaxed text-fog">{step}</span>
+              </li>
+            ))}
+          </ol>
+        </section>
+
+        <!-- مدارک -->
+        <section aria-labelledby="docs-h" class="mt-14">
+          <h2 id="docs-h" class="sec-title" style={`--acc: ${service.accent}`}>مدارک مورد نیاز</h2>
+          <ul class="mt-6 grid gap-2.5">
+            {service.docs.map((d) => (
+              <li class="flex items-start gap-3 rounded-[12px] border border-line bg-white/70 px-4 py-3 text-sm">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mt-0.5 shrink-0" style={`color: ${service.accent}`} aria-hidden="true"><path d="m5 12 4.5 4.5L19 7" /></svg>
+                <span>{d}</span>
+              </li>
+            ))}
+          </ul>
+          <p class="callout callout-warn mt-4 text-sm">{service.docsNote}</p>
+        </section>
+
+        {service.notice && <p class="callout callout-warn mt-6 text-sm">{service.notice}</p>}
+
+        <Faq faqs={service.faq} acc={service.accent} />
+      </div>
+
+      <!-- فرم درخواست -->
+      <div class="lg:sticky lg:top-28 lg:h-fit">
+        <section id="request" class="glass panel ticks scroll-mt-28" style={`--acc: ${service.accent}`} aria-labelledby="req-h">
+          <h2 id="req-h" class="sec-title mb-2" style={`--acc: ${service.accent}`}>ثبت درخواست اولیه</h2>
+          <p class="mb-7 text-sm leading-relaxed text-fog">
+            اطلاعات زیر برای تماس اولیه و بررسی درخواست شماست. اطلاعات هویتی و سلامت فقط در صورت ضرورت و حضوری، مطابق الزامات قانونی دریافت می‌شود.
+          </p>
+          {active ? (
+            <RequestForm client:visible mode="h477" locale="fa" services={formServices} defaultService={service.slug} t={dictionaries.fa} />
+          ) : (
+            <p class="callout callout-warn">این خدمت موقتاً غیرفعال است؛ برای اطلاع از زمان فعال‌سازی با دفتر تماس بگیرید.</p>
+          )}
+        </section>
+
+        <div class="slab ticks panel mt-5 nap" style={`--acc: ${service.accent}`}>
+          <p class="mono-label mb-4 mono-label-bare">تماس مستقیم</p>
+          <ul class="grid gap-3 text-sm">
+            {BIZ.phones.map((p) => (
+              <li class="flex items-center justify-between gap-3">
+                <a class="link-arrow font-bold" style="--acc: var(--color-flux)" href={`tel:${p.tel}`} dir="ltr">{p.display}</a>
+                <span class="mono text-[0.625rem] uppercase tracking-[0.16em] text-ash">{p.tel.startsWith('+989') ? 'mobile' : 'office'}</span>
+              </li>
+            ))}
+          </ul>
+          <address class="mt-4 border-t border-line pt-4 text-xs leading-relaxed text-fog">{BIZ.address}</address>
+          <a href={BIZ.maps} target="_blank" rel="noopener noreferrer" class="btn btn-ghost btn-sm mt-4 w-full" style="--acc: var(--color-volt)">مسیریابی به دفتر</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</S477Layout>

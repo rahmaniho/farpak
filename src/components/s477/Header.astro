@@ -1,0 +1,86 @@
+---
+import { withBase } from '../../lib/base';
+import { BIZ } from '../../content/s477';
+
+interface Props { currentPath: string }
+const { currentPath } = Astro.props;
+const nav = [
+  { href: withBase('/477/services/'), label: 'خدمات ما' },
+  { href: withBase('/477/services/health-card/'), label: 'کارت بهداشت' },
+  { href: withBase('/477/services/guild-hygiene-training/'), label: 'آموزش اصناف' },
+  { href: `${withBase('/477/')}#contact`, label: 'تماس و مسیریابی' },
+];
+const contactHash = `${withBase('/477/')}#contact`;
+const isCurrent = (href: string) => href !== contactHash && (currentPath === href || currentPath.startsWith(href));
+---
+<header data-header class="site-header">
+  <div class="shell-wide">
+    <div class="header-bar">
+      <a href={withBase("/477/")} class="flex items-center gap-3" aria-label={BIZ.nameFull}>
+        <span class="svc-icon" style="--acc: var(--color-flux); width: 44px; height: 44px; border-radius: 12px">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 3 5 6v6c0 4.4 3 7.6 7 9 4-1.4 7-4.6 7-9V6l-7-3Z" />
+            <path d="M12 8.5v7M8.5 12h7" />
+          </svg>
+        </span>
+        <span class="logo-text">
+          <span class="logo-name">{BIZ.name}</span>
+          <span class="logo-sub" lang="en" aria-hidden="true">Qazvin · Health Services</span>
+        </span>
+      </a>
+
+      <span class="grow" aria-hidden="true"></span>
+
+      <nav aria-label="ناوبری اصلی" class="hidden lg:block">
+        <ul class="flex items-center gap-7">
+          {nav.map((item) => (
+            <li>
+              <a href={item.href} class="nav-link" aria-current={isCurrent(item.href) ? 'page' : undefined}>{item.label}</a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+
+      <span class="grow" aria-hidden="true"></span>
+
+      <div class="flex items-center gap-2">
+        <a href={BIZ.instagram} target="_blank" rel="noopener noreferrer" aria-label={`اینستاگرام ${BIZ.instagramHandle}`}
+          class="grid size-11 place-items-center rounded-[10px] border border-line-2 bg-white/70 text-fog transition-colors duration-200 hover:text-[#B45309]">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+            <rect x="3.5" y="3.5" width="17" height="17" rx="4.5" /><circle cx="12" cy="12" r="3.6" /><path d="M17.2 6.8h.01" />
+          </svg>
+        </a>
+        <a href={`tel:${BIZ.phones[0].tel}`} class="btn btn-primary btn-sm hidden sm:inline-flex" style="--acc: var(--color-flux)">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2Z" />
+          </svg>
+          تماس با دفتر
+        </a>
+        <details data-mobile-nav class="lg:hidden">
+          <summary class="burger" aria-label="باز کردن منو">
+            <i aria-hidden="true"></i><i aria-hidden="true"></i><i aria-hidden="true"></i>
+            <span class="sr-only">باز کردن منو</span>
+          </summary>
+          <div class="mobile-panel">
+            <nav aria-label="ناوبری اصلی" class="shell py-6">
+              <ul>
+                {nav.map((item, i) => (
+                  <li>
+                    <a href={item.href} class="mobile-link" aria-current={isCurrent(item.href) ? 'page' : undefined}>
+                      <span>{item.label}</span>
+                      <span class="mono" aria-hidden="true">0{i + 1}</span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+              <div class="mt-6 flex flex-wrap gap-3">
+                <a href={`tel:${BIZ.phones[0].tel}`} class="btn btn-primary" style="--acc: var(--color-flux)">تماس با دفتر</a>
+                <a href={BIZ.maps} target="_blank" rel="noopener noreferrer" class="btn btn-ghost">مسیریابی</a>
+              </div>
+            </nav>
+          </div>
+        </details>
+      </div>
+    </div>
+  </div>
+</header>

@@ -1,0 +1,129 @@
+/* ============================================================================
+   فرپاک صنعت سلامت  ·  FARPAK OPS DESIGN SYSTEM
+   --------------------------------------------------------------------------
+   LAYER 1/4 — TOKENS
+   Design philosophy: "Industrial Neo-Brutalism meets Fluid Glass"
+   Motto: «دقت مهندسی، احساس آینده» — Engineering precision, the feel of tomorrow.
+
+   Rules of the house
+   1. Dark is the only canvas. Every surface is a layer of depth, never a flat fill.
+   2. Acid accents always carry INK-dark type on top of them (contrast ≥ 6:1).
+   3. Nothing is fully rounded, nothing is fully sharp: 2px hairlines on slabs,
+      16px on floating glass.
+   4. Every accent colour is a signal, not decoration:
+      flux = information · ember = caution/sample · volt = success/CTA · siren = alert
+   ========================================================================== */
+
+@theme {
+  /* ── Surface ladder ──────────────────────────────────────────────────── */
+  --color-void: #070b18;   /* bg-primary  : deep night navy                 */
+  --color-hull: #0d1426;   /* bg-elevated : substrate under glass           */
+  --color-deck: #121b33;   /* raised card / hover                           */
+  --color-rivet: #1b2745;  /* solid borders, chips, dividers                */
+
+  /* ── Ink ─────────────────────────────────────────────────────────────── */
+  --color-chalk: #f2f5fa;  /* text-primary                                  */
+  --color-fog: #8a93a6;    /* text-muted   (6.4:1 on void → AA body)        */
+  --color-ash: #6b7590;    /* decorative only (3.9:1) — never body copy     */
+
+  /* ── Accents ─────────────────────────────────────────────────────────── */
+  --color-flux: #00e5ff;   /* neon cyan   : information, focus, primary     */
+  --color-ember: #ffb020;  /* industrial amber : caution, "sample" badge    */
+  --color-volt: #b8ff3c;   /* signal lime : success, go, main CTA           */
+  --color-siren: #ff3cac;  /* alert magenta : errors, warnings, live        */
+
+  /* ── Lines ───────────────────────────────────────────────────────────── */
+  --color-line: rgba(255, 255, 255, 0.08);        /* border-subtle         */
+  --color-line-2: rgba(255, 255, 255, 0.14);      /* stronger hairline     */
+  --color-line-glow: rgba(0, 229, 255, 0.4);      /* border-glow           */
+
+  /* ── Semantic (forms, status) ────────────────────────────────────────── */
+  --color-ok: #b8ff3c;
+  --color-warn: #ffb020;
+  --color-danger: #ff3cac;
+
+  /* ── Legacy aliases: keep pre-redesign markup coherent on the dark canvas */
+  --color-navy: #0d1426;
+  --color-teal: #00e5ff;
+  --color-alert: #ffb020;
+  --color-ink: #f2f5fa;
+  --color-mist: #121b33;
+  --color-success: #b8ff3c;
+  --color-warning: #ffb020;
+
+  /* ── Type ────────────────────────────────────────────────────────────── */
+  --font-fa: "Vazirmatn Variable", "Vazirmatn", Tahoma, "Segoe UI", sans-serif;
+  --font-en: "Inter Variable", "Inter", system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono Variable", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* ── Radii: hairline slabs vs. floating glass ────────────────────────── */
+  --radius-hair: 2px;
+  --radius-panel: 4px;
+  --radius-glass: 16px;
+  --radius-pill: 999px;
+
+  /* ── Elevation ───────────────────────────────────────────────────────── */
+  --shadow-slab: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 18px 40px -28px rgba(0, 0, 0, 0.95);
+  --shadow-lift: inset 0 1px 0 rgba(255, 255, 255, 0.09), 0 34px 70px -34px rgba(0, 0, 0, 1);
+  --shadow-brut: 5px 5px 0 0 rgba(0, 0, 0, 0.6);
+  --shadow-flux: 0 0 0 1px rgba(0, 229, 255, 0.35), 0 0 34px -8px rgba(0, 229, 255, 0.5);
+  --shadow-volt: 0 0 0 1px rgba(184, 255, 60, 0.35), 0 0 34px -8px rgba(184, 255, 60, 0.45);
+}
+
+/* Non-utility tokens: recipes, rhythm and physics. Exposed as plain custom
+   properties so components can compose them without Tailwind knowing. */
+:root {
+  color-scheme: dark;
+
+  /* Layout shell -------------------------------------------------------- */
+  --shell: 1360px;
+  --shell-wide: 1680px;
+  --shell-read: 74ch;
+  --gutter: clamp(1rem, 4vw, 2.5rem);
+  --rail: clamp(2.5rem, 6vw, 5rem);
+  --section-y: clamp(4.5rem, 9vw, 9rem);
+
+  /* Fluid glass recipe --------------------------------------------------- */
+  --glass-bg: rgba(13, 20, 38, 0.65);
+  --glass-bg-strong: rgba(13, 20, 38, 0.86);
+  --glass-bg-thin: rgba(13, 20, 38, 0.38);
+  --glass-blur: blur(20px) saturate(150%);
+  --glass-blur-strong: blur(28px) saturate(170%);
+  /* Edge light: the thin rim of light on the top edge of a pane of glass. */
+  --edge-light: inset 0 1px 0 rgba(255, 255, 255, 0.1), inset 0 -1px 0 rgba(0, 0, 0, 0.45);
+  --edge-glow: 0 0 0 1px var(--color-line-glow), 0 0 44px -14px rgba(0, 229, 255, 0.65);
+
+  /* CAD grid ------------------------------------------------------------- */
+  --grid-cell: 34px;
+  --grid-block: 170px;
+  --grid-ink: rgba(255, 255, 255, 0.035);
+  --grid-ink-strong: rgba(255, 255, 255, 0.06);
+
+  /* Type scale ------------------------------------------------------------ */
+  --t-display: clamp(2.6rem, 9.5vw, 7.5rem);
+  --t-h1: clamp(2.1rem, 5.4vw, 4.25rem);
+  --t-h2: clamp(1.7rem, 3.4vw, 3rem);
+  --t-h3: clamp(1.2rem, 1.7vw, 1.65rem);
+  --t-lead: clamp(1.05rem, 0.5vw + 0.95rem, 1.35rem);
+  --t-body: 1rem;
+  --t-micro: 0.6875rem;
+  --t-mono: 0.75rem;
+
+  /* Physics --------------------------------------------------------------- */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --dur-1: 120ms;
+  --dur-2: 220ms;
+  --dur-3: 420ms;
+  --dur-4: 760ms;
+  --dur-5: 1200ms;
+
+  /* Layer stack ----------------------------------------------------------- */
+  --z-bg: 0;
+  --z-content: 10;
+  --z-header: 60;
+  --z-overlay: 80;
+  --z-top: 100;
+}

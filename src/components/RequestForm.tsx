@@ -1,5 +1,6 @@
-import { useState, type FormEvent } from 'react';
+import { useState, type CSSProperties, type FormEvent } from 'react';
 import { validateSubmission, type ErrorCode, type FormMode } from '../lib/validation';
+import { withBase } from '../lib/base';
 
 interface Props {
   mode: FormMode;
@@ -10,7 +11,7 @@ interface Props {
   t: Record<string, string>;
 }
 
-type FieldKey = 'name' | 'company' | 'phone' | 'email' | 'subject' | 'message' | 'service' | 'location' | 'volume' | 'attachment';
+type FieldKey = 'name' | 'company' | 'phone' | 'email' | 'subject' | 'message' | 'service' | 'location' | 'volume' | 'attachment' | 'consent';
 type Errors = Partial<Record<FieldKey, string>>;
 
 interface Values {
@@ -26,27 +27,29 @@ interface Values {
   deadline: string;
   hse: boolean;
   website: string; // honeypot, must stay empty
+  consent: boolean;
 }
 
 // Same-origin by default. The dev server proxies /api to the form server.
 // Trailing slash matches the site's trailingSlash: 'always' setting.
 const ENDPOINT: string = import.meta.env.PUBLIC_FORM_ENDPOINT || '/api/submit/';
 
-const fieldClass =
-  'mt-1 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-ink focus:border-teal focus:ring-2 focus:ring-teal/30 aria-[invalid=true]:border-danger';
-const labelClass = 'block text-sm font-medium text-ink';
-const errClass = 'mt-1 text-sm text-danger';
+const fieldClass = 'field';
+const labelClass = 'field-label';
+const errClass = 'field-error';
 
 export default function RequestForm({ mode, locale, services, defaultService = '', t }: Props) {
   const [values, setValues] = useState<Values>({
     name: '', company: '', phone: '', email: '', subject: '', message: '',
-    service: defaultService, location: '', volume: '', deadline: '', hse: false, website: '',
+    service: defaultService, location: '', volume: '', deadline: '', hse: false, website: '', consent: false,
   });
   const [file, setFile] = useState<File | null>(null);
   const [errors, setErrors] = useState<Errors>({});
   const [status, setStatus] = useState<'idle' | 'sending' | 'ok' | 'error'>('idle');
   const [serverError, setServerError] = useState('');
+  const [trackingId, setTrackingId] = useState('');
   const isRfq = mode === 'rfq';
+  const is477 = mode === 'h477';
 
   const set = <K extends keyof Values>(k: K, v: Values[K]) =>
     setValues((prev) => ({ ...prev, [k]: v }));
@@ -76,6 +79,7 @@ export default function RequestForm({ mode, locale, services, defaultService = '
       service: values.service,
       location: values.location,
       volume: values.volume,
+      consent: values.consent ? 'true' : '',
       attachment: file ? { type: file.type, size: file.size } : null,
     });
     const out: Errors = {};
@@ -112,6 +116,7 @@ export default function RequestForm({ mode, locale, services, defaultService = '
         volume: values.volume,
         deadline: values.deadline,
         hse: String(values.hse),
+        consent: String(values.consent),
         website: values.website,
       };
       Object.entries(fields).forEach(([k, v]) => body.append(k, v));
@@ -129,6 +134,8 @@ export default function RequestForm({ mode, locale, services, defaultService = '
         return;
       }
       if (!res.ok) throw new Error(String(res.status));
+      const data: { id?: string } | null = await res.json().catch(() => null);
+      setTrackingId(data?.id ?? '');
       setStatus('ok');
     } catch {
       setServerError(t.errorMsg);
@@ -140,16 +147,34 @@ export default function RequestForm({ mode, locale, services, defaultService = '
 
   if (status === 'ok') {
     return (
-      <p role="status" className="rounded-md bg-success/10 p-6 font-medium text-success">
-        {t.successMsg}
-      </p>
+      <div role="status" className="callout callout-ok font-medium">
+        <div>
+          <p>{t.successMsg}</p>
+          {trackingId && (
+            <p className="mt-3">
+              <span className="mono text-[0.625rem] uppercase tracking-[0.18em] opacity-70">{t.trackingCodeLabel}</span>
+              <br />
+              <code className="text-base" dir="ltr">{trackingId}</code>
+              <br />
+              <span className="text-xs opacity-80">{t.trackingCodeNote}</span>
+            </p>
+          )}
+          {is477 && (
+            <p className="mt-3">
+              <a className="link-arrow" style={{ '--acc': 'var(--color-volt)' } as CSSProperties} href={withBase('/477/track/')}>
+                {t.trackLinkLabel}
+              </a>
+            </p>
+          )}
+        </div>
+      </div>
     );
   }
 
   return (
     <form noValidate onSubmit={onSubmit} className="grid gap-5 md:grid-cols-2" aria-describedby="form-privacy">
       {errorList.length > 0 && (
-        <div id="form-error-summary" tabIndex={-1} role="alert" className="rounded-md border border-danger p-4 text-danger md:col-span-2">
+        <div id="form-error-summary" tabIndex={-1} role="alert" className="callout callout-danger md:col-span-2">
           <ul className="list-disc ps-5">
             {errorList.map(([k, v]) => <li key={k}>{v}</li>)}
           </ul>
@@ -185,6 +210,7 @@ export default function RequestForm({ mode, locale, services, defaultService = '
         {errors.phone && <p id="e-phone" className={errClass}>{errors.phone}</p>}
       </div>
 
+      {!is477 && (
       <div>
         <label htmlFor="f-email" className={labelClass}>{t.fieldEmail}</label>
         <input id="f-email" name="email" type="email" autoComplete="email" dir="ltr" className={fieldClass} value={values.email}
@@ -192,8 +218,9 @@ export default function RequestForm({ mode, locale, services, defaultService = '
           onChange={(ev) => set('email', ev.target.value)} />
         {errors.email && <p id="e-email" className={errClass}>{errors.email}</p>}
       </div>
+      )}
 
-      {isRfq ? (
+      {isRfq || is477 ? (
         <div>
           <label htmlFor="f-service" className={labelClass}>{t.fieldService}</label>
           <select id="f-service" name="service" className={fieldClass} value={values.service}
@@ -206,7 +233,7 @@ export default function RequestForm({ mode, locale, services, defaultService = '
         </div>
       ) : (
         <div>
-          <label htmlFor="f-subject" className={labelClass}>{t.fieldSubject}</label>
+          <label htmlFor="f-subject" className={labelClass}>{is477 ? t.fieldSubjectOptional : t.fieldSubject}</label>
           <input id="f-subject" name="subject" className={fieldClass} value={values.subject}
             aria-invalid={!!errors.subject} aria-describedby={errors.subject ? 'e-subject' : undefined}
             onChange={(ev) => set('subject', ev.target.value)} />
@@ -233,37 +260,48 @@ export default function RequestForm({ mode, locale, services, defaultService = '
           </div>
           <div>
             <label htmlFor="f-file" className={labelClass}>{t.fieldAttachment}</label>
-            <input id="f-file" name="attachment" type="file" accept="application/pdf" className="mt-1 block w-full text-sm"
+            <input id="f-file" name="attachment" type="file" accept="application/pdf" className="field text-sm"
               aria-invalid={!!errors.attachment} aria-describedby={errors.attachment ? 'e-file' : undefined}
               onChange={(ev) => setFile(ev.target.files?.[0] ?? null)} />
             {errors.attachment && <p id="e-file" className={errClass}>{errors.attachment}</p>}
           </div>
           <label className="flex items-start gap-3 text-sm md:col-span-2">
-            <input type="checkbox" name="hse" className="mt-1 size-4 accent-teal" checked={values.hse}
+            <input type="checkbox" name="hse" className="mt-1" checked={values.hse}
               onChange={(ev) => set('hse', ev.target.checked)} />
-            <span>{t.fieldHse}</span>
+            <span className="text-fog">{t.fieldHse}</span>
           </label>
         </>
       )}
 
       <div className="md:col-span-2">
-        <label htmlFor="f-message" className={labelClass}>{t.fieldMessage}</label>
+        <label htmlFor="f-message" className={labelClass}>{is477 ? t.fieldMessageOptional : t.fieldMessage}</label>
         <textarea id="f-message" name="message" rows={5} className={fieldClass} value={values.message}
           aria-invalid={!!errors.message} aria-describedby={errors.message ? 'e-message' : undefined}
           onChange={(ev) => set('message', ev.target.value)} />
         {errors.message && <p id="e-message" className={errClass}>{errors.message}</p>}
       </div>
 
+      {is477 && (
+        <div className="md:col-span-2">
+          <label className="flex items-start gap-3 text-sm">
+            <input type="checkbox" name="consent" className="mt-1" checked={values.consent}
+              aria-invalid={!!errors.consent} aria-describedby={errors.consent ? 'e-consent' : undefined}
+              onChange={(ev) => set('consent', ev.target.checked)} />
+            <span className="text-fog">{t.fieldConsent}</span>
+          </label>
+          {errors.consent && <p id="e-consent" className={errClass}>{errors.consent}</p>}
+        </div>
+      )}
+
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between md:col-span-2">
-        <p id="form-privacy" className="text-xs text-slate-500">{t.privacy}</p>
-        <button type="submit" disabled={status === 'sending'}
-          className="rounded-md bg-alert px-6 py-3 font-semibold text-white hover:brightness-95 disabled:opacity-60">
+        <p id="form-privacy" className="field-hint mt-0">{t.privacy}</p>
+        <button type="submit" disabled={status === 'sending'} className="btn btn-primary" style={{ '--acc': 'var(--color-volt)' } as CSSProperties}>
           {status === 'sending' ? t.submitting : t.submit}
         </button>
       </div>
 
       {status === 'error' && (
-        <p role="alert" className="text-danger md:col-span-2">{serverError || t.errorMsg}</p>
+        <p role="alert" className="callout callout-danger md:col-span-2">{serverError || t.errorMsg}</p>
       )}
     </form>
   );

@@ -2,6 +2,7 @@
  * Form submission endpoint (Node 22+, no dependencies).
  *
  *   POST /api/submit   multipart/form-data  (fields from RequestForm)
+ *   GET  /api/track/:id  status lookup by tracking id (sanitized: no personal data)
  *
  * Environment:
  *   FORM_PORT          default 8787
@@ -88,7 +89,8 @@ async function handleSubmit(req: http.IncomingMessage, res: http.ServerResponse)
   };
   const attachment = form.get('attachment');
   const file = attachment instanceof File && attachment.size > 0 ? attachment : null;
-  const mode: FormMode = get('mode') === 'contact' ? 'contact' : 'rfq';
+  const rawMode = get('mode');
+  const mode: FormMode = rawMode === 'contact' ? 'contact' : rawMode === 'h477' ? 'h477' : 'rfq';
 
   const input: SubmissionInput = {
     mode,
@@ -101,6 +103,7 @@ async function handleSubmit(req: http.IncomingMessage, res: http.ServerResponse)
     service: get('service'),
     location: get('location'),
     volume: get('volume'),
+    consent: get('consent'),
     website: get('website'),
     attachment: file ? { type: file.type, size: file.size } : null,
   };
@@ -125,6 +128,7 @@ async function handleSubmit(req: http.IncomingMessage, res: http.ServerResponse)
     service: input.service,
     location: input.location,
     volume: input.volume,
+    consent: input.consent === 'true',
     hse: get('hse') === 'true',
     attachmentName: file ? file.name : null,
   };
@@ -145,9 +149,35 @@ async function handleSubmit(req: http.IncomingMessage, res: http.ServerResponse)
   return send(res, 201, { ok: true, id: record.id });
 }
 
+async function handleTrack(req: http.IncomingMessage, res: http.ServerResponse, id: string) {
+  const ip = String(req.headers['x-forwarded-for'] ?? req.socket.remoteAddress ?? 'unknown').split(',')[0].trim();
+  if (rateLimited(ip)) return send(res, 429, { ok: false, error: 'rate-limited' }, { 'retry-after': '60' });
+  // Only unguessable UUID ids resolve; the response never contains personal fields.
+  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)) {
+    return send(res, 404, { ok: false, error: 'not-found' });
+  }
+  try {
+    const raw = await fs.readFile(path.join(INBOX, `${id}.json`), 'utf8');
+    const rec = JSON.parse(raw) as { receivedAt?: string; mode?: string; service?: string };
+    return send(res, 200, {
+      ok: true,
+      status: 'received',
+      receivedAt: rec.receivedAt ?? null,
+      mode: rec.mode ?? null,
+      service: rec.service ?? null,
+    });
+  } catch {
+    return send(res, 404, { ok: false, error: 'not-found' });
+  }
+}
+
 const server = http.createServer(async (req, res) => {
   // Accept the path with or without a trailing slash (the site uses trailingSlash: 'always').
   const pathname = new URL(req.url ?? '/', 'http://form.local').pathname.replace(/\/+$/, '');
+  if (pathname.startsWith('/api/track/')) {
+    if (req.method !== 'GET') return send(res, 405, { ok: false, error: 'method-not-allowed' }, { allow: 'GET' });
+    return handleTrack(req, res, decodeURIComponent(pathname.slice('/api/track/'.length)));
+  }
   if (pathname !== '/api/submit') return send(res, 404, { ok: false, error: 'not-found' });
   if (req.method !== 'POST') return send(res, 405, { ok: false, error: 'method-not-allowed' }, { allow: 'POST' });
   try {

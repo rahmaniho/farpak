@@ -1,6 +1,7 @@
 ---
 import { t, localePath, type Locale } from '../i18n/utils';
 import type { Article } from '../content/news';
+import { topicLabels } from '../content/news';
 import { sampleBadge } from '../content/sample';
 import Picture from './Picture.astro';
 import RelatedArticles from './RelatedArticles.astro';
@@ -10,20 +11,55 @@ const { locale, article } = Astro.props;
 const tr = t(locale);
 const c = article.copy[locale];
 const fmt = new Intl.DateTimeFormat(locale === 'fa' ? 'fa-IR-u-ca-persian' : 'en-US', { dateStyle: 'medium' });
+const topicAccents: Record<Article['topic'], string> = {
+  safety: 'var(--color-siren)',
+  maintenance: 'var(--color-flux)',
+  facilities: 'var(--color-ember)',
+  environment: 'var(--color-volt)',
+};
+const acc = topicAccents[article.topic];
 ---
-<article class="mx-auto max-w-3xl px-4 py-12 md:px-8">
-  <nav aria-label={locale === 'fa' ? 'مسیر صفحه' : 'Breadcrumb'}>
-    <a href={localePath(locale, '/news/')} class="text-sm font-medium text-teal hover:underline">← {tr('backToNews')}</a>
-  </nav>
-  {article.sample && <span class="mt-6 inline-block rounded bg-alert px-2 py-1 text-xs font-semibold text-white">{sampleBadge(locale)}</span>}
-  <h1 class="mt-3">{c.title}</h1>
-  <p class="mt-3 text-sm text-slate-500">
-    <time datetime={article.date}>{tr('articleDate')}: {fmt.format(new Date(article.date))}</time>
-  </p>
-  <Picture src={article.image} alt={article.imageAlt[locale]} width={800} height={600} loading="eager" fetchpriority="high"
-    sizes="(min-width: 768px) 768px, 100vw" class="mt-8 aspect-[4/3] w-full rounded-xl object-cover" />
-  <div class="prose-custom mt-10 space-y-5 text-lg leading-relaxed text-slate-700">
-    {c.body.map((p) => <p>{p}</p>)}
+<article class="relative" style={`--acc: ${acc}`}>
+  <div class="shell-wide pt-12 md:pt-16">
+    <nav aria-label={tr('breadcrumbLabel')} class="enter" style="--d: 40ms">
+      <a href={localePath(locale, '/news/')} class="link-arrow">
+        {tr('backToNews')}
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14" /><path d="m13 6 6 6-6 6" /></svg>
+      </a>
+    </nav>
+
+    <p class="mt-8 flex flex-wrap items-center gap-3 enter" style="--d: 120ms">
+      <span class="chip chip-accent" style={`--acc: ${acc}`}>{topicLabels[article.topic][locale]}</span>
+      {article.sample && <span class="badge-sample">{sampleBadge(locale)}</span>}
+      <time class="mono text-[0.6875rem] uppercase tracking-[0.18em] text-ash" datetime={article.date}>{fmt.format(new Date(article.date))}</time>
+    </p>
+
+    <h1 class="mt-6 max-w-4xl enter" style="--d: 200ms; font-size: clamp(1.9rem, 4.4vw, 3.4rem)">{c.title}</h1>
+    <p class="mt-5 max-w-2xl text-[1.0625rem] leading-relaxed text-fog enter md:text-[1.2rem]" style="--d: 300ms">{c.summary}</p>
+  </div>
+
+  <div class="shell-wide mt-10 md:mt-14" data-reveal="mask">
+    <div class="duotone ticks aspect-[16/8] rounded-[4px] border border-line" style={`--acc: ${acc}`}>
+      <Picture
+        src={article.image}
+        alt={article.imageAlt[locale]}
+        width={1600}
+        height={900}
+        loading="eager"
+        fetchpriority="high"
+        sizes="(min-width: 1280px) 1200px, 100vw"
+        class="size-full"
+      />
+    </div>
+  </div>
+
+  <div class="shell-read mt-12 md:mt-16">
+    <div class="prose-custom">
+      {c.body.map((p) => <p>{p}</p>)}
+    </div>
+    <p class="mono mt-12 border-t border-line pt-5 text-[0.625rem] uppercase tracking-[0.2em] text-ash">
+      END OF DOCUMENT · FARPAK TECHNICAL REVIEW
+    </p>
   </div>
 </article>
 <RelatedArticles locale={locale} article={article} />

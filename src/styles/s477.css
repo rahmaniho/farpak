@@ -1,0 +1,243 @@
+/* ============================================================================
+   میکروسایت «دفتر خدمات سلامت ۴۷۷ قزوین» — Clean Health Local
+   ---------------------------------------------------------------------------
+   Same DNA as FARPAK OPS (tokens → components → motion), different body:
+   a light, clinical, mobile-first identity. Because Tailwind v4 utilities and
+   our component classes all resolve through CSS variables, scoping a second
+   palette under `.site-477` recolors the entire object language without
+   duplicating a single component.
+
+   Palette: clinical white · trust blue #0B6BCB · health green #10B981 (as
+   dark-enough-for-text #047857) · warm accent #F59E0B (as #B45309 for text).
+   ========================================================================== */
+
+/* Page-level inversion for overscroll, scrollbars and color-scheme. */
+html:has(.site-477) {
+  background: #f4f8fc;
+  color: #0c2440;
+  color-scheme: light;
+  scrollbar-color: #c3d3e2 transparent;
+}
+html:has(.site-477)::-webkit-scrollbar-track { background: #f4f8fc; }
+html:has(.site-477)::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #0b6bcB, #10b981);
+  border: 3px solid #f4f8fc;
+}
+
+.site-477 {
+  color-scheme: light;
+  color: var(--color-chalk);
+  background: #f4f8fc;
+
+  /* ── Scoped token override ─────────────────────────────────────────────── */
+  --color-void: #f7fafd;   /* used as "ink on accent" here (light)          */
+  --color-hull: #ffffff;
+  --color-deck: #eaf2fa;
+  --color-rivet: #d9e4ef;
+  --color-chalk: #0c2440;  /* navy ink for headings/body                    */
+  --color-fog: #4e5d6c;    /* 7.4:1 on white → AA body                      */
+  --color-ash: #6e7c8a;    /* decorative only                               */
+  --color-flux: #0b6bcb;   /* trust blue (5.2:1 with white text)            */
+  --color-ember: #b45309;  /* warm accent, text-safe                        */
+  --color-volt: #047857;   /* health green, text-safe                       */
+  --color-siren: #b91c1c;  /* error red, text-safe                          */
+  --color-line: rgba(12, 36, 64, 0.1);
+  --color-line-2: rgba(12, 36, 64, 0.18);
+  --color-line-glow: rgba(11, 107, 203, 0.4);
+
+  --glass-bg: rgba(255, 255, 255, 0.82);
+  --glass-bg-strong: rgba(255, 255, 255, 0.94);
+  --glass-bg-thin: rgba(255, 255, 255, 0.6);
+  --glass-blur: blur(18px) saturate(140%);
+  --edge-light: inset 0 1px 0 rgba(255, 255, 255, 0.9), 0 1px 2px rgba(12, 36, 64, 0.05);
+  --edge-glow: 0 0 0 1px rgba(11, 107, 203, 0.35), 0 10px 30px -18px rgba(11, 107, 203, 0.5);
+
+  --grid-ink: rgba(12, 36, 64, 0.045);
+  --grid-ink-strong: rgba(12, 36, 64, 0.075);
+
+  --shadow-slab: 0 1px 2px rgba(12, 36, 64, 0.06), 0 14px 34px -24px rgba(12, 36, 64, 0.35);
+  --shadow-lift: 0 2px 4px rgba(12, 36, 64, 0.07), 0 26px 50px -28px rgba(12, 36, 64, 0.4);
+  --shadow-brut: 5px 5px 0 0 rgba(12, 36, 64, 0.12);
+
+  /* Softer radii: medical trust reads rounder than industrial. */
+  --radius-hair: 6px;
+  --radius-panel: 12px;
+  --radius-glass: 20px;
+}
+
+/* ── Light canvas: soft washes instead of night glow ─────────────────────── */
+.site-477 .bg-canvas { background: #f4f8fc; }
+.site-477 .canvas-orbs::before {
+  background: radial-gradient(circle, rgba(11, 107, 203, 0.12), transparent 62%);
+  filter: blur(70px);
+}
+.site-477 .canvas-orbs::after {
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.12), transparent 62%);
+  filter: blur(70px);
+}
+.site-477 .canvas-noise { opacity: 0.025; }
+.site-477 .canvas-vignette { display: none; }
+
+/* ── Materials on light ──────────────────────────────────────────────────── */
+.site-477 .slab,
+.site-477 .card { background: #ffffff; }
+.site-477 .card:hover,
+.site-477 .card:focus-within { border-color: color-mix(in oklab, var(--acc) 45%, var(--color-line)); }
+.site-477 .slab-brut { background: #fff; border-color: var(--color-line-2); }
+
+/* Images stay clean and bright — no duotone, no scanlines. */
+.site-477 .duotone img {
+  filter: none;
+  transform: scale(1.01);
+}
+.site-477 .duotone::before { display: none; }
+.site-477 .duotone::after {
+  background: linear-gradient(180deg, transparent 45%, rgba(247, 250, 253, 0.75) 100%);
+}
+.site-477 .card:hover .duotone img,
+.site-477 a:hover .duotone img { filter: none; transform: scale(1.04); }
+
+/* Type: navy headings, calm body. */
+.site-477 h1, .site-477 h2, .site-477 h3, .site-477 h4 { color: var(--color-chalk); }
+.site-477 .sec-title em,
+.site-477 .link-arrow { color: var(--acc, var(--color-flux)); }
+.site-477 .prose-custom { color: var(--color-fog); }
+.site-477 .wordmark-outline { -webkit-text-stroke: 1px rgba(12, 36, 64, 0.18); }
+.site-477 .mono-label { color: var(--color-fog); }
+
+/* Buttons keep their shape language; on-accent ink flips to light. */
+.site-477 .btn-primary { color: #ffffff; }
+.site-477 .btn-brut { background: var(--color-chalk); color: #fff; border-color: var(--color-chalk); }
+.site-477 .btn-ghost { color: var(--color-chalk); background: rgba(255, 255, 255, 0.7); }
+.site-477 .btn-ghost:hover { color: var(--acc, var(--color-flux)); }
+
+/* Form fields on white. */
+.site-477 .field {
+  background: #ffffff;
+  border-color: var(--color-line-2);
+  color: var(--color-chalk);
+  box-shadow: inset 0 1px 2px rgba(12, 36, 64, 0.05);
+}
+.site-477 .field::placeholder { color: #93a1b0; }
+.site-477 .field:hover:not(:disabled) { border-color: rgba(12, 36, 64, 0.32); }
+.site-477 .field:focus {
+  border-color: var(--color-flux);
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(11, 107, 203, 0.16);
+}
+.site-477 .field[aria-invalid="true"] {
+  border-color: var(--color-siren);
+  box-shadow: 0 0 0 3px rgba(185, 28, 28, 0.12);
+}
+.site-477 select.field option { background: #fff; color: var(--color-chalk); }
+.site-477 input[type="file"]::file-selector-button { background: var(--color-deck); color: var(--color-chalk); border-color: var(--color-line-2); }
+.site-477 input[type="file"]::file-selector-button:hover { background: var(--color-flux); color: #fff; }
+.site-477 .field-label { color: var(--color-fog); }
+.site-477 code, .site-477 kbd { background: rgba(11, 107, 203, 0.08); color: var(--color-flux); border-color: var(--color-line); }
+
+/* Callouts read as clinical notices. */
+.site-477 .callout { background: color-mix(in oklab, var(--acc, var(--color-flux)) 6%, #ffffff); }
+
+/* Chips on light. */
+.site-477 .chip { background: rgba(12, 36, 64, 0.04); color: var(--color-fog); }
+.site-477 .badge-sample { color: #fff; }
+.site-477 .index-chip { color: #fff; }
+.site-477 .chip-solid { color: #fff; }
+
+/* Spec rows & footer adapt. */
+.site-477 .spec-row:hover { background: rgba(11, 107, 203, 0.05); }
+.site-477 .footer-h { color: var(--color-flux); }
+.site-477 hr { background-image: repeating-linear-gradient(-45deg, rgba(12, 36, 64, 0.16) 0 1px, transparent 1px 7px); }
+.site-477 .hatch { background-image: repeating-linear-gradient(-45deg, rgba(12, 36, 64, 0.07) 0 1px, transparent 1px 8px); }
+
+/* Header stuck state uses white glass. */
+.site-477 .site-header[data-stuck] { box-shadow: 0 18px 40px -30px rgba(12, 36, 64, 0.35), var(--edge-light); }
+
+/* ── 477-only components ─────────────────────────────────────────────────── */
+@layer components {
+  /* Sticky conversion bar on mobile: call · route · instagram */
+  .action-bar {
+    position: fixed;
+    inset-inline: 0;
+    inset-block-end: 0;
+    z-index: var(--z-header);
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--color-line);
+    border-block-start: 1px solid var(--color-line-2);
+    box-shadow: 0 -14px 34px -22px rgba(12, 36, 64, 0.45);
+  }
+  .action-bar a {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.6rem 0.25rem calc(0.6rem + env(safe-area-inset-bottom));
+    background: var(--glass-bg-strong);
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    color: var(--color-chalk);
+    transition: color var(--dur-2) var(--ease-out), background-color var(--dur-2) var(--ease-out);
+  }
+  .action-bar a:active { background: var(--color-deck); }
+  .action-bar a[data-kind="call"] { color: var(--color-flux); }
+  .action-bar a[data-kind="route"] { color: var(--color-volt); }
+  .action-bar a[data-kind="social"] { color: var(--color-ember); }
+  @media (min-width: 768px) {
+    .action-bar { display: none; }
+  }
+
+  /* Health-service icon tile */
+  .svc-icon {
+    display: grid;
+    place-items: center;
+    width: 52px;
+    height: 52px;
+    flex: none;
+    border-radius: 14px;
+    border: 1px solid color-mix(in oklab, var(--acc) 30%, transparent);
+    background: color-mix(in oklab, var(--acc) 10%, #ffffff);
+    color: var(--acc);
+    transition: transform var(--dur-3) var(--ease-spring);
+  }
+  .card:hover .svc-icon,
+  a:hover .svc-icon { transform: scale(1.06) rotate(-3deg); }
+
+  /* FAQ accordion (native details = zero JS) */
+  .faq-item {
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-panel);
+    background: #fff;
+    overflow: hidden;
+    transition: border-color var(--dur-2) var(--ease-out), box-shadow var(--dur-3) var(--ease-out);
+  }
+  .faq-item[open] { border-color: color-mix(in oklab, var(--acc, var(--color-flux)) 40%, var(--color-line)); box-shadow: var(--shadow-slab); }
+  .faq-item summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    cursor: pointer;
+    padding: 1rem 1.15rem;
+    font-weight: 700;
+    color: var(--color-chalk);
+    list-style: none;
+  }
+  .faq-item summary::-webkit-details-marker { display: none; }
+  .faq-item summary::after {
+    content: "+";
+    font-family: var(--font-mono);
+    font-size: 1.2rem;
+    line-height: 1;
+    color: var(--acc, var(--color-flux));
+    transition: transform var(--dur-3) var(--ease-expo);
+  }
+  .faq-item[open] summary::after { transform: rotate(45deg); }
+  .faq-item .faq-a { padding: 0 1.15rem 1.15rem; font-size: 0.9375rem; line-height: 1.9; color: var(--color-fog); }
+
+  /* NAP block (Name-Address-Phone) — the Local SEO anchor */
+  .nap address { font-style: normal; }
+}
