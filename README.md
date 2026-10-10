@@ -1,1 +1,47 @@
-# farpak
+# فرپاک صنعت سلامت — وب‌سایت شرکتی (fa / en)
+
+وب‌سایت دوزبانه (فارسی RTL در `/` و انگلیسی LTR در `/en/`) با **Astro 5** و **React Islands**، **Tailwind CSS v4** و خروجی کاملاً استاتیک.
+
+## راه‌اندازی
+
+```bash
+npm install
+npm run dev       # http://localhost:4321
+npm run build     # خروجی در dist/ (شامل sitemap-index.xml)
+npm run preview
+npm run check     # بررسی تایپ و Astro
+```
+
+## متغیرهای محیطی
+
+| نام | الزامی | توضیح |
+|---|---|---|
+| `PUBLIC_SITE_URL` | بله (در production) | دامنه نهایی سایت، مثلاً `https://farapak.ir`. تا تعیین دامنه، `https://example.com` استفاده می‌شود. |
+
+نمونه در `.env.example` آمده است. فایل `.env` در Git نباید commit شود.
+
+## ساختار پروژه
+
+```
+src/
+  components/   Header, Footer, HomeView (بخش‌های صفحه)
+  i18n/         fa.json, en.json (همه متن‌های UI)، utils.ts (مسیرها و سوییچ زبان)
+  layouts/      BaseLayout.astro (lang/dir، متا، hreflang، skip link)
+  pages/        index.astro (fa)، en/index.astro (en)
+  styles/       global.css (توکن‌های برند، فوکوس، reduced motion)
+public/
+  images/       تصاویر تولیدشده با متدولوژی SCHEMA (JPG، نیازمند تبدیل به AVIF/WebP)
+  favicon.svg, robots.txt
+docs/
+  ROADMAP.md    نقشه راه و وضعیت فازها
+```
+
+## اصول فنی
+- **RTL/LTR:** `<html lang dir>` از روی زبان تعیین می‌شود؛ فقط Logical Properties (`ms-*`, `me-*`, `ps-*`, `start-*`, `end-*`) استفاده شده است.
+- **i18n:** هیچ متن سخت‌کدشده‌ای در کامپوننت‌ها نیست؛ همه از فایل‌های JSON می‌آیند. متن‌های موقت با پیشوند `[placeholder]` مشخص شده‌اند.
+- **JavaScript:** صفحه اصلی بدون هیچ JS ارسال می‌شود. منوی موبایل با `<details>` پیاده شده است.
+- **دسترس‌پذیری:** لینک پرش به محتوا، فوکوس قابل مشاهده، `prefers-reduced-motion`.
+- **SEO:** canonical، hreflang (fa / en / x-default)، Open Graph، sitemap دوزبانه.
+
+## وضعیت
+فاز ۱ (زیرساخت، طراحی پایه، صفحه اصلی دوزبانه، تصاویر) انجام شده است. جزئیات در `docs/ROADMAP.md`.
