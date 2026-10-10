@@ -1,39 +1,83 @@
 ---
 import { t, localePath, type Locale } from '../../i18n/utils';
-import { articles } from '../../content/news';
+import { TOPICS, topicLabels, PAGE_SIZE, type TopicId, type Article } from '../../content/news';
 import { sampleBadge } from '../../content/sample';
 import Picture from '../Picture.astro';
+import Pagination from '../Pagination.astro';
+import {
+  filterByTopic, pageSlice, pageCount, topicCount, listingBase, type ListingState,
+} from '../../lib/newsListing';
 
-interface Props { locale: Locale }
-const { locale } = Astro.props;
+interface Props { locale: Locale; state: ListingState }
+const { locale, state } = Astro.props;
 const tr = t(locale);
-const sorted = [...articles].sort((a, b) => (a.date < b.date ? 1 : -1));
+
+const all = filterByTopic(state.topic);
+const totalPages = pageCount(all.length, PAGE_SIZE);
+const items: Article[] = pageSlice(all, state.page, PAGE_SIZE);
 const fmt = new Intl.DateTimeFormat(locale === 'fa' ? 'fa-IR-u-ca-persian' : 'en-US', { dateStyle: 'medium' });
+const heading = state.topic ? topicLabels[state.topic][locale] : tr('newsTitle');
+const filterLinks: { id: TopicId | 'all'; label: string; count: number; href: string }[] = [
+  { id: 'all', label: locale === 'fa' ? 'همه' : 'All', count: filterByTopic().length, href: listingBase(locale) },
+  ...TOPICS.map((id) => ({
+    id,
+    label: topicLabels[id][locale],
+    count: topicCount(id),
+    href: listingBase(locale, id),
+  })),
+];
+const isActive = (id: TopicId | 'all') => (id === 'all' ? !state.topic : state.topic === id);
 ---
 <section class="mx-auto max-w-[1280px] px-4 py-16 md:px-8">
   <div class="flex flex-wrap items-end justify-between gap-4">
     <div>
-      <h1>{tr('newsTitle')}</h1>
+      <h1>{heading}</h1>
       <p class="mt-3 max-w-2xl text-slate-600">{tr('newsIntro')}</p>
     </div>
     <a href={localePath(locale, '/news/rss.xml')} class="text-sm font-medium text-teal hover:underline">RSS</a>
   </div>
-  <ul class="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-    {sorted.map((a) => (
-      <li class="flex flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-        <div class="relative">
-          <Picture src={a.image} alt={a.imageAlt[locale]} width={800} height={600} sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw" class="aspect-[4/3] w-full object-cover" />
-          {a.sample && <span class="absolute start-3 top-3 rounded bg-alert px-2 py-1 text-xs font-semibold text-white">{sampleBadge(locale)}</span>}
-        </div>
-        <div class="flex flex-1 flex-col p-5">
-          <time datetime={a.date} class="text-xs text-slate-500">{tr('articleDate')}: {fmt.format(new Date(a.date))}</time>
-          <h2 class="mt-1 text-lg font-semibold text-navy">{a.copy[locale].title}</h2>
-          <p class="mt-2 flex-1 text-sm text-slate-600">{a.copy[locale].summary}</p>
-          <a href={localePath(locale, `/news/${a.slug}/`)} class="mt-4 font-semibold text-teal hover:underline">
-            {tr('readArticle')}<span class="sr-only"> — {a.copy[locale].title}</span>
+
+  <nav aria-label={locale === 'fa' ? 'فیلتر بر اساس موضوع' : 'Filter by topic'} class="mt-8">
+    <ul class="flex flex-wrap gap-2">
+      {filterLinks.map((f) => (
+        <li>
+          <a href={f.href} aria-current={isActive(f.id) ? 'page' : undefined}
+            class={isActive(f.id)
+              ? 'inline-flex items-center gap-2 rounded-full bg-navy px-4 py-2 text-sm font-semibold text-white'
+              : 'inline-flex items-center gap-2 rounded-full border border-slate-300 px-4 py-2 text-sm font-medium text-navy hover:bg-mist'}>
+            {f.label}
+            <span class={isActive(f.id) ? 'rounded-full bg-white/20 px-2 text-xs' : 'rounded-full bg-mist px-2 text-xs text-slate-600'}>{f.count}</span>
           </a>
-        </div>
-      </li>
-    ))}
-  </ul>
+        </li>
+      ))}
+    </ul>
+  </nav>
+
+  {items.length === 0 ? (
+    <p class="mt-10 rounded-xl border-2 border-dashed border-slate-300 p-10 text-center text-slate-500">{tr('newsEmpty')}</p>
+  ) : (
+    <ul class="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      {items.map((a) => (
+        <li class="flex flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+          <div class="relative">
+            <Picture src={a.image} alt={a.imageAlt[locale]} width={800} height={600} sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw" class="aspect-[4/3] w-full object-cover" />
+            {a.sample && <span class="absolute start-3 top-3 rounded bg-alert px-2 py-1 text-xs font-semibold text-white">{sampleBadge(locale)}</span>}
+          </div>
+          <div class="flex flex-1 flex-col p-5">
+            <div class="flex items-center justify-between gap-2 text-xs text-slate-500">
+              <span class="rounded bg-mist px-2 py-0.5 font-medium text-navy">{topicLabels[a.topic][locale]}</span>
+              <time datetime={a.date}>{fmt.format(new Date(a.date))}</time>
+            </div>
+            <h2 class="mt-3 text-lg font-semibold text-navy">{a.copy[locale].title}</h2>
+            <p class="mt-2 flex-1 text-sm text-slate-600">{a.copy[locale].summary}</p>
+            <a href={localePath(locale, `/news/${a.slug}/`)} class="mt-4 font-semibold text-teal hover:underline">
+              {tr('readArticle')}<span class="sr-only"> — {a.copy[locale].title}</span>
+            </a>
+          </div>
+        </li>
+      ))}
+    </ul>
+  )}
+
+  <Pagination locale={locale} state={state} totalPages={totalPages} />
 </section>

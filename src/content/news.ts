@@ -7,8 +7,23 @@ export interface ArticleCopy {
   body: string[];
 }
 
+export const TOPICS = ['safety', 'maintenance', 'facilities', 'environment'] as const;
+export type TopicId = (typeof TOPICS)[number];
+
+/** Labels for the topic filter. */
+export const topicLabels: Record<TopicId, Record<Locale, string>> = {
+  safety: { fa: 'ایمنی', en: 'Safety' },
+  maintenance: { fa: 'نگهداری', en: 'Maintenance' },
+  facilities: { fa: 'تأسیسات', en: 'Facilities' },
+  environment: { fa: 'محیط زیست', en: 'Environment' },
+};
+
+/** Articles per listing page. */
+export const PAGE_SIZE = 6;
+
 export interface Article {
   slug: string;
+  topic: TopicId;
   date: string; // ISO date (YYYY-MM-DD)
   image: string;
   imageAlt: Record<Locale, string>;
@@ -19,6 +34,8 @@ export interface Article {
 const baseArticles: Article[] = [
   {
     slug: 'hse-risk-assessment-basics',
+
+    topic: 'safety',
     date: '2026-06-15',
     image: '/images/service-hse-environment.jpg',
     imageAlt: { fa: 'کارشناس محیط زیست در حال نمونه‌برداری', en: 'Environmental engineer sampling water' },
@@ -46,6 +63,8 @@ const baseArticles: Article[] = [
   },
   {
     slug: 'fire-suppression-maintenance-checklist',
+
+    topic: 'safety',
     date: '2026-07-20',
     image: '/images/service-fire-safety.jpg',
     imageAlt: { fa: 'لوله‌ها و اسپرینکلرهای سیستم اطفای حریق', en: 'Fire suppression piping and sprinklers' },
@@ -73,6 +92,8 @@ const baseArticles: Article[] = [
   },
   {
     slug: 'commissioning-handover-practice',
+
+    topic: 'maintenance',
     date: '2026-08-30',
     image: '/images/service-hvac-piping.jpg',
     imageAlt: { fa: 'سیستم تأسیسات و لوله‌کشی صنعتی', en: 'Industrial HVAC and piping system' },

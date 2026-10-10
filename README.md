@@ -33,6 +33,13 @@ npm run form-server   # پیش‌فرض: 127.0.0.1:8787
 2. مسیر `/api/submit/` را روی دامنه سایت به سرویس form-server هدایت کنید (در Netlify/Vercel/Cloudflare با rewrite یا function).
 3. `FORM_WEBHOOK_URL` را به CRM یا رله ایمیل خود وصل کنید.
 
+## فهرست اخبار، صفحه‌بندی و فیلتر موضوعی
+- هر مقاله یک `topic` دارد: `safety`، `maintenance`، `facilities` یا `environment` (تعریف در `src/content/news.ts`).
+- تعداد مقاله در هر صفحه با `PAGE_SIZE` تعیین می‌شود.
+- مسیرها: `/news/` و `/news/page/N/`؛ `/news/topic/<موضوع>/` و `/news/topic/<موضوع>/page/N/` (و نسخه `/en/`).
+- همه این صفحات در زمان بیلد ساخته می‌شوند؛ فیلتر به JavaScript نیاز ندارد و هرکدام canonical و sitemap خودش را دارد.
+- منطق مشترک در `src/lib/newsListing.ts` است.
+
 ## داده‌های نمونه
 سایت فعلاً با داده‌های **نمونه** کامل شده است. این داده‌ها با پرچم `SAMPLE_DATA` در `src/content/sample.ts` کنترل می‌شوند و روی صفحات با برچسب «نمونه» نمایش داده می‌شوند:
 - پروژه‌ها: `src/content/projects.ts`

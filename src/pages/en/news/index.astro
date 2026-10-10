@@ -2,6 +2,6 @@
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import NewsView from '../../../components/views/NewsView.astro';
 ---
-<BaseLayout locale="en" currentPath="/en/news/">
-  <NewsView locale="en" />
+<BaseLayout locale="en" currentPath="/en/news/" title="News & technical articles">
+  <NewsView locale="en" state={{ page: 1 }} />
 </BaseLayout>

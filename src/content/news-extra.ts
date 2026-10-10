@@ -8,6 +8,8 @@ import type { Article } from './news';
 export const extraArticles: Article[] = [
   {
     slug: 'pipeline-corrosion-inspection',
+
+    topic: 'maintenance',
     date: '2026-01-12',
     image: '/images/article-pipeline-corrosion-inspection.jpg',
     imageAlt: { fa: 'بازرسی خوردگی خط لوله با گیج ضخامت اولتراسونیک', en: 'Ultrasonic thickness inspection of a corroded pipeline' },
@@ -35,6 +37,8 @@ export const extraArticles: Article[] = [
   },
   {
     slug: 'gas-leak-detection-systems',
+
+    topic: 'safety',
     date: '2026-02-05',
     image: '/images/article-gas-leak-detection.jpg',
     imageAlt: { fa: 'سنسور تشخیص نشت گاز روی فلنج لوله صنعتی', en: 'Gas detection sensor mounted on an industrial pipe flange' },
@@ -62,6 +66,8 @@ export const extraArticles: Article[] = [
   },
   {
     slug: 'process-safety-management-overview',
+
+    topic: 'safety',
     date: '2026-02-20',
     image: '/images/article-process-safety-management.jpg',
     imageAlt: { fa: 'اتاق کنترل واحد فرآیندی با اپراتورها', en: 'Process control room with operators' },
@@ -89,6 +95,8 @@ export const extraArticles: Article[] = [
   },
   {
     slug: 'hazop-study-in-design-and-operation',
+
+    topic: 'safety',
     date: '2026-03-10',
     image: '/images/article-hazop-study.jpg',
     imageAlt: { fa: 'تیم مهندسی در جلسه بررسی نقشه‌های P&ID', en: 'Engineering team reviewing P&ID drawings' },
@@ -116,6 +124,8 @@ export const extraArticles: Article[] = [
   },
   {
     slug: 'electrical-safety-in-industrial-plants',
+
+    topic: 'facilities',
     date: '2026-03-28',
     image: '/images/article-electrical-safety.jpg',
     imageAlt: { fa: 'تابلوهای برق صنعتی و سینی کابل', en: 'Industrial switchgear cabinets and cable trays' },
@@ -143,6 +153,8 @@ export const extraArticles: Article[] = [
   },
   {
     slug: 'confined-space-entry-safely',
+
+    topic: 'safety',
     date: '2026-04-15',
     image: '/images/article-confined-space-entry.jpg',
     imageAlt: { fa: 'دریچه ورود مخزن با سه‌پایه ایمنی و مانیتور گاز', en: 'Tank entry hatch with safety tripod and gas monitor' },
@@ -170,6 +182,8 @@ export const extraArticles: Article[] = [
   },
   {
     slug: 'ppe-selection-guide',
+
+    topic: 'safety',
     date: '2026-05-06',
     image: '/images/article-ppe-selection.jpg',
     imageAlt: { fa: 'تجهیزات حفاظت فردی شامل کلاه، عینک و دستکش', en: 'Personal protective equipment on a steel bench' },
@@ -197,6 +211,8 @@ export const extraArticles: Article[] = [
   },
   {
     slug: 'industrial-wastewater-treatment-basics',
+
+    topic: 'environment',
     date: '2026-06-01',
     image: '/images/article-wastewater-treatment.jpg',
     imageAlt: { fa: 'حوضچه هوادهی تصفیه پساب صنعتی از نمای هوایی', en: 'Aerial view of an industrial wastewater aeration basin' },
@@ -224,6 +240,8 @@ export const extraArticles: Article[] = [
   },
   {
     slug: 'industrial-fire-water-system-design',
+
+    topic: 'facilities',
     date: '2026-07-08',
     image: '/images/article-fire-water-systems.jpg',
     imageAlt: { fa: 'خانه پمپ آب آتش‌نشانی صنعتی', en: 'Industrial fire water pump house' },
@@ -251,6 +269,8 @@ export const extraArticles: Article[] = [
   },
   {
     slug: 'predictive-maintenance-vibration-monitoring',
+
+    topic: 'maintenance',
     date: '2026-08-12',
     image: '/images/article-predictive-maintenance.jpg',
     imageAlt: { fa: 'تکنسین با تبلت کنار پمپ دوار و حسگر ارتعاش', en: 'Technician with a tablet beside a rotating pump' },

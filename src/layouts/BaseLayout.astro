@@ -21,7 +21,8 @@ const dir = locale === 'fa' ? 'rtl' : 'ltr';
 const siteName = dictionaries[locale].siteName;
 const pageTitle = title ? `${title} | ${siteName}` : siteName;
 const pageDesc = description ?? dictionaries[locale].siteDescription;
-const canonical = new URL(localePath(locale, currentPath), Astro.site);
+// currentPath is already the full public path (e.g. /en/news/), so use it as-is.
+const canonical = new URL(currentPath, Astro.site);
 const altFa = new URL(switchLocalePath(currentPath, 'fa'), Astro.site);
 const altEn = new URL(switchLocalePath(currentPath, 'en'), Astro.site);
 // TODO: switch to /images/og-image.jpg once generated (currently reuses hero).

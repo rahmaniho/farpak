@@ -1,0 +1,37 @@
+---
+import { t, type Locale } from '../i18n/utils';
+import { listingUrl, type ListingState } from '../lib/newsListing';
+
+interface Props {
+  locale: Locale;
+  state: ListingState;
+  totalPages: number;
+}
+const { locale, state, totalPages } = Astro.props;
+const tr = t(locale);
+const current = state.page;
+const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
+const url = (page: number) => listingUrl(locale, { topic: state.topic, page });
+const itemClass = 'min-w-10 rounded-md border border-slate-300 px-3 py-2 text-center text-sm font-medium text-navy hover:bg-mist';
+---
+{totalPages > 1 && (
+  <nav aria-label={locale === 'fa' ? 'صفحه‌بندی' : 'Pagination'} class="mt-12 flex flex-wrap items-center justify-center gap-2">
+    {current > 1 && (
+      <a href={url(current - 1)} rel="prev" class={itemClass}>{tr('pagePrev')}</a>
+    )}
+    <ul class="flex flex-wrap items-center gap-2">
+      {pages.map((p) => (
+        <li>
+          {p === current ? (
+            <span aria-current="page" class="inline-block min-w-10 rounded-md bg-navy px-3 py-2 text-center text-sm font-semibold text-white">{p}</span>
+          ) : (
+            <a href={url(p)} class={itemClass} aria-label={`${tr('pageLabel')} ${p}`}>{p}</a>
+          )}
+        </li>
+      ))}
+    </ul>
+    {current < totalPages && (
+      <a href={url(current + 1)} rel="next" class={itemClass}>{tr('pageNext')}</a>
+    )}
+  </nav>
+)}

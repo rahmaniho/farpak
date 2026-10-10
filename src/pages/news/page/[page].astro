@@ -1,0 +1,15 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import NewsView from '../../../components/views/NewsView.astro';
+import { allListingStates } from '../../../lib/newsListing';
+
+export function getStaticPaths() {
+  return allListingStates()
+    .filter((s) => !s.topic && s.page > 1)
+    .map((state) => ({ params: { page: String(state.page) }, props: { state } }));
+}
+const { state } = Astro.props;
+---
+<BaseLayout locale="fa" currentPath={`/news/page/${state.page}/`} title={`اخبار و مقالات فنی - صفحه ${state.page}`}>
+  <NewsView locale="fa" state={state} />
+</BaseLayout>

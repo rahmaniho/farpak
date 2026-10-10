@@ -7,6 +7,8 @@ import type { Article } from './news';
 export const moreArticles: Article[] = [
   {
     slug: 'fire-alarm-detection-systems',
+
+    topic: 'safety',
     date: '2026-09-01',
     image: '/images/article-fire-alarm-detection-systems.jpg',
     imageAlt: { fa: 'تابلوی اعلام حریق و آشکارساز دود روی سقف', en: 'Fire alarm panel and smoke detector on a ceiling' },
@@ -34,6 +36,8 @@ export const moreArticles: Article[] = [
   },
   {
     slug: 'heat-exchanger-fouling-and-cleaning',
+
+    topic: 'maintenance',
     date: '2026-09-05',
     image: '/images/article-heat-exchanger-fouling.jpg',
     imageAlt: { fa: 'تکنسین در حال تمیزکاری دسته لوله مبدل حرارتی', en: 'Technician cleaning a heat exchanger tube bundle' },
@@ -61,6 +65,8 @@ export const moreArticles: Article[] = [
   },
   {
     slug: 'permit-to-work-system',
+
+    topic: 'safety',
     date: '2026-09-09',
     image: '/images/article-permit-to-work-system.jpg',
     imageAlt: { fa: 'سرپرست و کارگر در حال بررسی فرم مجوز کار', en: 'Supervisor and worker reviewing a permit-to-work form' },
@@ -88,6 +94,8 @@ export const moreArticles: Article[] = [
   },
   {
     slug: 'earthing-and-lightning-protection',
+
+    topic: 'facilities',
     date: '2026-09-12',
     image: '/images/article-earthing-lightning-protection.jpg',
     imageAlt: { fa: 'میله صاعقه‌گیر و هادی زمین روی دودکش صنعتی', en: 'Lightning air terminal and down conductor on an industrial stack' },
@@ -115,6 +123,8 @@ export const moreArticles: Article[] = [
   },
   {
     slug: 'noise-control-in-plants',
+
+    topic: 'safety',
     date: '2026-09-16',
     image: '/images/article-noise-control-plants.jpg',
     imageAlt: { fa: 'پانل‌های عایق صوتی در سالن کارخانه با کارگر دارای گوشی ایمنی', en: 'Acoustic panels on a plant floor with a worker wearing ear protection' },
@@ -142,6 +152,8 @@ export const moreArticles: Article[] = [
   },
   {
     slug: 'emergency-response-planning',
+
+    topic: 'safety',
     date: '2026-09-19',
     image: '/images/article-emergency-response-planning.jpg',
     imageAlt: { fa: 'تیم واکنش اضطراری در نقطه تجمع کارخانه', en: 'Emergency response team at a plant assembly point' },
@@ -169,6 +181,8 @@ export const moreArticles: Article[] = [
   },
   {
     slug: 'hydrostatic-testing-of-pressure-vessels',
+
+    topic: 'maintenance',
     date: '2026-09-23',
     image: '/images/article-hydrostatic-testing.jpg',
     imageAlt: { fa: 'مخزن تحت فشار در آزمون هیدرواستاتیک با گیج فشار', en: 'Pressure vessel during hydrostatic testing with pressure gauges' },
@@ -196,6 +210,8 @@ export const moreArticles: Article[] = [
   },
   {
     slug: 'scaffolding-safety-on-site',
+
+    topic: 'safety',
     date: '2026-09-26',
     image: '/images/article-scaffolding-safety.jpg',
     imageAlt: { fa: 'داربست ساختمانی با نرده ایمنی و کارگران دارای هارنس', en: 'Scaffolding with guardrails and workers wearing harnesses' },
@@ -223,6 +239,8 @@ export const moreArticles: Article[] = [
   },
   {
     slug: 'hvac-energy-efficiency-in-industrial-buildings',
+
+    topic: 'facilities',
     date: '2026-09-30',
     image: '/images/article-hvac-energy-efficiency.jpg',
     imageAlt: { fa: 'واحدهای تهویه و چیلر روی پشت‌بام ساختمان صنعتی', en: 'Air handling units and chillers on an industrial rooftop' },
@@ -250,6 +268,8 @@ export const moreArticles: Article[] = [
   },
   {
     slug: 'hazardous-waste-management',
+
+    topic: 'environment',
     date: '2026-10-03',
     image: '/images/article-hazardous-waste-management.jpg',
     imageAlt: { fa: 'بشکه‌های پسماند خطرناک برچسب‌گذاری‌شده روی سکوی بتنی', en: 'Labeled hazardous waste drums on a bunded concrete pad' },
