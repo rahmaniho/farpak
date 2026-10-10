@@ -73,7 +73,7 @@ src/
   styles/       global.css (توکن‌های برند، فوکوس، reduced motion)
 public/
   images/       تصاویر تولیدشده با متدولوژی SCHEMA (JPG، نیازمند تبدیل به AVIF/WebP)
-  favicon.svg, robots.txt
+  favicon-256.png, apple-touch-icon.png, robots.txt
 docs/
   ROADMAP.md    نقشه راه و وضعیت فازها
 tests/          تست‌های واحد اعتبارسنجی

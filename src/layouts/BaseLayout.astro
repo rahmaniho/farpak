@@ -28,8 +28,8 @@ const pageDesc = description ?? dictionaries[locale].siteDescription;
 const canonical = new URL(withBase(currentPath), Astro.site);
 const altFa = new URL(switchLocalePath(currentPath, 'fa'), Astro.site);
 const altEn = new URL(switchLocalePath(currentPath, 'en'), Astro.site);
-// TODO: switch to /images/og-image.jpg once generated (currently reuses hero).
-const ogImage = new URL(withBase('/images/hero-industrial-plant.jpg'), Astro.site);
+// Watermarked 1731x909 image generated for social sharing.
+const ogImage = new URL(withBase('/images/og-image.jpg'), Astro.site);
 ---
 <!doctype html>
 <html lang={locale} dir={dir}>
@@ -56,7 +56,8 @@ const ogImage = new URL(withBase('/images/hero-industrial-plant.jpg'), Astro.sit
     <meta property="og:image:alt" content={tr('ogImageAlt')} />
     <meta property="og:locale" content={locale === 'fa' ? 'fa_IR' : 'en_US'} />
     <meta name="theme-color" content="#0a1f44" />
-    <link rel="icon" href={withBase("/favicon.svg")} type="image/svg+xml" />
+    <link rel="icon" href={withBase("/favicon-256.png")} type="image/png" sizes="256x256" />
+    <link rel="apple-touch-icon" href={withBase("/apple-touch-icon.png")} sizes="180x180" />
     <JsonLd data={[organizationSchema(Astro.site!.origin, locale), ...jsonLd]} />
   </head>
   <body class="min-h-dvh bg-white antialiased">
