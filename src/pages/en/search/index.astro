@@ -1,0 +1,17 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import SearchBox from '../../../components/SearchBox';
+import { buildSearchIndex } from '../../../lib/searchIndex';
+import { t, dictionaries } from '../../../i18n/utils';
+
+const tr = t('en');
+const entries = buildSearchIndex('en');
+---
+<BaseLayout locale="en" currentPath="/en/search/" title={tr('searchTitle')}>
+  <section class="mx-auto max-w-3xl px-4 py-16 md:px-8">
+    <h1>{tr('searchTitle')}</h1>
+    <div class="mt-8">
+      <SearchBox client:load entries={entries} t={dictionaries.en} />
+    </div>
+  </section>
+</BaseLayout>

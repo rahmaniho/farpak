@@ -1,0 +1,13 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ArticleDetail from '../../components/ArticleDetail.astro';
+import { articles } from '../../content/news';
+
+export function getStaticPaths() {
+  return articles.map((article) => ({ params: { slug: article.slug }, props: { article } }));
+}
+const { article } = Astro.props;
+---
+<BaseLayout locale="fa" currentPath={`/news/${article.slug}/`} title={article.copy.fa.title} description={article.copy.fa.summary}>
+  <ArticleDetail locale="fa" article={article} />
+</BaseLayout>

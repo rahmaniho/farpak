@@ -1,0 +1,27 @@
+---
+import { t, type Locale, localePath } from '../i18n/utils';
+import { services } from '../content/services';
+import Picture from './Picture.astro';
+
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const tr = t(locale);
+---
+<section class="mx-auto max-w-[1280px] px-4 py-16 md:px-8">
+  <h1>{tr('servicesIndexTitle')}</h1>
+  <p class="mt-3 max-w-2xl text-slate-600">{tr('servicesIndexIntro')}</p>
+  <ul class="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+    {services.map((s) => (
+      <li class="flex flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+        <Picture src={s.image} alt={s.imageAlt[locale]} width={800} height={600} sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw" class="aspect-[4/3] w-full object-cover" />
+        <div class="flex flex-1 flex-col p-6">
+          <h2 class="text-xl font-semibold text-navy">{s.copy[locale].title}</h2>
+          <p class="mt-2 flex-1 text-slate-600">{s.copy[locale].summary}</p>
+          <a href={localePath(locale, `/services/${s.slug}/`)} class="mt-4 font-semibold text-teal hover:underline">
+            {tr('learnMore')}<span class="sr-only"> — {s.copy[locale].title}</span>
+          </a>
+        </div>
+      </li>
+    ))}
+  </ul>
+</section>

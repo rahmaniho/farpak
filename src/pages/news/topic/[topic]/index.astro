@@ -1,0 +1,17 @@
+---
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import NewsView from '../../../../components/views/NewsView.astro';
+import { allListingStates } from '../../../../lib/newsListing';
+import { topicLabels } from '../../../../content/news';
+
+export function getStaticPaths() {
+  return allListingStates()
+    .filter((s) => s.topic && s.page === 1)
+    .map((state) => ({ params: { topic: state.topic }, props: { state } }));
+}
+const { state } = Astro.props;
+const label = topicLabels[state.topic!].fa;
+---
+<BaseLayout locale="fa" currentPath={`/news/topic/${state.topic}/`} title={`اخبار: ${label}`}>
+  <NewsView locale="fa" state={state} />
+</BaseLayout>
