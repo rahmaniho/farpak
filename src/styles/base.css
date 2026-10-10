@@ -1,0 +1,247 @@
+/* ============================================================================
+   LAYER 2/4 — BASE (element defaults, canvas, accessibility contract)
+   ========================================================================== */
+
+@layer base {
+  *,
+  ::before,
+  ::after {
+    border-color: var(--color-line);
+  }
+
+  html {
+    background-color: var(--color-void);
+    color: var(--color-chalk);
+    font-family: var(--font-en);
+    font-size: 100%;
+    line-height: 1.55;
+    -webkit-text-size-adjust: 100%;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    scroll-behavior: smooth;
+    scroll-padding-block-start: 7rem;
+    /* A dark page must not flash white before paint. */
+    color-scheme: dark;
+  }
+
+  html[dir="rtl"] {
+    font-family: var(--font-fa);
+    line-height: 1.78;
+    /* Persian script needs air; Latin display type needs to be squeezed. */
+    letter-spacing: 0;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100dvh;
+    background-color: var(--color-void);
+    /* clip (not hidden) so position: sticky keeps working */
+    overflow-x: clip;
+    font-synthesis-weight: none;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    margin: 0;
+    color: var(--color-chalk);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.02;
+    text-wrap: balance;
+  }
+
+  html[dir="rtl"] h1,
+  html[dir="rtl"] h2,
+  html[dir="rtl"] h3,
+  html[dir="rtl"] h4 {
+    font-weight: 800;
+    letter-spacing: 0;
+    line-height: 1.28;
+  }
+
+  h1 { font-size: var(--t-h1); }
+  h2 { font-size: var(--t-h2); font-weight: 750; }
+  h3 { font-size: var(--t-h3); font-weight: 700; letter-spacing: -0.02em; }
+  h4 { font-size: 1.0625rem; font-weight: 650; letter-spacing: -0.01em; }
+
+  html[dir="rtl"] h1,
+  html[dir="rtl"] h2,
+  html[dir="rtl"] h3 { line-height: 1.3; }
+
+  p { margin: 0; text-wrap: pretty; }
+
+  ul,
+  ol,
+  dl,
+  dd { margin: 0; padding: 0; }
+  ul[class],
+  ol[class] { list-style: none; }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  b,
+  strong { font-weight: 700; color: var(--color-chalk); }
+
+  small { font-size: 0.875em; }
+
+  /* Numbers and technical readouts never jitter: tabular figures. */
+  time,
+  code,
+  kbd,
+  samp,
+  pre {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+  }
+
+  code,
+  kbd {
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-hair);
+    background: rgba(255, 255, 255, 0.04);
+    padding: 0.1em 0.4em;
+    font-size: 0.875em;
+    color: var(--color-flux);
+  }
+
+  button,
+  input,
+  select,
+  textarea {
+    font: inherit;
+    color: inherit;
+    letter-spacing: inherit;
+  }
+
+  img,
+  svg,
+  video,
+  canvas { display: block; max-width: 100%; }
+
+  ::selection {
+    background: var(--color-volt);
+    color: var(--color-void);
+  }
+
+  /* ── Focus: the accessibility contract ───────────────────────────────── */
+  :focus-visible {
+    outline: 2px solid var(--color-flux);
+    outline-offset: 3px;
+    border-radius: var(--radius-hair);
+  }
+
+  /* Dark surfaces swallow default focus rings on form controls; re-assert. */
+  input:focus-visible,
+  textarea:focus-visible,
+  select:focus-visible {
+    outline: 2px solid var(--color-flux);
+    outline-offset: 1px;
+  }
+
+  /* ── Scrollbars: part of the identity, not an afterthought ───────────── */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-rivet) transparent;
+  }
+  ::-webkit-scrollbar { width: 11px; height: 11px; }
+  ::-webkit-scrollbar-track { background: var(--color-void); }
+  ::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, rgba(0, 229, 255, 0.5), rgba(184, 255, 60, 0.32));
+    border: 3px solid var(--color-void);
+    border-radius: 999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, rgba(0, 229, 255, 0.85), rgba(184, 255, 60, 0.6));
+  }
+
+  /* ── Horizontal rule = engineering hatch, not a grey line ────────────── */
+  hr {
+    height: 8px;
+    border: 0;
+    background-image: repeating-linear-gradient(
+      -45deg,
+      var(--color-line-2) 0 1px,
+      transparent 1px 7px
+    );
+  }
+
+  /* ── Long-form article body ──────────────────────────────────────────── */
+  .prose-custom {
+    font-size: var(--t-lead);
+    line-height: 1.85;
+    color: #c3cad9;
+  }
+  html[dir="rtl"] .prose-custom { line-height: 2.05; }
+  .prose-custom p + p { margin-block-start: 1.15em; }
+  .prose-custom a {
+    color: var(--color-flux);
+    text-decoration: underline;
+    text-decoration-color: rgba(0, 229, 255, 0.35);
+    text-underline-offset: 0.22em;
+    transition: text-decoration-color var(--dur-2) var(--ease-out);
+  }
+  .prose-custom a:hover { text-decoration-color: var(--color-flux); }
+  .prose-custom h2 {
+    margin-block: 2.2em 0.7em;
+    padding-block-start: 1.2em;
+    border-block-start: 1px solid var(--color-line);
+  }
+  .prose-custom ul,
+  .prose-custom ol { padding-inline-start: 1.4em; }
+  .prose-custom ul { list-style: square; }
+  .prose-custom ol { list-style: decimal; }
+  .prose-custom li + li { margin-block-start: 0.5em; }
+  .prose-custom li::marker { color: var(--color-flux); }
+  .prose-custom blockquote {
+    margin: 1.6em 0;
+    padding: 0.2em 1.4em;
+    border-inline-start: 3px solid var(--color-volt);
+    color: var(--color-chalk);
+    font-weight: 600;
+  }
+}
+
+/* ── Higher-contrast preference: thicken the engineering lines ───────────── */
+@media (prefers-contrast: more) {
+  :root {
+    --color-line: rgba(255, 255, 255, 0.22);
+    --color-line-2: rgba(255, 255, 255, 0.34);
+    --color-fog: #a9b2c4;
+    --grid-ink: rgba(255, 255, 255, 0.07);
+  }
+}
+
+/* ── Reduced motion: the page is still complete, just still ──────────────── */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ── Print: an engineer will print a spec sheet sooner or later ──────────── */
+@media print {
+  :root { color-scheme: light; }
+  html,
+  body {
+    background: #fff !important;
+    color: #000 !important;
+  }
+  .no-print,
+  header,
+  footer,
+  .bg-canvas { display: none !important; }
+  a { text-decoration: underline; }
+}

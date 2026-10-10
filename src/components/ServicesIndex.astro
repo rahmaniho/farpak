@@ -2,26 +2,39 @@
 import { t, type Locale, localePath } from '../i18n/utils';
 import { services } from '../content/services';
 import Picture from './Picture.astro';
+import PageHero from './PageHero.astro';
 
 interface Props { locale: Locale }
 const { locale } = Astro.props;
 const tr = t(locale);
+const accents = ['var(--color-flux)', 'var(--color-ember)', 'var(--color-siren)', 'var(--color-volt)', 'var(--color-flux)', 'var(--color-ember)'];
 ---
-<section class="mx-auto max-w-[1280px] px-4 py-16 md:px-8">
-  <h1>{tr('servicesIndexTitle')}</h1>
-  <p class="mt-3 max-w-2xl text-slate-600">{tr('servicesIndexIntro')}</p>
-  <ul class="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-    {services.map((s) => (
-      <li class="flex flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-        <Picture src={s.image} alt={s.imageAlt[locale]} width={800} height={600} sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw" class="aspect-[4/3] w-full object-cover" />
-        <div class="flex flex-1 flex-col p-6">
-          <h2 class="text-xl font-semibold text-navy">{s.copy[locale].title}</h2>
-          <p class="mt-2 flex-1 text-slate-600">{s.copy[locale].summary}</p>
-          <a href={localePath(locale, `/services/${s.slug}/`)} class="mt-4 font-semibold text-teal hover:underline">
-            {tr('learnMore')}<span class="sr-only"> — {s.copy[locale].title}</span>
+<PageHero locale={locale} index="01" kicker={tr('servicesKicker')} title={tr('servicesIndexTitle')} lead={tr('servicesIndexIntro')} />
+
+<section class="section" aria-labelledby="services-index-h">
+  <div class="shell-wide">
+    <h2 id="services-index-h" class="sr-only">{tr('servicesIndexTitle')}</h2>
+    <ul class="grid gap-5 md:grid-cols-2 xl:grid-cols-3" data-stagger>
+      {services.map((s, i) => (
+        <li data-reveal>
+          <a href={localePath(locale, `/services/${s.slug}/`)} class="card ticks group h-full" style={`--acc: ${accents[i % accents.length]}`} data-spot>
+            <div class="duotone aspect-[16/9]">
+              <Picture src={s.image} alt={s.imageAlt[locale]} width={800} height={600} sizes="(min-width: 1280px) 33vw, (min-width: 768px) 50vw, 100vw" class="size-full" />
+              <span class="mono absolute bottom-3 start-4 z-10 text-[0.625rem] uppercase tracking-[0.24em] text-chalk/80" aria-hidden="true">
+                SVC-{String(i + 1).padStart(2, '0')}
+              </span>
+            </div>
+            <div class="card-body">
+              <h3 class="text-[1.15rem] font-bold transition-colors duration-300 group-hover:text-flux">{s.copy[locale].title}</h3>
+              <p class="flex-1 text-sm leading-relaxed text-fog">{s.copy[locale].summary}</p>
+              <span class="link-arrow mt-1">
+                {tr('learnMore')}<span class="sr-only"> — {s.copy[locale].title}</span>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14" /><path d="m13 6 6 6-6 6" /></svg>
+              </span>
+            </div>
           </a>
-        </div>
-      </li>
-    ))}
-  </ul>
+        </li>
+      ))}
+    </ul>
+  </div>
 </section>

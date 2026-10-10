@@ -1,17 +1,23 @@
 ---
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import SearchBox from '../../../components/SearchBox';
+import PageHero from '../../../components/PageHero.astro';
 import { buildSearchIndex } from '../../../lib/searchIndex';
 import { t, dictionaries } from '../../../i18n/utils';
 
 const tr = t('en');
 const entries = buildSearchIndex('en');
+const suggestions = [tr('searchSuggest1'), tr('searchSuggest2'), tr('searchSuggest3')];
 ---
 <BaseLayout locale="en" currentPath="/en/search/" title={tr('searchTitle')}>
-  <section class="mx-auto max-w-3xl px-4 py-16 md:px-8">
-    <h1>{tr('searchTitle')}</h1>
-    <div class="mt-8">
-      <SearchBox client:load entries={entries} t={dictionaries.en} />
+  <PageHero locale="en" index="11" kicker={tr('navSearch')} title={tr('searchTitle')} lead={tr('searchHint')} />
+
+  <section class="section" aria-labelledby="search-h">
+    <div class="shell-read">
+      <h2 id="search-h" class="sr-only">{tr('searchTitle')}</h2>
+      <div class="glass panel ticks" style="--acc: var(--color-flux)">
+        <SearchBox client:load entries={entries} t={dictionaries.en} suggestions={suggestions} />
+      </div>
     </div>
   </section>
 </BaseLayout>

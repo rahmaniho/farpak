@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react';
+import { useState, type CSSProperties, type FormEvent } from 'react';
 import { validateSubmission, type ErrorCode, type FormMode } from '../lib/validation';
 
 interface Props {
@@ -32,10 +32,9 @@ interface Values {
 // Trailing slash matches the site's trailingSlash: 'always' setting.
 const ENDPOINT: string = import.meta.env.PUBLIC_FORM_ENDPOINT || '/api/submit/';
 
-const fieldClass =
-  'mt-1 w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-ink focus:border-teal focus:ring-2 focus:ring-teal/30 aria-[invalid=true]:border-danger';
-const labelClass = 'block text-sm font-medium text-ink';
-const errClass = 'mt-1 text-sm text-danger';
+const fieldClass = 'field';
+const labelClass = 'field-label';
+const errClass = 'field-error';
 
 export default function RequestForm({ mode, locale, services, defaultService = '', t }: Props) {
   const [values, setValues] = useState<Values>({
@@ -140,7 +139,7 @@ export default function RequestForm({ mode, locale, services, defaultService = '
 
   if (status === 'ok') {
     return (
-      <p role="status" className="rounded-md bg-success/10 p-6 font-medium text-success">
+      <p role="status" className="callout callout-ok font-medium">
         {t.successMsg}
       </p>
     );
@@ -149,7 +148,7 @@ export default function RequestForm({ mode, locale, services, defaultService = '
   return (
     <form noValidate onSubmit={onSubmit} className="grid gap-5 md:grid-cols-2" aria-describedby="form-privacy">
       {errorList.length > 0 && (
-        <div id="form-error-summary" tabIndex={-1} role="alert" className="rounded-md border border-danger p-4 text-danger md:col-span-2">
+        <div id="form-error-summary" tabIndex={-1} role="alert" className="callout callout-danger md:col-span-2">
           <ul className="list-disc ps-5">
             {errorList.map(([k, v]) => <li key={k}>{v}</li>)}
           </ul>
@@ -233,15 +232,15 @@ export default function RequestForm({ mode, locale, services, defaultService = '
           </div>
           <div>
             <label htmlFor="f-file" className={labelClass}>{t.fieldAttachment}</label>
-            <input id="f-file" name="attachment" type="file" accept="application/pdf" className="mt-1 block w-full text-sm"
+            <input id="f-file" name="attachment" type="file" accept="application/pdf" className="field text-sm"
               aria-invalid={!!errors.attachment} aria-describedby={errors.attachment ? 'e-file' : undefined}
               onChange={(ev) => setFile(ev.target.files?.[0] ?? null)} />
             {errors.attachment && <p id="e-file" className={errClass}>{errors.attachment}</p>}
           </div>
           <label className="flex items-start gap-3 text-sm md:col-span-2">
-            <input type="checkbox" name="hse" className="mt-1 size-4 accent-teal" checked={values.hse}
+            <input type="checkbox" name="hse" className="mt-1" checked={values.hse}
               onChange={(ev) => set('hse', ev.target.checked)} />
-            <span>{t.fieldHse}</span>
+            <span className="text-fog">{t.fieldHse}</span>
           </label>
         </>
       )}
@@ -255,15 +254,14 @@ export default function RequestForm({ mode, locale, services, defaultService = '
       </div>
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between md:col-span-2">
-        <p id="form-privacy" className="text-xs text-slate-500">{t.privacy}</p>
-        <button type="submit" disabled={status === 'sending'}
-          className="rounded-md bg-alert px-6 py-3 font-semibold text-white hover:brightness-95 disabled:opacity-60">
+        <p id="form-privacy" className="field-hint mt-0">{t.privacy}</p>
+        <button type="submit" disabled={status === 'sending'} className="btn btn-primary" style={{ '--acc': 'var(--color-volt)' } as CSSProperties}>
           {status === 'sending' ? t.submitting : t.submit}
         </button>
       </div>
 
       {status === 'error' && (
-        <p role="alert" className="text-danger md:col-span-2">{serverError || t.errorMsg}</p>
+        <p role="alert" className="callout callout-danger md:col-span-2">{serverError || t.errorMsg}</p>
       )}
     </form>
   );

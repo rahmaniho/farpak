@@ -2,141 +2,439 @@
 import { withBase } from '../lib/base';
 import { t, type Locale, localePath } from '../i18n/utils';
 import Picture from './Picture.astro';
+import SectionHead from './SectionHead.astro';
 import { projects } from '../content/projects';
+import { articles } from '../content/news';
+import { topicLabels } from '../content/news';
 import { sampleBadge, sampleStats } from '../content/sample';
 
 interface Props { locale: Locale }
 const { locale } = Astro.props;
 const tr = t(locale);
+const fmt = new Intl.NumberFormat(locale === 'fa' ? 'fa-IR' : 'en-US');
+const numLocale = locale === 'fa' ? 'fa-IR' : 'en-US';
+const clockLocale = locale === 'fa' ? 'fa-IR' : 'en-GB';
+const dateLocale = locale === 'fa' ? 'fa-IR-u-ca-persian' : 'en-US';
 
 const services = [
-  { key: 'serviceEngineering', desc: 'serviceEngineeringDesc', slug: 'engineering' },
-  { key: 'serviceConstruction', desc: 'serviceConstructionDesc', slug: 'construction' },
-  { key: 'serviceFire', desc: 'serviceFireDesc', slug: 'fire-safety' },
-  { key: 'serviceHse', desc: 'serviceHseDesc', slug: 'hse' },
-  { key: 'serviceMaintenance', desc: 'serviceMaintenanceDesc', slug: 'maintenance' },
-  { key: 'serviceUrban', desc: 'serviceUrbanDesc', slug: 'urban' },
+  { key: 'serviceEngineering', desc: 'serviceEngineeringDesc', slug: 'engineering', acc: 'var(--color-flux)',
+    icon: '<path d="M4 20 12 4l8 16"/><path d="M7.5 14h9"/><circle cx="12" cy="4" r="1.4"/>' },
+  { key: 'serviceConstruction', desc: 'serviceConstructionDesc', slug: 'construction', acc: 'var(--color-ember)',
+    icon: '<path d="M4 17h16"/><path d="M6 17v-3a6 6 0 0 1 12 0v3"/><path d="M12 5v3"/><path d="M3 21h18"/>' },
+  { key: 'serviceFire', desc: 'serviceFireDesc', slug: 'fire-safety', acc: 'var(--color-siren)',
+    icon: '<path d="M12 3s5 4.4 5 9.2a5 5 0 0 1-10 0C7 9.9 8.4 7.6 9.8 5.9 11 4.5 12 3 12 3Z"/><path d="M12 21a3 3 0 0 0 3-3c0-1.7-1.4-2.7-3-4.1-1.6 1.4-3 2.4-3 4.1a3 3 0 0 0 3 3Z"/>' },
+  { key: 'serviceHse', desc: 'serviceHseDesc', slug: 'hse', acc: 'var(--color-volt)',
+    icon: '<path d="M12 3 5 6v6c0 4.4 3 7.6 7 9 4-1.4 7-4.6 7-9V6l-7-3Z"/><path d="m9 12 2.2 2.2L15.5 10"/>' },
+  { key: 'serviceMaintenance', desc: 'serviceMaintenanceDesc', slug: 'maintenance', acc: 'var(--color-flux)',
+    icon: '<circle cx="12" cy="12" r="3.2"/><path d="M12 2.8v3M12 18.2v3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M2.8 12h3M18.2 12h3M4.9 19.1 7 17M17 7l2.1-2.1"/>' },
+  { key: 'serviceUrban', desc: 'serviceUrbanDesc', slug: 'urban', acc: 'var(--color-ember)',
+    icon: '<path d="M3 21h18"/><path d="M5 21V8l6-4v17"/><path d="M13 21V11l6 3v7"/><path d="M8 9.5h.01M8 13h.01M8 16.5h.01"/>' },
 ] as const;
 
 const why = [
-  { t: 'why1Title', d: 'why1Desc' },
-  { t: 'why2Title', d: 'why2Desc' },
-  { t: 'why3Title', d: 'why3Desc' },
-  { t: 'why4Title', d: 'why4Desc' },
+  { t: 'why1Title', d: 'why1Desc', acc: 'var(--color-flux)' },
+  { t: 'why2Title', d: 'why2Desc', acc: 'var(--color-volt)' },
+  { t: 'why3Title', d: 'why3Desc', acc: 'var(--color-ember)' },
+  { t: 'why4Title', d: 'why4Desc', acc: 'var(--color-siren)' },
+] as const;
+
+const industries = [
+  { k: 'industryOil', acc: 'var(--color-flux)' },
+  { k: 'industryPetro', acc: 'var(--color-siren)' },
+  { k: 'industryPower', acc: 'var(--color-ember)' },
+  { k: 'industryWater', acc: 'var(--color-flux)' },
+  { k: 'industryBuilding', acc: 'var(--color-volt)' },
+  { k: 'industryUrban', acc: 'var(--color-ember)' },
+] as const;
+
+const flow = [
+  { t: 'flow1Title', d: 'flow1Desc', acc: 'var(--color-flux)' },
+  { t: 'flow2Title', d: 'flow2Desc', acc: 'var(--color-volt)' },
+  { t: 'flow3Title', d: 'flow3Desc', acc: 'var(--color-ember)' },
+  { t: 'flow4Title', d: 'flow4Desc', acc: 'var(--color-siren)' },
 ] as const;
 
 const stats = [
-  { value: `${sampleStats.yearsOfExperience}+`, label: 'statYears' },
-  { value: `${sampleStats.projectsDelivered}+`, label: 'statProjects' },
-  { value: sampleStats.manHours, label: 'statManHours' },
+  { value: sampleStats.yearsOfExperience, label: 'statYears', acc: 'var(--color-flux)', pct: 62 },
+  { value: sampleStats.projectsDelivered, label: 'statProjects', acc: 'var(--color-volt)', pct: 84 },
+  { value: 250000, label: 'statManHours', acc: 'var(--color-ember)', pct: 71 },
 ] as const;
 
+const vocab = ['HAZOP / HAZID', 'P&ID', 'EPC', 'PTW', 'SIL 2-3', 'NDT', 'ATEX', 'MOC', 'RBI', 'LOTO', 'PM / CM', 'COMMISSIONING'];
+
 const featured = projects.slice(0, 3);
+const latest = [...articles].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 3);
+const dateFmt = new Intl.DateTimeFormat(dateLocale, { dateStyle: 'medium' });
+
+// Localised final values so counters end exactly where the markup starts.
+const manHoursFinal = locale === 'fa' ? sampleStats.manHours : fmt.format(250000);
 ---
-<!-- 1. Hero -->
-<section class="relative isolate overflow-hidden bg-navy text-white">
-  <Picture
-    src={withBase("/images/hero-industrial-plant.jpg")}
-    alt={tr('heroImageAlt')}
-    width={1920}
-    height={1080}
-    loading="eager"
-    fetchpriority="high"
-    sizes="100vw"
-    class="absolute inset-0 -z-10 size-full object-cover opacity-40"
-  />
-  <div class="mx-auto flex min-h-[70svh] max-w-[1280px] flex-col justify-center gap-6 px-4 py-24 md:px-8">
-    <h1 class="max-w-3xl">{tr('heroTitle')}</h1>
-    <p class="max-w-2xl text-lg text-slate-100">{tr('heroSubtitle')}</p>
-    <div class="flex flex-wrap gap-3">
-      <a href={localePath(locale, '/rfq/')} class="rounded-md bg-alert px-6 py-3 font-semibold text-white hover:brightness-95">{tr('heroCtaPrimary')}</a>
-      <a href={localePath(locale, '/services/')} class="rounded-md border border-white px-6 py-3 font-semibold text-white hover:bg-white hover:text-navy">{tr('heroCtaSecondary')}</a>
+<!-- ══ SEC.00 — HERO ═══════════════════════════════════════════════════════ -->
+<section class="relative isolate overflow-hidden" data-glow>
+  <div class="duotone absolute inset-0 -z-20">
+    <Picture
+      src={withBase('/images/hero-industrial-plant.jpg')}
+      alt={tr('heroImageAlt')}
+      width={1920}
+      height={1080}
+      loading="eager"
+      fetchpriority="high"
+      sizes="100vw"
+      class="size-full"
+    />
+  </div>
+  <div class="absolute inset-0 -z-10 bg-[linear-gradient(180deg,rgba(7,11,24,0.55)_0%,rgba(7,11,24,0.82)_58%,#070b18_100%)]" aria-hidden="true"></div>
+  <!-- pointer-tracked light source -->
+  <div class="pointer-events-none absolute inset-0 -z-10 opacity-70 transition-opacity duration-500"
+    style="background: radial-gradient(42rem circle at var(--px, 68%) var(--py, 34%), rgba(0,229,255,0.16), transparent 62%)" aria-hidden="true"></div>
+  <!-- scanline -->
+  <div class="pointer-events-none absolute inset-x-0 top-0 -z-10 h-24 overflow-hidden opacity-40" aria-hidden="true">
+    <div class="anim-scan h-px w-full bg-[linear-gradient(90deg,transparent,rgba(0,229,255,0.9),transparent)]"></div>
+  </div>
+
+  <div class="shell-wide relative grid items-center gap-14 py-20 md:py-28 lg:min-h-[calc(100svh-6rem)] lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:gap-10">
+    <div>
+      <p class="mb-6 flex flex-wrap items-center gap-3 enter" style="--d: 80ms">
+        <span class="chip chip-accent" style="--acc: var(--color-flux)">
+          <span class="dot-live" data-tone="flux" aria-hidden="true"></span>
+          {tr('heroKicker')}
+        </span>
+        <span class="mono hidden text-[0.625rem] uppercase tracking-[0.24em] text-ash sm:inline" dir="ltr" aria-hidden="true">
+          {tr('heroCoords')}
+        </span>
+      </p>
+
+      <h1 class="max-w-4xl font-black leading-[1.02]" style={`font-size: clamp(2.4rem, 6.4vw, 5.4rem); letter-spacing: ${locale === 'fa' ? '0' : '-0.04em'}`} dir="auto">
+        <span class="line-mask enter-line" style="--d: 160ms"><span>{tr('heroLine1')}</span></span>
+        <span class="line-mask enter-line" style="--d: 300ms"><span>{tr('heroLine2')}</span></span>
+        <span class="line-mask enter-line" style="--d: 440ms">
+          <span class="text-[color:var(--color-flux)]">{tr('heroLine3')}</span>
+        </span>
+      </h1>
+
+      <p class="mt-7 max-w-xl text-[1.0625rem] leading-relaxed text-fog md:text-[1.2rem] enter" style="--d: 620ms">
+        {tr('heroSubtitle')}
+      </p>
+
+      <div class="mt-9 flex flex-wrap items-center gap-4 enter" style="--d: 760ms">
+        <a href={localePath(locale, '/rfq/')} class="btn btn-primary btn-lg" style="--acc: var(--color-volt)">{tr('heroCtaPrimary')}</a>
+        <a href={localePath(locale, '/services/')} class="btn btn-ghost btn-lg">{tr('heroCtaSecondary')}</a>
+      </div>
+
+      <p class="mt-12 flex items-center gap-3 text-fog enter" style="--d: 900ms">
+        <svg width="14" height="26" viewBox="0 0 14 26" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" class="anim-float" aria-hidden="true">
+          <path d="M7 1v18" /><path d="m2 15 5 6 5-6" />
+        </svg>
+        <span class="mono text-[0.625rem] uppercase tracking-[0.28em]">{tr('heroScrollCue')}</span>
+      </p>
+    </div>
+
+    <!-- HUD: the plant control panel -->
+    <aside class="glass glass-lit ticks panel relative enter" style="--d: 520ms; --acc: var(--color-flux)" aria-label={tr('hudTitle')}>
+      <div class="flex items-center justify-between gap-4 border-b border-line pb-4">
+        <p class="mono-label mono-label-bare">{tr('hudTitle')}</p>
+        <p class="flex items-center gap-2">
+          <span class="dot-live" aria-hidden="true"></span>
+          <span class="mono text-[0.625rem] uppercase tracking-[0.2em] text-volt">{tr('hudLive')}</span>
+        </p>
+      </div>
+
+      <div class="hud mt-2">
+        <div class="hud-row">
+          <span class="hud-key">{tr('hudClockLabel')}</span>
+          <b dir="ltr"><span data-clock data-locale={clockLocale} aria-hidden="true">--:--:--</span> <span class="text-ash">IRST</span></b>
+        </div>
+        <div class="hud-row">
+          <span class="hud-key">{tr('hudSitesLabel')}</span>
+          <b><span data-count="12" data-locale={numLocale}>{fmt.format(12)}</span></b>
+        </div>
+        <div class="hud-row">
+          <span class="hud-key">{tr('hudProjectsLabel')}</span>
+          <b><span data-count={String(sampleStats.projectsDelivered)} data-locale={numLocale}>{fmt.format(sampleStats.projectsDelivered)}</span></b>
+        </div>
+        <div class="hud-row">
+          <span class="hud-key">{tr('hudResponseLabel')}</span>
+          <b style="color: var(--color-volt)">{tr('hudResponseValue')}</b>
+        </div>
+        <div class="hud-row">
+          <span class="hud-key">{tr('hudHseLabel')}</span>
+          <b><span data-count="420" data-locale={numLocale}>{fmt.format(420)}</span></b>
+        </div>
+      </div>
+
+      <div class="mt-5 grid gap-4">
+        <div>
+          <div class="mb-2 flex items-center justify-between">
+            <span class="mono text-[0.625rem] uppercase tracking-[0.18em] text-fog">{tr('hudAvailLabel')}</span>
+            <span class="mono text-[0.6875rem] text-flux" dir="ltr">99.98%</span>
+          </div>
+          <div class="meter" style="--acc: var(--color-flux); --v: 99%"><i></i></div>
+        </div>
+        <div>
+          <div class="mb-2 flex items-center justify-between">
+            <span class="mono text-[0.625rem] uppercase tracking-[0.18em] text-fog">{tr('hudHseComplianceLabel')}</span>
+            <span class="mono text-[0.6875rem] text-volt" dir="ltr">100%</span>
+          </div>
+          <div class="meter" style="--acc: var(--color-volt); --v: 100%"><i></i></div>
+        </div>
+      </div>
+
+      <!-- sparkline -->
+      <svg viewBox="0 0 240 46" class="mt-5 w-full text-flux" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.4">
+        <path class="anim-dash" d="M0 34 20 30 40 33 60 22 80 26 100 14 120 18 140 9 160 15 180 7 200 12 220 5 240 9" />
+        <path d="M0 44h240" stroke="rgba(255,255,255,0.14)" stroke-dasharray="2 6" />
+      </svg>
+
+      <p class="mt-4 flex items-center gap-2 border-t border-line pt-3 text-[0.6875rem] text-ash">
+        <span class="badge-sample">{sampleBadge(locale)}</span>
+        <span>{tr('statsNote')}</span>
+      </p>
+    </aside>
+  </div>
+</section>
+
+<!-- ══ VOCAB TICKER ════════════════════════════════════════════════════════ -->
+<section class="marquee border-y border-line bg-[rgba(13,20,38,0.55)] py-4" aria-label={tr('marqueeLabel')}>
+  <div class="marquee-track" style="--speed: 46s">
+    {[0, 1].map((dup) => (
+      <ul class="flex items-center" aria-hidden={dup === 1 ? 'true' : undefined}>
+        {vocab.map((v) => (
+          <li class="flex items-center gap-6 px-6">
+            <span class="mono text-[0.75rem] uppercase tracking-[0.26em] text-fog" dir="ltr">{v}</span>
+            <span class="text-flux" aria-hidden="true">/</span>
+          </li>
+        ))}
+      </ul>
+    ))}
+  </div>
+</section>
+
+<!-- ══ SEC.01 — STATS ══════════════════════════════════════════════════════ -->
+<section class="section" aria-labelledby="stats-title">
+  <div class="shell-wide">
+    <h2 id="stats-title" class="sr-only">{tr('trustTitle')}</h2>
+    <div class="slab ticks panel grid gap-10 sm:grid-cols-3" style="--acc: var(--color-flux)" data-reveal="scale">
+      {stats.map((s) => (
+        <div class="relative" style={`--acc: ${s.acc}`}>
+          <p class="stat-value">
+            <span data-count={String(s.value)} data-locale={numLocale}>{s.label === 'statManHours' ? manHoursFinal : fmt.format(s.value)}</span>
+            <span class="unit" aria-hidden="true">+</span>
+          </p>
+          <p class="stat-label">{tr(s.label)}</p>
+          <div class="meter mt-4" style={`--acc: ${s.acc}; --v: ${s.pct}%`}><i></i></div>
+        </div>
+      ))}
     </div>
   </div>
 </section>
 
-<!-- 2. Trust bar -->
-<section aria-labelledby="trust-title" class="border-b border-slate-200 bg-mist">
-  <div class="mx-auto max-w-[1280px] px-4 py-10 md:px-8">
-    <h2 id="trust-title" class="sr-only">{tr('trustTitle')}</h2>
-    <dl class="grid grid-cols-1 gap-6 text-center sm:grid-cols-3">
-      {stats.map((s) => (
-        <div>
-          <dt class="text-sm text-slate-600">{tr(s.label)}</dt>
-          <dd class="text-3xl font-bold text-navy">{s.value}</dd>
-        </div>
-      ))}
-    </dl>
-    <p class="mt-4 text-center text-xs text-slate-500">
-      <span class="me-2 rounded bg-alert px-1.5 py-0.5 font-semibold text-white">{sampleBadge(locale)}</span>{tr('statsNote')}
-    </p>
-  </div>
-</section>
-
-<!-- 3. Services -->
-<section aria-labelledby="services-title" class="mx-auto max-w-[1280px] px-4 py-20 md:px-8">
-  <h2 id="services-title">{tr('servicesTitle')}</h2>
-  <p class="mt-3 max-w-2xl text-slate-600">{tr('servicesIntro')}</p>
-  <ul class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-    {services.map((s) => (
-      <li class="flex flex-col rounded-xl border border-slate-200 bg-white p-6 shadow-sm transition-shadow hover:shadow-md">
-        <h3 class="text-navy">{tr(s.key)}</h3>
-        <p class="mt-2 flex-1 text-slate-600">{tr(s.desc)}</p>
-        <a href={localePath(locale, `/services/${s.slug}/`)} class="mt-4 inline-flex font-semibold text-teal hover:underline">
-          {tr('learnMore')}<span class="sr-only"> — {tr(s.key)}</span>
-        </a>
-      </li>
-    ))}
-  </ul>
-</section>
-
-<!-- 4. Why Farapak -->
-<section aria-labelledby="why-title" class="bg-mist">
-  <div class="mx-auto max-w-[1280px] px-4 py-20 md:px-8">
-    <h2 id="why-title">{tr('whyTitle')}</h2>
-    <ul class="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-      {why.map((w) => (
-        <li class="border-t-4 border-teal pt-4">
-          <h3 class="text-lg text-navy">{tr(w.t)}</h3>
-          <p class="mt-2 text-slate-600">{tr(w.d)}</p>
+<!-- ══ SEC.02 — SERVICES ═══════════════════════════════════════════════════ -->
+<section class="section pt-0" aria-labelledby="services-title">
+  <div class="shell-wide">
+    <SectionHead
+      locale={locale}
+      index="02"
+      kicker={tr('servicesKicker')}
+      title={tr('servicesTitle')}
+      intro={tr('servicesIntro')}
+      actionHref={localePath(locale, '/services/')}
+      actionLabel={tr('viewAll')}
+      id="services-title"
+    />
+    <ul class="mt-12 grid gap-5 sm:grid-cols-2 xl:grid-cols-3" data-stagger>
+      {services.map((s, i) => (
+        <li>
+          <article class="card ticks h-full" style={`--acc: ${s.acc}`} data-reveal data-spot>
+            <div class="card-body">
+              <div class="flex items-start justify-between gap-4">
+                <span class="grid size-12 place-items-center rounded-[4px] border" style={`border-color: color-mix(in oklab, ${s.acc} 40%, transparent); color: ${s.acc}; background: color-mix(in oklab, ${s.acc} 10%, transparent)`}>
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={s.icon} />
+                </span>
+                <span class="mono text-[0.6875rem] tracking-[0.2em] text-ash" aria-hidden="true">0{i + 1}</span>
+              </div>
+              <h3 class="mt-2 text-[1.15rem] font-bold">{tr(s.key)}</h3>
+              <p class="flex-1 text-sm leading-relaxed text-fog">{tr(s.desc)}</p>
+              <a href={localePath(locale, `/services/${s.slug}/`)} class="link-arrow mt-2">
+                {tr('learnMore')}<span class="sr-only"> — {tr(s.key)}</span>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14" /><path d="m13 6 6 6-6 6" /></svg>
+              </a>
+            </div>
+          </article>
         </li>
       ))}
     </ul>
   </div>
 </section>
 
-<!-- 5. Featured projects -->
-<section aria-labelledby="projects-title" class="mx-auto max-w-[1280px] px-4 py-20 md:px-8">
-  <div class="flex flex-wrap items-end justify-between gap-4">
-    <h2 id="projects-title">{tr('projectsTitle')}</h2>
-    <a href={localePath(locale, '/projects/')} class="font-semibold text-teal hover:underline">{tr('navProjects')}</a>
-  </div>
-  <ul class="mt-10 grid gap-6 md:grid-cols-3">
-    {featured.map((p) => (
-      <li class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-        <a href={localePath(locale, `/projects/${p.slug}/`)} class="block">
-          <div class="relative">
-            <Picture src={p.image} alt={p.imageAlt[locale]} width={800} height={600} sizes="(min-width: 768px) 33vw, 100vw" class="aspect-[4/3] w-full object-cover" />
-            {p.sample && <span class="absolute start-3 top-3 rounded bg-alert px-2 py-1 text-xs font-semibold text-white">{sampleBadge(locale)}</span>}
-          </div>
-          <p class="p-5 font-semibold text-navy">{p.copy[locale].title}</p>
-        </a>
-      </li>
-    ))}
-  </ul>
-</section>
-
-<!-- 6. Certifications -->
-<section aria-labelledby="cert-title" class="bg-navy text-white">
-  <div class="mx-auto max-w-[1280px] px-4 py-16 md:px-8">
-    <h2 id="cert-title" class="text-white">{tr('certTitle')}</h2>
-    <p class="mt-3 text-slate-200">{tr('certPlaceholder')}</p>
+<!-- ══ SEC.03 — WHY FARAPAK ════════════════════════════════════════════════ -->
+<section class="section border-y border-line bg-[rgba(9,14,28,0.6)]" aria-labelledby="why-title">
+  <div class="shell-wide">
+    <SectionHead locale={locale} index="03" kicker={tr('whyKicker')} title={tr('whyTitle')} intro={tr('whyIntro')} id="why-title" acc="var(--color-volt)" />
+    <ul class="mt-12 grid gap-px overflow-hidden rounded-[4px] border border-line bg-line sm:grid-cols-2 xl:grid-cols-4" data-stagger>
+      {why.map((w, i) => (
+        <li class="group relative bg-[#0a1020] p-7 transition-colors duration-300 hover:bg-[#0e1630]" style={`--acc: ${w.acc}`} data-reveal>
+          <span class="pointer-events-none absolute -top-3 end-4 font-mono text-[4.5rem] font-extrabold leading-none text-transparent transition-colors duration-500 [-webkit-text-stroke:1px_rgba(255,255,255,0.14)] group-hover:[-webkit-text-stroke:1px_var(--acc)]" aria-hidden="true">
+            0{i + 1}
+          </span>
+          <span class="mb-5 block h-1 w-10 transition-all duration-500 group-hover:w-16" style={`background: ${w.acc}`} aria-hidden="true"></span>
+          <h3 class="text-[1.05rem] font-bold">{tr(w.t)}</h3>
+          <p class="mt-2.5 text-sm leading-relaxed text-fog">{tr(w.d)}</p>
+        </li>
+      ))}
+    </ul>
   </div>
 </section>
 
-<!-- 7. Final CTA -->
-<section aria-labelledby="cta-title" class="mx-auto max-w-[1280px] px-4 py-20 text-center md:px-8">
-  <h2 id="cta-title">{tr('ctaFinalTitle')}</h2>
-  <p class="mx-auto mt-3 max-w-xl text-slate-600">{tr('ctaFinalDesc')}</p>
-  <a href={localePath(locale, '/rfq/')} class="mt-8 inline-block rounded-md bg-alert px-8 py-3 font-semibold text-white hover:brightness-95">{tr('ctaFinalButton')}</a>
+<!-- ══ SEC.04 — INDUSTRIES ═════════════════════════════════════════════════ -->
+<section class="section" aria-labelledby="industries-title">
+  <div class="shell-wide">
+    <SectionHead locale={locale} index="04" kicker={tr('industriesKicker')} title={tr('industriesTitle')} intro={tr('industriesIntro')} id="industries-title" acc="var(--color-ember)" />
+    <ul class="mt-12 grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-6" data-stagger>
+      {industries.map((ind, i) => (
+        <li class="slab ticks group p-5 transition-transform duration-300 hover:-translate-y-1" style={`--acc: ${ind.acc}`} data-reveal>
+          <p class="mono text-[0.625rem] tracking-[0.2em] text-ash" aria-hidden="true">S{i + 1}</p>
+          <p class="mt-3 text-sm font-semibold leading-snug">{tr(ind.k)}</p>
+          <span class="mt-4 block h-px w-full transition-all duration-500 group-hover:h-0.5" style={`background: linear-gradient(90deg, ${ind.acc}, transparent)`} aria-hidden="true"></span>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<!-- ══ SEC.05 — PROCESS ════════════════════════════════════════════════════ -->
+<section class="section border-y border-line bg-[rgba(9,14,28,0.6)]" aria-labelledby="flow-title">
+  <div class="shell-wide">
+    <SectionHead locale={locale} index="05" kicker={tr('flowKicker')} title={tr('flowTitle')} intro={tr('flowIntro')} id="flow-title" acc="var(--color-siren)" />
+    <div class="relative mt-14">
+      <svg class="pointer-events-none absolute inset-x-0 top-6 hidden h-px w-full lg:block" aria-hidden="true" preserveAspectRatio="none" viewBox="0 0 100 1">
+        <line x1="0" y1="0.5" x2="100" y2="0.5" stroke="rgba(255,255,255,0.16)" stroke-width="1" class="anim-dash" vector-effect="non-scaling-stroke" />
+      </svg>
+      <ol class="grid gap-10 md:grid-cols-2 lg:grid-cols-4" data-stagger>
+        {flow.map((f, i) => (
+          <li class="relative" style={`--acc: ${f.acc}`} data-reveal>
+            <span class="relative z-10 grid size-12 place-items-center rounded-full border bg-void font-mono text-sm font-bold" style={`border-color: ${f.acc}; color: ${f.acc}; box-shadow: 0 0 22px -6px ${f.acc}`}>
+              {fmt.format(i + 1)}
+            </span>
+            <h3 class="mt-5 text-[1.05rem] font-bold">{tr(f.t)}</h3>
+            <p class="mt-2.5 text-sm leading-relaxed text-fog">{tr(f.d)}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- ══ SEC.06 — FEATURED PROJECTS ══════════════════════════════════════════ -->
+<section class="section" aria-labelledby="projects-title">
+  <div class="shell-wide">
+    <SectionHead
+      locale={locale}
+      index="06"
+      kicker={tr('projectsKicker')}
+      title={tr('projectsTitle')}
+      actionHref={localePath(locale, '/projects/')}
+      actionLabel={tr('viewAll')}
+      id="projects-title"
+    />
+    <ul class="mt-12 grid gap-5 md:grid-cols-3" data-stagger>
+      {featured.map((p) => (
+        <li data-reveal>
+          <a href={localePath(locale, `/projects/${p.slug}/`)} class="card ticks group h-full" style="--acc: var(--color-flux)" data-spot>
+            <div class="duotone aspect-[16/10]">
+              <Picture src={p.image} alt={p.imageAlt[locale]} width={800} height={600} sizes="(min-width: 768px) 33vw, 100vw" class="size-full" />
+              {p.sample && <span class="badge-sample absolute start-3 top-3 z-10">{sampleBadge(locale)}</span>}
+            </div>
+            <div class="card-body">
+              <p class="mono text-[0.625rem] uppercase tracking-[0.2em] text-ash">{tr('projectYear')}: {fmt.format(p.year)}</p>
+              <h3 class="text-[1.05rem] font-bold transition-colors duration-300 group-hover:text-flux">{p.copy[locale].title}</h3>
+              <p class="flex-1 text-sm leading-relaxed text-fog">{p.copy[locale].summary}</p>
+            </div>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<!-- ══ SEC.07 — KNOWLEDGE ══════════════════════════════════════════════════ -->
+<section class="section border-t border-line" aria-labelledby="news-title">
+  <div class="shell-wide">
+    <SectionHead
+      locale={locale}
+      index="07"
+      kicker={tr('newsKicker')}
+      title={tr('articlesTitle')}
+      actionHref={localePath(locale, '/news/')}
+      actionLabel={tr('viewAll')}
+      id="news-title"
+      acc="var(--color-volt)"
+    />
+    <ul class="mt-12 divide-y divide-[rgba(255,255,255,0.08)] border-y border-line" data-stagger>
+      {latest.map((a) => (
+        <li data-reveal>
+          <a href={localePath(locale, `/news/${a.slug}/`)} class="group grid gap-3 py-6 transition-all duration-300 hover:ps-3 md:grid-cols-[10rem_minmax(0,1fr)_auto] md:items-center md:gap-8">
+            <p class="mono flex items-center gap-3 text-[0.6875rem] uppercase tracking-[0.16em] text-ash">
+              <time datetime={a.date}>{dateFmt.format(new Date(a.date))}</time>
+            </p>
+            <div>
+              <p class="mb-1.5 flex items-center gap-2">
+                <span class="chip chip-accent" style="--acc: var(--color-volt)">{topicLabels[a.topic][locale]}</span>
+                {a.sample && <span class="badge-sample">{sampleBadge(locale)}</span>}
+              </p>
+              <h3 class="text-[1.1rem] font-bold transition-colors duration-300 group-hover:text-volt">{a.copy[locale].title}</h3>
+              <p class="mt-1.5 max-w-2xl text-sm leading-relaxed text-fog">{a.copy[locale].summary}</p>
+            </div>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="hidden text-volt transition-transform duration-300 group-hover:translate-x-1 md:block rtl:rotate-180 rtl:group-hover:-translate-x-1" aria-hidden="true">
+              <path d="M5 12h14" /><path d="m13 6 6 6-6 6" />
+            </svg>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<!-- ══ SEC.08 — CERTIFICATIONS ═════════════════════════════════════════════ -->
+<section class="section" aria-labelledby="cert-title">
+  <div class="shell-wide">
+    <div class="glass panel ticks relative overflow-hidden" style="--acc: var(--color-ember)" data-reveal="scale">
+      <div class="hatch absolute inset-0 opacity-40" aria-hidden="true"></div>
+      <div class="relative grid gap-8 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center">
+        <div>
+          <p class="mb-4 flex items-center gap-3">
+            <span class="index-chip" style="--acc: var(--color-ember)" aria-hidden="true">08</span>
+            <span class="mono-label mono-label-bare">{tr('certKicker')}</span>
+          </p>
+          <h2 id="cert-title" class="sec-title">{tr('certTitle')}</h2>
+          <p class="mt-4 max-w-xl text-sm leading-relaxed text-fog">{tr('certPlaceholder')}</p>
+          <a href={localePath(locale, '/certifications/')} class="link-arrow mt-6" style="--acc: var(--color-ember)">
+            {tr('certIndexTitle')}
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14" /><path d="m13 6 6 6-6 6" /></svg>
+          </a>
+        </div>
+        <ul class="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-2">
+          {[1, 2, 3, 4].map((n) => (
+            <li class="grid aspect-square w-24 place-items-center rounded-[4px] border-2 border-dashed border-[rgba(255,255,255,0.16)] sm:w-28">
+              <span class="mono text-[0.625rem] tracking-[0.2em] text-ash">SLOT 0{n}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ SEC.09 — FINAL CTA ══════════════════════════════════════════════════ -->
+<section class="relative overflow-hidden border-t border-line" aria-labelledby="cta-title">
+  <div class="hatch-accent absolute inset-0 opacity-25" style="--acc: var(--color-volt)" aria-hidden="true"></div>
+  <div class="absolute inset-x-0 top-0 h-px bg-[linear-gradient(90deg,transparent,rgba(184,255,60,0.7),transparent)]" aria-hidden="true"></div>
+  <div class="shell-wide relative py-24 text-center md:py-32">
+    <p class="mono-label mx-auto mb-6 justify-center" data-reveal>{tr('ctaKicker')}</p>
+    <h2 id="cta-title" class="mx-auto max-w-3xl text-[length:var(--t-h1)] font-black tracking-[-0.035em]" data-reveal="mask">{tr('ctaFinalTitle')}</h2>
+    <p class="mx-auto mt-5 max-w-xl text-[1.05rem] leading-relaxed text-fog" data-reveal>{tr('ctaFinalDesc')}</p>
+    <div class="mt-10 flex flex-wrap items-center justify-center gap-4" data-reveal>
+      <a href={localePath(locale, '/rfq/')} class="btn btn-primary btn-lg" style="--acc: var(--color-volt)">{tr('ctaFinalButton')}</a>
+      <a href={localePath(locale, '/contact/')} class="btn btn-ghost btn-lg">{tr('navContact')}</a>
+    </div>
+  </div>
 </section>

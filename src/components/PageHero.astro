@@ -1,0 +1,47 @@
+---
+import type { Locale } from '../i18n/utils';
+import Picture from './Picture.astro';
+
+interface Props {
+  locale: Locale;
+  /** 2-digit sheet index, e.g. "03". */
+  index: string;
+  kicker: string;
+  title: string;
+  lead?: string;
+  image?: string;
+  imageAlt?: string;
+  acc?: string;
+}
+const { index, kicker, title, lead, image, imageAlt = '', acc = 'var(--color-flux)' } = Astro.props;
+void Astro.props.locale;
+---
+<section class="relative isolate overflow-hidden border-b border-line" style={`--acc: ${acc}`}>
+  {image && (
+    <div class="duotone absolute inset-0 -z-10">
+      <Picture
+        src={image}
+        alt={imageAlt}
+        width={1600}
+        height={900}
+        loading="eager"
+        fetchpriority="high"
+        sizes="100vw"
+        class="size-full"
+      />
+    </div>
+  )}
+  <div class="absolute inset-0 -z-10 bg-[linear-gradient(180deg,rgba(7,11,24,0.72),rgba(7,11,24,0.94))]" aria-hidden="true"></div>
+  <div class="hatch absolute inset-x-0 bottom-0 -z-10 h-16 opacity-60" aria-hidden="true"></div>
+
+  <div class="shell-wide relative py-16 md:py-24">
+    <p class="mb-5 flex flex-wrap items-center gap-3 enter" style="--d: 60ms">
+      <span class="index-chip" aria-hidden="true">{index}</span>
+      <span class="mono-label mono-label-bare">{kicker}</span>
+      <span class="view-progress block h-px w-24 bg-[rgba(0,229,255,0.55)]" aria-hidden="true"></span>
+    </p>
+    <h1 class="max-w-4xl enter" style="--d: 140ms">{title}</h1>
+    {lead && <p class="mt-5 max-w-2xl text-[1.0625rem] leading-relaxed text-fog enter md:text-[1.2rem]" style="--d: 240ms">{lead}</p>}
+    <slot />
+  </div>
+</section>

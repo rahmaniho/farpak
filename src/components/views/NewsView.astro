@@ -2,8 +2,9 @@
 import { t, localePath, type Locale } from '../../i18n/utils';
 import { TOPICS, topicLabels, PAGE_SIZE, type TopicId, type Article } from '../../content/news';
 import { sampleBadge } from '../../content/sample';
-import Picture from '../Picture.astro';
-import Pagination from '../Pagination.astro';
+import Picture from '../../components/Picture.astro';
+import Pagination from '../../components/Pagination.astro';
+import PageHero from '../../components/PageHero.astro';
 import {
   filterByTopic, pageSlice, pageCount, topicCount, listingBase, type ListingState,
 } from '../../lib/newsListing';
@@ -18,7 +19,7 @@ const items: Article[] = pageSlice(all, state.page, PAGE_SIZE);
 const fmt = new Intl.DateTimeFormat(locale === 'fa' ? 'fa-IR-u-ca-persian' : 'en-US', { dateStyle: 'medium' });
 const heading = state.topic ? topicLabels[state.topic][locale] : tr('newsTitle');
 const filterLinks: { id: TopicId | 'all'; label: string; count: number; href: string }[] = [
-  { id: 'all', label: locale === 'fa' ? 'همه' : 'All', count: filterByTopic().length, href: listingBase(locale) },
+  { id: 'all', label: tr('newsFilterAll'), count: filterByTopic().length, href: listingBase(locale) },
   ...TOPICS.map((id) => ({
     id,
     label: topicLabels[id][locale],
@@ -27,57 +28,74 @@ const filterLinks: { id: TopicId | 'all'; label: string; count: number; href: st
   })),
 ];
 const isActive = (id: TopicId | 'all') => (id === 'all' ? !state.topic : state.topic === id);
+const topicAccents: Record<TopicId, string> = {
+  safety: 'var(--color-siren)',
+  maintenance: 'var(--color-flux)',
+  facilities: 'var(--color-ember)',
+  environment: 'var(--color-volt)',
+};
 ---
-<section class="mx-auto max-w-[1280px] px-4 py-16 md:px-8">
-  <div class="flex flex-wrap items-end justify-between gap-4">
-    <div>
-      <h1>{heading}</h1>
-      <p class="mt-3 max-w-2xl text-slate-600">{tr('newsIntro')}</p>
-    </div>
-    <a href={localePath(locale, '/news/rss.xml')} class="text-sm font-medium text-teal hover:underline">RSS</a>
-  </div>
+<PageHero locale={locale} index="07" kicker={tr('newsKicker')} title={heading} lead={tr('newsIntro')}>
+  <p class="mt-7 enter" style="--d: 320ms">
+    <a href={localePath(locale, '/news/rss.xml')} class="chip chip-accent" style="--acc: var(--color-ember)">
+      <span class="mono" aria-hidden="true">XML</span> RSS
+    </a>
+  </p>
+</PageHero>
 
-  <nav aria-label={locale === 'fa' ? 'فیلتر بر اساس موضوع' : 'Filter by topic'} class="mt-8">
-    <ul class="flex flex-wrap gap-2">
-      {filterLinks.map((f) => (
-        <li>
-          <a href={f.href} aria-current={isActive(f.id) ? 'page' : undefined}
-            class={isActive(f.id)
-              ? 'inline-flex items-center gap-2 rounded-full bg-navy px-4 py-2 text-sm font-semibold text-white'
-              : 'inline-flex items-center gap-2 rounded-full border border-slate-300 px-4 py-2 text-sm font-medium text-navy hover:bg-mist'}>
-            {f.label}
-            <span class={isActive(f.id) ? 'rounded-full bg-white/20 px-2 text-xs' : 'rounded-full bg-mist px-2 text-xs text-slate-600'}>{f.count}</span>
-          </a>
-        </li>
-      ))}
-    </ul>
-  </nav>
+<section class="section" aria-labelledby="news-listing-h">
+  <div class="shell-wide">
+    <h2 id="news-listing-h" class="sr-only">{heading}</h2>
 
-  {items.length === 0 ? (
-    <p class="mt-10 rounded-xl border-2 border-dashed border-slate-300 p-10 text-center text-slate-500">{tr('newsEmpty')}</p>
-  ) : (
-    <ul class="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-      {items.map((a) => (
-        <li class="flex flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-          <div class="relative">
-            <Picture src={a.image} alt={a.imageAlt[locale]} width={800} height={600} sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw" class="aspect-[4/3] w-full object-cover" />
-            {a.sample && <span class="absolute start-3 top-3 rounded bg-alert px-2 py-1 text-xs font-semibold text-white">{sampleBadge(locale)}</span>}
-          </div>
-          <div class="flex flex-1 flex-col p-5">
-            <div class="flex items-center justify-between gap-2 text-xs text-slate-500">
-              <span class="rounded bg-mist px-2 py-0.5 font-medium text-navy">{topicLabels[a.topic][locale]}</span>
-              <time datetime={a.date}>{fmt.format(new Date(a.date))}</time>
-            </div>
-            <h2 class="mt-3 text-lg font-semibold text-navy">{a.copy[locale].title}</h2>
-            <p class="mt-2 flex-1 text-sm text-slate-600">{a.copy[locale].summary}</p>
-            <a href={localePath(locale, `/news/${a.slug}/`)} class="mt-4 font-semibold text-teal hover:underline">
-              {tr('readArticle')}<span class="sr-only"> — {a.copy[locale].title}</span>
+    <nav aria-label={tr('filterByTopic')} data-reveal>
+      <ul class="flex flex-wrap gap-2">
+        {filterLinks.map((f) => (
+          <li>
+            <a
+              href={f.href}
+              aria-current={isActive(f.id) ? 'page' : undefined}
+              class={isActive(f.id)
+                ? 'chip chip-solid'
+                : 'chip transition-all duration-200 hover:-translate-y-0.5 hover:border-[rgba(0,229,255,0.5)] hover:text-flux'}
+              style={isActive(f.id) ? '--acc: var(--color-flux)' : undefined}
+            >
+              {f.label}
+              <span class={isActive(f.id) ? 'opacity-70' : 'text-ash'} aria-hidden="true">{f.count}</span>
             </a>
-          </div>
-        </li>
-      ))}
-    </ul>
-  )}
+          </li>
+        ))}
+      </ul>
+    </nav>
 
-  <Pagination locale={locale} state={state} totalPages={totalPages} />
+    {items.length === 0 ? (
+      <p class="callout callout-warn mt-10">{tr('newsEmpty')}</p>
+    ) : (
+      <ul class="mt-10 grid gap-5 md:grid-cols-2 xl:grid-cols-3" data-stagger>
+        {items.map((a) => (
+          <li data-reveal>
+            <a href={localePath(locale, `/news/${a.slug}/`)} class="card ticks group h-full" style={`--acc: ${topicAccents[a.topic]}`} data-spot>
+              <div class="duotone aspect-[16/9]">
+                <Picture src={a.image} alt={a.imageAlt[locale]} width={800} height={600} sizes="(min-width: 1280px) 33vw, (min-width: 768px) 50vw, 100vw" class="size-full" />
+                {a.sample && <span class="badge-sample absolute start-3 top-3 z-10">{sampleBadge(locale)}</span>}
+              </div>
+              <div class="card-body">
+                <div class="flex items-center justify-between gap-2">
+                  <span class="chip chip-accent" style={`--acc: ${topicAccents[a.topic]}`}>{topicLabels[a.topic][locale]}</span>
+                  <time class="mono text-[0.625rem] uppercase tracking-[0.14em] text-ash" datetime={a.date}>{fmt.format(new Date(a.date))}</time>
+                </div>
+                <h3 class="text-[1.05rem] font-bold leading-snug transition-colors duration-300 group-hover:text-flux">{a.copy[locale].title}</h3>
+                <p class="flex-1 text-sm leading-relaxed text-fog">{a.copy[locale].summary}</p>
+                <span class="link-arrow mt-1">
+                  {tr('readArticle')}<span class="sr-only"> — {a.copy[locale].title}</span>
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14" /><path d="m13 6 6 6-6 6" /></svg>
+                </span>
+              </div>
+            </a>
+          </li>
+        ))}
+      </ul>
+    )}
+
+    <Pagination locale={locale} state={state} totalPages={totalPages} />
+  </div>
 </section>

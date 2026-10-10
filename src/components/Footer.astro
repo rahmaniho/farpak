@@ -7,36 +7,97 @@ interface Props { locale: Locale }
 const { locale } = Astro.props;
 const tr = t(locale);
 const year = new Date().getFullYear();
+
+const links = [
+  { href: localePath(locale, '/services/'), label: tr('navServices') },
+  { href: localePath(locale, '/projects/'), label: tr('navProjects') },
+  { href: localePath(locale, '/news/'), label: tr('navNews') },
+  { href: localePath(locale, '/about/'), label: tr('navAbout') },
+  { href: localePath(locale, '/certifications/'), label: tr('certTitle') },
+  { href: localePath(locale, '/contact/'), label: tr('navContact') },
+  { href: localePath(locale, '/rfq/'), label: tr('ctaRfq') },
+];
+// Operational vocabulary — what the teams actually work with. Not a certification claim.
+const vocab = ['HAZOP', 'P&ID', 'EPC', 'PTW', 'SIL', 'NDT', 'ATEX', 'MOC', 'RBI', 'PM/CM', 'LOTO', 'COMMISSIONING'];
 ---
-<footer class="mt-24 bg-navy text-white">
-  <div class="mx-auto grid max-w-[1280px] gap-10 px-4 py-14 md:grid-cols-3 md:px-8">
-    <div>
-      <div class="flex items-center gap-3">
-        <img src={withBase("/images/brand/logo-256.webp")} alt="" width="56" height="56" class="size-14 shrink-0 rounded-md bg-white p-1" decoding="async" />
-        <p class="text-lg font-semibold">{tr('siteName')}</p>
-      </div>
-      <p class="mt-2 text-sm text-slate-300">{tr('footerTagline')}</p>
-    </div>
-    <div>
-      <h2 class="mb-3 text-base font-semibold">{tr('footerContact')}</h2>
-      <ul class="space-y-2 text-sm text-slate-200">
-        <li>{sampleContact.address[locale]}</li>
-        <li dir="ltr">{sampleContact.phone}</li>
-        <li dir="ltr">{sampleContact.email}</li>
-      </ul>
-    </div>
-    <div>
-      <h2 class="mb-3 text-base font-semibold">{tr('footerLinks')}</h2>
-      <ul class="space-y-2 text-sm">
-        <li><a class="underline-offset-4 hover:underline" href={localePath(locale, '/services/')}>{tr('navServices')}</a></li>
-        <li><a class="underline-offset-4 hover:underline" href={localePath(locale, '/about/')}>{tr('navAbout')}</a></li>
-        <li><a class="underline-offset-4 hover:underline" href={localePath(locale, '/contact/')}>{tr('navContact')}</a></li>
-      </ul>
-    </div>
-  </div>
-  <div class="border-t border-white/15">
-    <p class="mx-auto max-w-[1280px] px-4 py-6 text-xs text-slate-300 md:px-8">
-      © {year} {tr('siteName')}. {tr('footerRights')} {tr('footerLegal')}
+<footer class="relative mt-24 border-t border-line bg-[rgba(9,14,28,0.82)] backdrop-blur-md">
+  <!-- registration marks, like a drawing sheet -->
+  <div class="hatch-accent h-1.5 w-full" style="--acc: var(--color-flux)" aria-hidden="true"></div>
+
+  <div class="shell-wide relative pb-10 pt-14 md:pt-20">
+    <p class="wordmark-outline select-none" aria-hidden="true" data-reveal="mask">
+      {locale === 'fa' ? 'فرپاک' : 'FARAPAK'}
     </p>
+
+    <div class="footer-grid mt-12 md:mt-16">
+      <div>
+        <div class="flex items-center gap-3">
+          <img src={withBase('/images/brand/logo-256.webp')} alt="" width="52" height="52" class="size-13 shrink-0" decoding="async" />
+          <div>
+            <p class="text-lg font-extrabold">{tr('siteName')}</p>
+            <p class="mono text-[0.5625rem] uppercase tracking-[0.3em] text-flux">Farapak Sanat Salamat</p>
+          </div>
+        </div>
+        <p class="mt-4 max-w-xs text-sm leading-relaxed text-fog">{tr('footerTagline')}</p>
+        <p class="mt-5 flex items-center gap-2 text-xs text-fog">
+          <span class="dot-live" aria-hidden="true"></span>
+          <span class="mono uppercase tracking-[0.18em]">{tr('headerStatusOk')}</span>
+        </p>
+      </div>
+
+      <div>
+        <h2 class="footer-h">{tr('footerContact')}</h2>
+        <ul class="space-y-2.5 text-sm text-fog">
+          <li class="flex gap-2">
+            <span class="mono text-[0.625rem] uppercase tracking-[0.18em] text-ash">{tr('contactAddressLabel')}</span>
+          </li>
+          <li class="text-chalk/90">{sampleContact.address[locale]}</li>
+          <li>
+            <a class="link-arrow" style="--acc: var(--color-flux)" href={`tel:${sampleContact.phone.replace(/\s/g, '')}`} dir="ltr">
+              {sampleContact.phone}
+            </a>
+          </li>
+          <li>
+            <a class="link-arrow" style="--acc: var(--color-flux)" href={`mailto:${sampleContact.email}`} dir="ltr">
+              {sampleContact.email}
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <nav aria-label={tr('footerLinks')}>
+        <h2 class="footer-h">{tr('footerLinks')}</h2>
+        <ul class="space-y-0.5 text-sm">
+          {links.map((l) => (
+            <li><a class="footer-link" href={l.href}>{l.label}</a></li>
+          ))}
+        </ul>
+      </nav>
+
+      <div>
+        <h2 class="footer-h">{tr('footerVocab')}</h2>
+        <p class="mb-3 text-xs leading-relaxed text-fog">{tr('footerVocabNote')}</p>
+        <ul class="flex flex-wrap gap-2">
+          {vocab.map((v) => (
+            <li class="chip" dir="ltr">{v}</li>
+          ))}
+        </ul>
+        <a href="#main" class="btn btn-ghost btn-sm mt-6">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true">
+            <path d="M12 19V5" /><path d="m5 12 7-7 7 7" />
+          </svg>
+          {tr('backToTop')}
+        </a>
+      </div>
+    </div>
+
+    <div class="mt-14 flex flex-col gap-4 border-t border-line pt-6 md:flex-row md:items-center md:justify-between">
+      <p class="mono text-[0.625rem] uppercase tracking-[0.16em] text-ash">
+        DWG. FP-{year}-00 / REV.04 / SHEET 01
+      </p>
+      <p class="max-w-2xl text-xs leading-relaxed text-fog">
+        © {year} {tr('siteName')}. {tr('footerRights')} {tr('footerLegal')}
+      </p>
+    </div>
   </div>
 </footer>

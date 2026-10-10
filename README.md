@@ -2,6 +2,16 @@
 
 وب‌سایت دوزبانه (فارسی RTL در `/` و انگلیسی LTR در `/en/`) با **Astro 5** و **React Islands**، **Tailwind CSS v4** و خروجی کاملاً استاتیک.
 
+## سیستم طراحی «FARPAK OPS» — UIX Pro Max
+
+تم تاریکِ یگانه با فلسفه **Industrial Neo-Brutalism meets Fluid Glass**: بوم سرمه‌ای شبانه (`#070B18`)، شیشه‌های مات با نور لبه، گرید CAD زنده، تایپ مونو برای برچسب‌های فنی و حرکت‌های scroll-driven بومی CSS.
+
+- مرجع کامل: [`docs/design/DESIGN_SYSTEM.md`](docs/design/DESIGN_SYSTEM.md)
+- توکن‌ها: `src/styles/tokens.css` · پایه: `base.css` · اشیا: `components.css` · فیزیک: `motion.css`
+- فونت‌های self-host و Variable: `Vazirmatn Variable` (فارسی)، `Inter Variable` (لاتین)، `JetBrains Mono Variable` (برچسب‌های فنی/HUD)
+- قرارداد حرکت: بدون JS صفحه کامل است؛ `prefers-reduced-motion` حرکت را حذف می‌کند نه محتوا را.
+- رنگ اکسنت هر بلوک با متغیر `--acc` ست می‌شود؛ روی پرکننده‌های اسیدی فقط تایپ تیره (`#070B18`).
+
 ## راه‌اندازی
 
 ```bash

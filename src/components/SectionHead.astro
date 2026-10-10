@@ -1,0 +1,40 @@
+---
+import type { Locale } from '../i18n/utils';
+
+interface Props {
+  locale: Locale;
+  /** 2-digit section index rendered as a CAD chip, e.g. "02". */
+  index: string;
+  title: string;
+  /** Mono kicker above the title. */
+  kicker?: string;
+  intro?: string;
+  actionHref?: string;
+  actionLabel?: string;
+  /** Accent colour (CSS colour value). */
+  acc?: string;
+  id?: string;
+}
+const { locale, index, title, kicker, intro, actionHref, actionLabel, acc = 'var(--color-flux)', id } = Astro.props;
+void locale;
+---
+<div class="sec-head" style={`--acc: ${acc}`}>
+  <div>
+    <p class="mb-4 flex flex-wrap items-center gap-3" data-reveal>
+      <span class="index-chip" aria-hidden="true">{index}</span>
+      {kicker && <span class="mono-label mono-label-bare">{kicker}</span>}
+    </p>
+    <h2 id={id} class="sec-title" data-reveal="mask">{title}</h2>
+    {intro && <p class="mt-4 max-w-xl text-[0.9375rem] leading-relaxed text-fog md:text-base" data-reveal>{intro}</p>}
+  </div>
+  {actionHref && actionLabel && (
+    <p class="justify-self-start md:justify-self-end" data-reveal="end">
+      <a href={actionHref} class="link-arrow">
+        {actionLabel}
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M5 12h14" /><path d="m13 6 6 6-6 6" />
+        </svg>
+      </a>
+    </p>
+  )}
+</div>

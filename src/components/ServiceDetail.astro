@@ -2,7 +2,7 @@
 import { t, dictionaries, type Locale, localePath } from '../i18n/utils';
 import type { Service } from '../content/services';
 import RequestForm from './RequestForm';
-import Picture from './Picture.astro';
+import PageHero from './PageHero.astro';
 import { services } from '../content/services';
 
 interface Props { locale: Locale; service: Service }
@@ -10,44 +10,75 @@ const { locale, service } = Astro.props;
 const tr = t(locale);
 const copy = service.copy[locale];
 const formServices = services.map((s) => ({ slug: s.slug, title: s.copy[locale].title }));
+const idx = String(services.findIndex((s) => s.slug === service.slug) + 1).padStart(2, '0');
 ---
-<article class="mx-auto max-w-[1280px] px-4 py-12 md:px-8">
-  <nav aria-label={locale === 'fa' ? 'مسیر صفحه' : 'Breadcrumb'}>
-    <a href={localePath(locale, '/services/')} class="text-sm font-medium text-teal hover:underline">← {tr('backToServices')}</a>
-  </nav>
+<PageHero locale={locale} index={idx} kicker={tr('servicesKicker')} title={copy.title} lead={copy.description} image={service.image} imageAlt={service.imageAlt[locale]}>
+  <p class="mt-7 enter" style="--d: 320ms">
+    <a href={localePath(locale, '/services/')} class="link-arrow">
+      {tr('backToServices')}
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14" /><path d="m13 6 6 6-6 6" /></svg>
+    </a>
+  </p>
+</PageHero>
 
-  <div class="mt-6 grid gap-10 lg:grid-cols-2 lg:items-center">
-    <div>
-      <h1>{copy.title}</h1>
-      <p class="mt-4 text-lg text-slate-700">{copy.description}</p>
+<section class="section" aria-labelledby={`svc-${service.slug}-h`}>
+  <div class="shell-wide">
+    <h2 id={`svc-${service.slug}-h`} class="sr-only">{copy.title}</h2>
+    <p class="mono-label mb-8" data-reveal>{tr('specSheetLabel')} · SVC-{idx}</p>
+
+    <div class="grid gap-5 md:grid-cols-3" data-stagger>
+      <section aria-labelledby="process-h" class="slab ticks panel" style="--acc: var(--color-flux)" data-reveal>
+        <p class="mono mb-3 text-[0.625rem] uppercase tracking-[0.24em] text-flux" aria-hidden="true">A</p>
+        <h3 id="process-h" class="text-[1.1rem] font-bold">{tr('processTitle')}</h3>
+        <ol class="mt-4 space-y-3">
+          {copy.process.map((step, i) => (
+            <li class="flex gap-3 text-sm leading-relaxed text-fog">
+              <span class="mono shrink-0 text-flux">{String(i + 1).padStart(2, '0')}</span>
+              <span>{step}</span>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      <section aria-labelledby="out-h" class="slab ticks panel" style="--acc: var(--color-volt)" data-reveal>
+        <p class="mono mb-3 text-[0.625rem] uppercase tracking-[0.24em] text-volt" aria-hidden="true">B</p>
+        <h3 id="out-h" class="text-[1.1rem] font-bold">{tr('outputsTitle')}</h3>
+        <ul class="mt-4 space-y-3">
+          {copy.outputs.map((o) => (
+            <li class="flex gap-3 text-sm leading-relaxed text-fog">
+              <span class="mt-2 size-1.5 shrink-0 rounded-full bg-volt" aria-hidden="true"></span>
+              <span>{o}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <section aria-labelledby="std-h" class="slab ticks panel" style="--acc: var(--color-ember)" data-reveal>
+        <p class="mono mb-3 text-[0.625rem] uppercase tracking-[0.24em] text-ember" aria-hidden="true">C</p>
+        <h3 id="std-h" class="text-[1.1rem] font-bold">{tr('standardsTitle')}</h3>
+        <p class="mt-4 text-sm leading-relaxed text-fog">{copy.standards}</p>
+      </section>
     </div>
-    <Picture src={service.image} alt={service.imageAlt[locale]} width={800} height={600} loading="eager"
-      fetchpriority="high" sizes="(min-width: 1024px) 50vw, 100vw" class="aspect-[4/3] w-full rounded-xl object-cover" />
-  </div>
 
-  <div class="mt-16 grid gap-10 md:grid-cols-3">
-    <section aria-labelledby="process-h" class="rounded-xl bg-mist p-6">
-      <h2 id="process-h" class="text-xl">{tr('processTitle')}</h2>
-      <ol class="mt-4 list-decimal space-y-2 ps-5 text-slate-700">
-        {copy.process.map((step) => <li>{step}</li>)}
-      </ol>
-    </section>
-    <section aria-labelledby="out-h" class="rounded-xl bg-mist p-6">
-      <h2 id="out-h" class="text-xl">{tr('outputsTitle')}</h2>
-      <ul class="mt-4 list-disc space-y-2 ps-5 text-slate-700">
-        {copy.outputs.map((o) => <li>{o}</li>)}
-      </ul>
-    </section>
-    <section aria-labelledby="std-h" class="rounded-xl bg-mist p-6">
-      <h2 id="std-h" class="text-xl">{tr('standardsTitle')}</h2>
-      <p class="mt-4 text-slate-700">{copy.standards}</p>
+    <section aria-labelledby="quote-h" class="glass panel ticks mt-16" style="--acc: var(--color-volt)" data-reveal="scale">
+      <div class="grid gap-10 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)]">
+        <div>
+          <p class="mono-label mb-4">{tr('ctaKicker')}</p>
+          <h2 id="quote-h" class="sec-title">{tr('requestQuoteForService')}</h2>
+          <p class="mt-4 text-sm leading-relaxed text-fog">{tr('rfqIntro')}</p>
+          <ol class="mt-8 space-y-4">
+            {(['rfqStep1', 'rfqStep2', 'rfqStep3', 'rfqStep4'] as const).map((k, i) => (
+              <li class="flex items-start gap-3 text-sm text-fog">
+                <span class="mono grid size-7 shrink-0 place-items-center rounded-full border border-[rgba(184,255,60,0.45)] text-[0.6875rem] font-bold text-volt">{i + 1}</span>
+                <span class="pt-1">{tr(k)}</span>
+              </li>
+            ))}
+          </ol>
+        </div>
+        <div>
+          <RequestForm client:visible mode="rfq" locale={locale} services={formServices} defaultService={service.slug} t={dictionaries[locale]} />
+        </div>
+      </div>
     </section>
   </div>
-
-  <section aria-labelledby="quote-h" class="mt-16 rounded-xl border border-slate-200 p-6 md:p-10">
-    <h2 id="quote-h" class="text-2xl">{tr('requestQuoteForService')}</h2>
-    <div class="mt-8">
-      <RequestForm client:visible mode="rfq" locale={locale} services={formServices} defaultService={service.slug} t={dictionaries[locale]} />
-    </div>
-  </section>
-</article>
+</section>

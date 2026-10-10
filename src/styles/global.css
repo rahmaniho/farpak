@@ -1,49 +1,17 @@
-/* Self-hosted fonts (no third-party requests). font-display: swap is set by Fontsource. */
+/* ============================================================================
+   فرپاک صنعت سلامت — global stylesheet entry point
+   Layer order matters: tailwind first, then tokens → base → components → motion.
+   See docs/design/DESIGN_SYSTEM.md for the full specification.
+   ========================================================================== */
+
+/* Self-hosted fonts only (CSP: font-src 'self'). font-display: swap by Fontsource. */
 @import "@fontsource-variable/inter/index.css";
-@import "@fontsource/vazirmatn/400.css";
-@import "@fontsource/vazirmatn/500.css";
-@import "@fontsource/vazirmatn/600.css";
-@import "@fontsource/vazirmatn/700.css";
+@import "@fontsource-variable/vazirmatn/index.css";
+@import "@fontsource-variable/jetbrains-mono/index.css";
+
 @import "tailwindcss";
 
-/* Brand tokens (Industrial Eco-Tech 2026) */
-@theme {
-  --color-navy: #0a1f44;
-  --color-teal: #00a8a8;
-  --color-alert: #e85d04;
-  --color-ink: #1a1a2e;
-  --color-mist: #f5f7fa;
-  --color-success: #2d6a4f;
-  --color-danger: #9d0208;
-  --color-warning: #f48c06;
-  --font-fa: "Vazirmatn", "Tahoma", sans-serif;
-  --font-en: "Inter Variable", "Inter", system-ui, sans-serif;
-}
-
-@layer base {
-  html {
-    font-family: var(--font-en);
-    color: var(--color-ink);
-    background: #fff;
-    line-height: 1.5;
-  }
-  html[dir="rtl"] {
-    font-family: var(--font-fa);
-    line-height: 1.6;
-  }
-  h1 { font-size: clamp(2.25rem, 4vw + 1rem, 3.5rem); font-weight: 700; }
-  h2 { font-size: clamp(1.75rem, 2vw + 1rem, 2.625rem); font-weight: 600; }
-  h3 { font-size: 1.5rem; font-weight: 600; }
-  :focus-visible {
-    outline: 3px solid var(--color-alert);
-    outline-offset: 3px;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
-}
+@import "./tokens.css";
+@import "./base.css";
+@import "./components.css";
+@import "./motion.css";

@@ -51,6 +51,17 @@
 - [ ] گزارش انطباق WCAG 2.2 AA و تست مرورگرها
 - [ ] راهنمای استقرار (Vercel/Netlify/هاست ایرانی)
 
+## فاز ۷ — بازطراحی کامل UI «FARPAK OPS / UIX Pro Max» (✅ انجام شد)
+- [x] سیستم طراحی اختصاصی: توکن‌ها، دو خانواده متریال SLAB/GLASS، امضاهای بصری (corner ticks، برگه‌های مشخصات، HUD، duotone، ticker، wordmark outline) — [`docs/design/DESIGN_SYSTEM.md`](design/DESIGN_SYSTEM.md)
+- [x] تم تاریک یگانه جایگزین تم روشن؛ همه ۹۹ صفحه fa/en بازطراحی شدند (خانه، خدمات، پروژه‌ها، اخبار + فیلتر/صفحه‌بندی، درباره، گواهینامه‌ها، تماس، RFQ، جستجو، ۴۰)
+- [x] فونت‌های Variable: Vazirmatn + Inter + JetBrains Mono (برچسب‌های فنی/HUD)
+- [x] حرکت: reveal با `animation-timeline: view()` (بدون JS)، نوار پیشرفت اسکرول، شمارنده‌ها، spotlight نشانگر، ساعت زنده تهران؛ همه با fallback و reduced-motion
+- [x] لایه enhancement تک‌ماژولی `src/scripts/ui.ts` (~۳KB، بدون وابستگی)
+- [x] فرم‌ها و جستجو با استایل جدید (field/label/error/callout) بدون تغییر منطق اعتبارسنجی
+- [x] رفع باگ موجود: CSP اجازه `script-src 'unsafe-inline'` گرفت چون Astro بوت‌استرپ hydration را inline تزریق می‌کند (بدون آن فرم‌ها در Netlify/Vercel hydrate نمی‌شدند)
+- [ ] بازبینی بصری روی مرورگرهای واقعی (Safari/Firefox) و دستگاه‌های لمسی
+- [ ] بازگشت به `mockup-home-desktop.jpg` جدید مطابق زبان بصری تازه
+
 ## تصمیمات باز
 - دامنه نهایی سایت (`PUBLIC_SITE_URL`)
 - اطلاعات واقعی تماس، آمار، پروژه‌ها، گواهینامه‌ها و لوگو (فعلاً placeholder)
