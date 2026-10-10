@@ -1,0 +1,26 @@
+---
+import { t, type Locale } from '../../i18n/utils';
+
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const tr = t(locale);
+
+const cards = [
+  { img: '/images/project-gas-refinery.jpg', alt: locale === 'fa' ? 'پالایشگاه گاز در غروب' : 'Gas refinery at dusk' },
+  { img: '/images/project-petrochemical-aerial.jpg', alt: locale === 'fa' ? 'نمای هوایی مجتمع پتروشیمی' : 'Aerial view of a petrochemical complex' },
+  { img: '/images/project-water-treatment.jpg', alt: locale === 'fa' ? 'تأسیسات تصفیه آب صنعتی' : 'Industrial water treatment facility' },
+];
+---
+<section class="mx-auto max-w-[1280px] px-4 py-16 md:px-8">
+  <h1>{tr('projectsIndexTitle')}</h1>
+  <p class="mt-3 max-w-2xl text-slate-600">{tr('projectsIndexIntro')}</p>
+  <ul class="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+    {cards.map((c) => (
+      <li class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+        <img src={c.img} alt={c.alt} width="800" height="600" loading="lazy" decoding="async" class="aspect-[4/3] w-full object-cover" />
+        <p class="p-5 text-sm text-slate-600">{tr('projectCardPlaceholder')}</p>
+      </li>
+    ))}
+  </ul>
+  <p class="mt-8 text-sm text-slate-500">{tr('projectsIndexNote')}</p>
+</section>

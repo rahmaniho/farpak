@@ -1,0 +1,59 @@
+---
+import { t, type Locale } from '../../i18n/utils';
+
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const tr = t(locale);
+
+const facts = [
+  { label: 'factEnglishName', value: 'factEnglishNameValue' },
+  { label: 'factFounded', value: 'factFoundedValue' },
+  { label: 'factLegalType', value: 'factLegalTypeValue' },
+  { label: 'factStatus', value: 'factStatusValue' },
+  { label: 'factRegNo', value: 'factRegNoValue' },
+  { label: 'factNationalId', value: 'factNationalIdValue' },
+  { label: 'factCapital', value: 'factCapitalValue' },
+  { label: 'factGazette', value: 'factGazetteValue' },
+] as const;
+
+const pillars = [
+  { t: 'missionTitle', d: 'missionText' },
+  { t: 'visionTitle', d: 'visionText' },
+  { t: 'valuesTitle', d: 'valuesText' },
+] as const;
+---
+<section class="mx-auto max-w-[1280px] px-4 py-16 md:px-8">
+  <h1>{tr('aboutTitle')}</h1>
+  <p class="mt-4 max-w-3xl text-lg text-slate-700">{tr('aboutIntro')}</p>
+  <blockquote class="mt-8 border-s-4 border-teal ps-6 text-xl font-semibold text-navy">{tr('brandPromise')}</blockquote>
+
+  <ul class="mt-12 grid gap-6 md:grid-cols-3">
+    {pillars.map((p) => (
+      <li class="rounded-xl bg-mist p-6">
+        <h2 class="text-xl">{tr(p.t)}</h2>
+        <p class="mt-3 text-slate-700">{tr(p.d)}</p>
+      </li>
+    ))}
+  </ul>
+
+  <section aria-labelledby="history-h" class="mt-16 max-w-3xl">
+    <h2 id="history-h">{tr('historyTitle')}</h2>
+    <p class="mt-3 text-slate-700">{tr('historyText')}</p>
+  </section>
+
+  <section aria-labelledby="facts-h" class="mt-16">
+    <h2 id="facts-h">{tr('aboutFactsTitle')}</h2>
+    <dl class="mt-6 grid gap-4 sm:grid-cols-2">
+      {facts.map((f) => (
+        <div class="border-b border-slate-200 pb-3">
+          <dt class="text-sm text-slate-500">{tr(f.label)}</dt>
+          <dd class="mt-1 font-medium text-ink" dir={f.value.includes('Name') ? 'ltr' : undefined}>{tr(f.value)}</dd>
+        </div>
+      ))}
+      <div class="border-b border-slate-200 pb-3 sm:col-span-2">
+        <dt class="text-sm text-slate-500">{tr('factFields')}</dt>
+        <dd class="mt-1 text-ink">{tr('factFieldsValue')}</dd>
+      </div>
+    </dl>
+  </section>
+</section>
