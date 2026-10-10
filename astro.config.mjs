@@ -27,5 +27,9 @@ export default defineConfig({
   ],
   vite: {
     plugins: [tailwindcss()],
+    server: {
+      // Allow the sandbox live-preview host (dev only).
+      allowedHosts: ['.e2b.app'],
+    },
   },
 });
