@@ -3,15 +3,19 @@ import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import { t, type Locale, localePath, switchLocalePath, dictionaries } from '../i18n/utils';
+import JsonLd from '../components/JsonLd.astro';
+import { organizationSchema } from '../lib/schema';
 
 interface Props {
   title?: string;
   description?: string;
   locale: Locale;
   currentPath: string;
+  /** Extra structured data (Service, BreadcrumbList, ...) added after Organization. */
+  jsonLd?: Record<string, unknown>[];
 }
 
-const { locale, currentPath, title, description } = Astro.props;
+const { locale, currentPath, title, description, jsonLd = [] } = Astro.props;
 const tr = t(locale);
 const dir = locale === 'fa' ? 'rtl' : 'ltr';
 const siteName = dictionaries[locale].siteName;
@@ -43,6 +47,7 @@ const ogImage = new URL('/images/hero-industrial-plant.jpg', Astro.site);
     <meta property="og:locale" content={locale === 'fa' ? 'fa_IR' : 'en_US'} />
     <meta name="theme-color" content="#0a1f44" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <JsonLd data={[organizationSchema(Astro.site!.origin, locale), ...jsonLd]} />
   </head>
   <body class="min-h-dvh bg-white antialiased">
     <a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:start-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-navy focus:px-4 focus:py-2 focus:text-white">

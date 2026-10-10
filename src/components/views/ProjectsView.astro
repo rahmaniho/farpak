@@ -1,5 +1,6 @@
 ---
 import { t, type Locale } from '../../i18n/utils';
+import Picture from '../Picture.astro';
 
 interface Props { locale: Locale }
 const { locale } = Astro.props;
@@ -17,7 +18,7 @@ const cards = [
   <ul class="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
     {cards.map((c) => (
       <li class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-        <img src={c.img} alt={c.alt} width="800" height="600" loading="lazy" decoding="async" class="aspect-[4/3] w-full object-cover" />
+        <Picture src={c.img} alt={c.alt} width={800} height={600} sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw" class="aspect-[4/3] w-full object-cover" />
         <p class="p-5 text-sm text-slate-600">{tr('projectCardPlaceholder')}</p>
       </li>
     ))}

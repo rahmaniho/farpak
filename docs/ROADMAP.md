@@ -12,7 +12,7 @@
 ## فاز ۲ — تصاویر باقی‌مانده و بهینه‌سازی
 - [ ] تولید تصویر OG (`og-image.jpg`) و پس‌زمینه گواهینامه‌ها (`certifications-bg.jpg`) — در این نوبت به سقف تولید تصویر رسیدیم
 - [ ] تصاویر خدمات (`service-*.jpg`) در صفحات خدمات
-- [ ] تبدیل به AVIF/WebP با `srcset` (و تصویر تیم `team-engineers.jpg` در صفحه درباره)
+- [x] تبدیل به AVIF/WebP با `srcset` (کامپوننت `Picture`؛ تصویر تیم هنوز در صفحه‌ای استفاده نشده)
 
 ## فاز ۳ — صفحات محتوایی
 - [ ] `/services/` و ۶ صفحه خدمات (مهندسی، پیمانکاری، آتش‌نشانی، HSE، نگهداری، شهری)
@@ -32,9 +32,10 @@
 - [ ] اتصال به CRM (Webhook) و اعلان ایمیل/اسلک
 
 ## فاز ۶ — SEO، کیفیت و استقرار
-- [ ] Schema.org: Organization، LocalBusiness، Service، BreadcrumbList، FAQPage
+- [x] Schema.org: Organization، Service، BreadcrumbList (LocalBusiness و FAQPage پس از تأیید اطلاعات)
+- [x] فونت‌های self-host (Vazirmatn، Inter)
+- [x] هدرهای امنیتی و CSP (`public/_headers`، `vercel.json`)
 - [ ] RSS برای اخبار، robots.txt نهایی با دامنه واقعی
-- [ ] هدرهای امنیتی (CSP، HSTS، X-Frame-Options، X-Content-Type-Options)
 - [ ] Lighthouse ≥ 95 (عملکرد) و ۱۰۰ (دسترس‌پذیری، SEO، Best Practices)
 - [ ] گزارش انطباق WCAG 2.2 AA و تست مرورگرها
 - [ ] راهنمای استقرار (Vercel/Netlify/هاست ایرانی)
@@ -42,4 +43,3 @@
 ## تصمیمات باز
 - دامنه نهایی سایت (`PUBLIC_SITE_URL`)
 - اطلاعات واقعی تماس، آمار، پروژه‌ها، گواهینامه‌ها و لوگو (فعلاً placeholder)
-- فونت Vazirmatn و Inter هنوز self-host نشده‌اند (فعلاً از fallback سیستم استفاده می‌شود)

@@ -10,6 +10,7 @@ npm run dev       # http://localhost:4321
 npm run build     # خروجی در dist/ (شامل sitemap-index.xml)
 npm run preview
 npm run check     # بررسی تایپ و Astro
+npm run images    # تولید AVIF/WebP (800w و 1600w) از JPG های public/images
 ```
 
 ## متغیرهای محیطی
@@ -41,7 +42,10 @@ docs/
 - **i18n:** هیچ متن سخت‌کدشده‌ای در کامپوننت‌ها نیست؛ همه از فایل‌های JSON می‌آیند. متن‌های موقت با پیشوند `[placeholder]` مشخص شده‌اند.
 - **JavaScript:** صفحه اصلی بدون هیچ JS ارسال می‌شود. منوی موبایل با `<details>` پیاده شده است.
 - **دسترس‌پذیری:** لینک پرش به محتوا، فوکوس قابل مشاهده، `prefers-reduced-motion`.
-- **SEO:** canonical، hreflang (fa / en / x-default)، Open Graph، sitemap دوزبانه.
+- **SEO:** canonical، hreflang (fa / en / x-default)، Open Graph، sitemap دوزبانه، JSON-LD (Organization، Service، BreadcrumbList).
+- **فونت:** Vazirmatn و Inter با `@fontsource` self-host شده‌اند (بدون درخواست شخص ثالث).
+- **تصاویر:** کامپوننت `Picture` با `<picture>` و AVIF → WebP → JPG. پس از افزودن تصویر جدید `npm run images` را اجرا کنید.
+- **هدرهای امنیتی:** در `public/_headers` (Netlify/Cloudflare) و `vercel.json` (Vercel). اگر endpoint فرم روی دامنه دیگری است، `connect-src` در CSP باید به‌روز شود.
 
 ## وضعیت
 فاز ۱ (زیرساخت، طراحی پایه، صفحه اصلی دوزبانه، تصاویر) انجام شده است. جزئیات در `docs/ROADMAP.md`.

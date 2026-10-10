@@ -2,6 +2,7 @@
 import { t, dictionaries, type Locale, localePath } from '../i18n/utils';
 import type { Service } from '../content/services';
 import RequestForm from './RequestForm';
+import Picture from './Picture.astro';
 import { services } from '../content/services';
 
 interface Props { locale: Locale; service: Service }
@@ -20,8 +21,8 @@ const formServices = services.map((s) => ({ slug: s.slug, title: s.copy[locale].
       <h1>{copy.title}</h1>
       <p class="mt-4 text-lg text-slate-700">{copy.description}</p>
     </div>
-    <img src={service.image} alt={service.imageAlt[locale]} width="800" height="600" decoding="async"
-      fetchpriority="high" class="aspect-[4/3] w-full rounded-xl object-cover" />
+    <Picture src={service.image} alt={service.imageAlt[locale]} width={800} height={600} loading="eager"
+      fetchpriority="high" sizes="(min-width: 1024px) 50vw, 100vw" class="aspect-[4/3] w-full rounded-xl object-cover" />
   </div>
 
   <div class="mt-16 grid gap-10 md:grid-cols-3">

@@ -2,13 +2,27 @@
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import ServiceDetail from '../../../components/ServiceDetail.astro';
 import { services } from '../../../content/services';
+import { serviceSchema, breadcrumbSchema } from '../../../lib/schema';
 
 export function getStaticPaths() {
   return services.map((service) => ({ params: { slug: service.slug }, props: { service } }));
 }
 
 const { service } = Astro.props;
+const copy = service.copy.en;
+const pageUrl = new URL(Astro.url.pathname, Astro.site).href;
+const siteUrl = Astro.site!.origin;
+const homeUrl = new URL('/en/', Astro.site).href;
+const servicesUrl = new URL('/en/services/', Astro.site).href;
+const jsonLd = [
+  serviceSchema(siteUrl, pageUrl, 'en', copy.title, copy.summary),
+  breadcrumbSchema([
+    { name: 'Home', url: homeUrl },
+    { name: 'Services', url: servicesUrl },
+    { name: copy.title, url: pageUrl },
+  ]),
+];
 ---
-<BaseLayout locale="en" currentPath={`/en/services/${service.slug}/`} title={service.copy.en.title} description={service.copy.en.summary}>
+<BaseLayout locale="en" currentPath={`/en/services/${service.slug}/`} title={copy.title} description={copy.summary} jsonLd={jsonLd}>
   <ServiceDetail locale="en" service={service} />
 </BaseLayout>
