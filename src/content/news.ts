@@ -99,9 +99,10 @@ const baseArticles: Article[] = [
 ];
 
 import { extraArticles } from './news-extra';
+import { moreArticles } from './news-more';
 
 /** All articles, newest first. */
-export const articles: Article[] = [...baseArticles, ...extraArticles];
+export const articles: Article[] = [...baseArticles, ...extraArticles, ...moreArticles];
 
 export function getArticle(slug: string) {
   return articles.find((a) => a.slug === slug);
