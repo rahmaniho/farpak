@@ -2,11 +2,22 @@
 import { t, type Locale, localePath, switchLocalePath } from '../i18n/utils';
 import { withBase } from '../lib/base';
 
-interface Props { locale: Locale; currentPath: string }
-const { locale, currentPath } = Astro.props;
+interface Props {
+  locale: Locale;
+  currentPath: string;
+  /**
+   * Override for the language-switch target. Pass `null` to hide the switch
+   * (used by Persian-only sections such as /health/ so it never 404s).
+   */
+  langSwitchHref?: string | null;
+}
+const { locale, currentPath, langSwitchHref } = Astro.props;
 const tr = t(locale);
 const other: Locale = locale === 'fa' ? 'en' : 'fa';
+const switchHref = langSwitchHref === undefined ? switchLocalePath(currentPath, other) : langSwitchHref;
 const nav = [
+  // بخش خدمات سلامت ۴۷۷ فعلاً فقط فارسی است؛ در منوی انگلیسی نشان داده نمی‌شود.
+  ...(locale === 'fa' ? [{ href: localePath(locale, '/health/'), label: tr('navHealth') }] : []),
   { href: localePath(locale, '/services/'), label: tr('navServices') },
   { href: localePath(locale, '/projects/'), label: tr('navProjects') },
   { href: localePath(locale, '/about/'), label: tr('navAbout') },
@@ -31,13 +42,15 @@ const nav = [
 
     <div class="flex items-center gap-3">
       <a href={localePath(locale, '/search/')} class="hidden rounded-md px-3 py-1.5 text-sm font-medium text-navy hover:bg-mist md:inline-block">{tr('navSearch')}</a>
-      <a
-        href={switchLocalePath(currentPath, other)}
-        hreflang={other}
-        lang={other}
-        aria-label={tr('langSwitchLabel')}
-        class="rounded-md border border-slate-300 px-3 py-1.5 text-sm font-medium text-navy hover:bg-mist"
-      >{tr('langSwitch')}</a>
+      {switchHref && (
+        <a
+          href={switchHref}
+          hreflang={other}
+          lang={other}
+          aria-label={tr('langSwitchLabel')}
+          class="rounded-md border border-slate-300 px-3 py-1.5 text-sm font-medium text-navy hover:bg-mist"
+        >{tr('langSwitch')}</a>
+      )}
       <a href={localePath(locale, '/rfq/')} class="hidden rounded-md bg-alert px-4 py-2 text-sm font-semibold text-white hover:brightness-95 sm:inline-block">
         {tr('ctaRfq')}
       </a>

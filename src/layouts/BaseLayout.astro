@@ -16,13 +16,22 @@ interface Props {
   noindex?: boolean;
   /** Extra structured data (Service, BreadcrumbList, ...) added after Organization. */
   jsonLd?: Record<string, unknown>[];
+  /** Brand name used in <title>/og:site_name (defaults to the site name). */
+  brand?: string;
+  /**
+   * True when the page exists in one locale only (e.g. the Persian-only
+   * health-services section). Then hreflang points to the same URL for
+   * fa/x-default and the language switch is hidden instead of 404-ing.
+   */
+  singleLocale?: boolean;
 }
 
-const { locale, currentPath, title, description, jsonLd = [], noindex = false } = Astro.props;
+const { locale, currentPath, title, description, jsonLd = [], noindex = false, brand, singleLocale = false } = Astro.props;
 const tr = t(locale);
 const dir = locale === 'fa' ? 'rtl' : 'ltr';
 const siteName = dictionaries[locale].siteName;
-const pageTitle = title ? `${title} | ${siteName}` : siteName;
+const brandName = brand ?? siteName;
+const pageTitle = title ? `${title} | ${brandName}` : brandName;
 const pageDesc = description ?? dictionaries[locale].siteDescription;
 // currentPath is already the full public path (e.g. /en/news/), so use it as-is.
 const canonical = new URL(withBase(currentPath), Astro.site);
@@ -40,6 +49,12 @@ const ogImage = new URL(withBase('/images/og-image.jpg'), Astro.site);
     <meta name="description" content={pageDesc} />
     {noindex ? (
       <meta name="robots" content="noindex, follow" />
+    ) : singleLocale ? (
+      <>
+        <link rel="canonical" href={canonical} />
+        <link rel="alternate" hreflang="fa" href={canonical} />
+        <link rel="alternate" hreflang="x-default" href={canonical} />
+      </>
     ) : (
       <>
         <link rel="canonical" href={canonical} />
@@ -55,6 +70,7 @@ const ogImage = new URL(withBase('/images/og-image.jpg'), Astro.site);
     <meta property="og:image" content={ogImage} />
     <meta property="og:image:alt" content={tr('ogImageAlt')} />
     <meta property="og:locale" content={locale === 'fa' ? 'fa_IR' : 'en_US'} />
+    <meta property="og:site_name" content={brandName} />
     <meta name="theme-color" content="#0a1f44" />
     <link rel="icon" href={withBase("/favicon-256.png")} type="image/png" sizes="256x256" />
     <link rel="apple-touch-icon" href={withBase("/apple-touch-icon.png")} sizes="180x180" />
@@ -64,7 +80,7 @@ const ogImage = new URL(withBase('/images/og-image.jpg'), Astro.site);
     <a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:start-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-navy focus:px-4 focus:py-2 focus:text-white">
       {tr('skipToContent')}
     </a>
-    <Header locale={locale} currentPath={currentPath} />
+    <Header locale={locale} currentPath={currentPath} langSwitchHref={singleLocale ? null : undefined} />
     <main id="main" tabindex="-1">
       <slot />
     </main>

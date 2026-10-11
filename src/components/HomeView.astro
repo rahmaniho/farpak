@@ -2,7 +2,10 @@
 import { withBase } from '../lib/base';
 import { t, type Locale, localePath } from '../i18n/utils';
 import Picture from './Picture.astro';
+import HealthIcon from './health/HealthIcon.astro';
+import OfficeActions from './health/OfficeActions.astro';
 import { projects } from '../content/projects';
+import { healthOffice, sortedHealthServices } from '../content/health';
 import { sampleBadge, sampleStats } from '../content/sample';
 
 interface Props { locale: Locale }
@@ -133,6 +136,69 @@ const featured = projects.slice(0, 3);
     <p class="mt-3 text-slate-200">{tr('certPlaceholder')}</p>
   </div>
 </section>
+
+<!-- 6b. بخش خدمات سلامت ۴۷۷ (فقط فارسی) -->
+{locale === 'fa' && (
+  <section aria-labelledby="health-strip-title" class="border-y border-slate-200 bg-white">
+    <div class="mx-auto max-w-[1280px] px-4 py-16 md:px-8">
+      <div class="grid gap-8 rounded-2xl border border-slate-200 bg-mist p-6 md:grid-cols-[1.5fr_1fr] md:p-10">
+        <div>
+          <p class="inline-flex items-center gap-2 rounded-full bg-white px-3 py-1.5 text-xs font-semibold text-health">
+            <HealthIcon name="heart" size={14} />
+            {tr('healthHeroEyebrow')}
+          </p>
+          <h2 id="health-strip-title" class="mt-4 text-2xl text-navy md:text-3xl">{tr('homeHealthTitle')}</h2>
+          <p class="mt-3 max-w-xl leading-8 text-slate-600">{tr('homeHealthIntro')}</p>
+
+          <ul class="mt-6 flex flex-wrap gap-2">
+            {sortedHealthServices().map((s) => (
+              <li>
+                <a
+                  href={localePath(locale, `/health/${s.slug}/`)}
+                  class="inline-flex items-center gap-2 rounded-full border border-slate-300 bg-white px-3.5 py-2 text-sm font-medium text-ink transition hover:border-teal hover:text-teal"
+                >
+                  <HealthIcon name={s.icon} size={15} />
+                  {s.copy.shortTitle}
+                </a>
+              </li>
+            ))}
+          </ul>
+
+          <div class="mt-7 flex flex-wrap items-center gap-3">
+            <a
+              href={localePath(locale, '/health/')}
+              class="inline-flex items-center gap-2 rounded-md bg-navy px-5 py-3 font-semibold text-white transition hover:bg-teal"
+            >
+              {tr('homeHealthCta')}
+              <HealthIcon name="chevron" size={16} class="rtl:rotate-180" />
+            </a>
+            <OfficeActions locale={locale} size="sm" />
+          </div>
+        </div>
+
+        <aside class="rounded-2xl border border-slate-200 bg-white p-6">
+          <h3 class="text-base font-semibold text-navy">{healthOffice.name}</h3>
+          <p class="mt-3 flex items-start gap-2 text-sm leading-7 text-slate-600">
+            <HealthIcon name="pin" size={16} class="mt-1 shrink-0 text-teal" />
+            <span>{healthOffice.address}</span>
+          </p>
+          <ul class="mt-4 space-y-2 text-sm">
+            {healthOffice.phones.map((ph) => (
+              <li class="flex items-center justify-between gap-2">
+                <span class="text-slate-500">{ph.label}</span>
+                <a href={`tel:${ph.dial}`} dir="ltr" class="font-medium text-navy underline-offset-4 hover:text-teal hover:underline tabular-nums">{ph.display}</a>
+              </li>
+            ))}
+          </ul>
+          <div class="mt-5 flex items-center gap-4 border-t border-slate-200 pt-5">
+            <img src={healthOffice.qrImage} alt={tr('healthQrHint')} width="84" height="84" loading="lazy" decoding="async" class="size-[84px] rounded-lg border border-slate-200 p-1" />
+            <p class="text-xs leading-6 text-slate-500">{tr('healthQrHint')}</p>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+)}
 
 <!-- 7. Final CTA -->
 <section aria-labelledby="cta-title" class="mx-auto max-w-[1280px] px-4 py-20 text-center md:px-8">

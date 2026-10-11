@@ -1,0 +1,18 @@
+---
+/**
+ * برچسب «نیازمند تأیید مدیریت».
+ * هر داده‌ای که هنوز توسط مدیریت مجموعه تأیید نشده است با این برچسب نمایش
+ * داده می‌شود تا هیچ اطلاعات تأییدنشده‌ای به‌عنوان واقعیت قطعی منتشر نشود.
+ */
+interface Props {
+  class?: string;
+  label?: string;
+}
+const { class: className = '', label = 'نیازمند تأیید مدیریت' } = Astro.props;
+---
+<span class={`pending-badge inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium ${className}`}>
+  <svg viewBox="0 0 24 24" class="size-3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+    <circle cx="12" cy="12" r="9" /><path d="M12 7.5v5" /><path d="M12 16.2h.01" />
+  </svg>
+  {label}
+</span>

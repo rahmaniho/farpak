@@ -28,6 +28,9 @@ const year = new Date().getFullYear();
     <div>
       <h2 class="mb-3 text-base font-semibold">{tr('footerLinks')}</h2>
       <ul class="space-y-2 text-sm">
+        {locale === 'fa' && (
+          <li><a class="underline-offset-4 hover:underline" href={localePath(locale, '/health/')}>{tr('navHealth')}</a></li>
+        )}
         <li><a class="underline-offset-4 hover:underline" href={localePath(locale, '/services/')}>{tr('navServices')}</a></li>
         <li><a class="underline-offset-4 hover:underline" href={localePath(locale, '/about/')}>{tr('navAbout')}</a></li>
         <li><a class="underline-offset-4 hover:underline" href={localePath(locale, '/contact/')}>{tr('navContact')}</a></li>

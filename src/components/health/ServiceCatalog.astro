@@ -1,0 +1,198 @@
+---
+/**
+ * فهرست خدمات بخش سلامت، دسته‌بندی‌شده.
+ *
+ * بدون JavaScript: خدمات گروه‌بندی‌شده بر اساس دسته‌بندی، با عنوان و توضیح
+ * هر دسته نمایش داده می‌شوند (کاملاً قابل مرور).
+ * با JavaScript: فیلتر دسته‌بندی و جست‌وجوی زنده اضافه می‌شود
+ * (افزایش تدریجی — کنترل‌ها تا اجرای اسکریپت پنهان‌اند).
+ *
+ * منطق تطبیق متن از `src/lib/search.ts` بازیافت می‌شود تا یکسان‌سازی
+ * حروف فارسی/عربی، نیم‌فاصله و ارقام در همه جای سایت یکسان بماند.
+ */
+import HealthIcon from './HealthIcon.astro';
+import ServiceCard from './ServiceCard.astro';
+import { serviceCategories, type HealthService } from '../../content/health';
+import { t, type Locale } from '../../i18n/utils';
+import { toFaDigits } from '../../lib/format';
+
+interface Props { locale?: Locale; services: HealthService[]; id?: string }
+const { locale = 'fa', services, id = 'catalog' } = Astro.props;
+const tr = t(locale);
+
+const groups = serviceCategories.map((cat) => ({
+  category: cat,
+  items: services.filter((s) => s.category === cat.id),
+}));
+const uncategorized = services.filter((s) => !serviceCategories.some((c) => c.id === s.category));
+const countWord = tr('healthServicesCountWord');
+---
+<section
+  id={id}
+  data-catalog
+  data-count-word={countWord}
+  data-empty-text={tr('healthNoResults')}
+  aria-labelledby={`${id}-h`}
+  class="scroll-mt-24"
+>
+  <div class="flex flex-wrap items-end justify-between gap-4">
+    <div>
+      <h2 id={`${id}-h`} class="text-2xl text-navy md:text-3xl">{tr('healthCatalogTitle')}</h2>
+      <p class="mt-3 max-w-2xl text-slate-600">{tr('healthCatalogIntro')}</p>
+    </div>
+    <p class="text-sm text-slate-500">
+      <span data-catalog-count>{toFaDigits(services.length)}</span> {countWord}
+    </p>
+  </div>
+
+  <!-- کنترل‌های فیلتر و جست‌وجو: فقط با JavaScript فعال می‌شوند -->
+  <div class="mt-8 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+    <div class="js-only flex-wrap gap-2" role="group" aria-label={tr('healthFilterLabel')} data-catalog-filters>
+      <button type="button" data-catalog-filter="all" aria-pressed="true">
+        {tr('healthFilterAll')}
+      </button>
+      {serviceCategories.map((cat) => (
+        <button type="button" data-catalog-filter={cat.id} aria-pressed="false">
+          <HealthIcon name={cat.icon} size={15} />
+          <span>{cat.label}</span>
+        </button>
+      ))}
+    </div>
+
+    <div class="js-only w-full lg:max-w-xs">
+      <label for={`${id}-search`} class="block text-sm font-medium text-ink">{tr('healthSearchLabel')}</label>
+      <div class="relative mt-1.5">
+        <HealthIcon name="search" size={16} class="pointer-events-none absolute inset-y-0 start-3 my-auto text-slate-400" />
+        <input
+          id={`${id}-search`}
+          type="search"
+          autocomplete="off"
+          data-catalog-search
+          placeholder={tr('healthSearchPlaceholder')}
+          class="w-full rounded-md border border-slate-300 bg-white py-2 pe-3 ps-9 text-sm text-ink focus:border-teal focus:ring-2 focus:ring-teal/30"
+          aria-describedby={`${id}-status`}
+        />
+      </div>
+    </div>
+  </div>
+
+  <p id={`${id}-status`} data-catalog-status role="status" aria-live="polite" class="sr-only"></p>
+
+  <div class="mt-10 space-y-12">
+    {groups.map(({ category, items }) => (
+      <section data-catalog-group={category.id} aria-labelledby={`${id}-cat-${category.id}`} class="scroll-mt-24">
+        <div class="flex flex-wrap items-center gap-3">
+          <span aria-hidden="true" class="flex size-10 items-center justify-center rounded-xl bg-sky text-navy">
+            <HealthIcon name={category.icon} size={20} />
+          </span>
+          <h3 id={`${id}-cat-${category.id}`} class="text-xl font-semibold text-navy">{category.label}</h3>
+          <span class="rounded-full bg-mist px-2.5 py-1 text-xs font-medium text-slate-600">
+            {toFaDigits(items.length)} {countWord}
+          </span>
+        </div>
+        <p class="mt-2 max-w-2xl text-sm text-slate-600">{category.description}</p>
+        <ul class="mt-5 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+          {items.map((s) => <li data-catalog-item><ServiceCard service={s} locale={locale} /></li>)}
+        </ul>
+      </section>
+    ))}
+
+    {uncategorized.length > 0 && (
+      <section data-catalog-group="other" aria-labelledby={`${id}-cat-other`}>
+        <h3 id={`${id}-cat-other`} class="text-xl font-semibold text-navy">{tr('healthCatalogTitle')}</h3>
+        <ul class="mt-5 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+          {uncategorized.map((s) => <li data-catalog-item><ServiceCard service={s} locale={locale} /></li>)}
+        </ul>
+      </section>
+    )}
+  </div>
+
+  <p data-catalog-empty class="mt-10 hidden rounded-xl border border-dashed border-slate-300 bg-mist p-8 text-center text-slate-600">
+    {tr('healthNoResults')}
+  </p>
+</section>
+
+<style>
+  /* دکمه‌های فیلتر: یک ظاهر ثابت، بدون تکرار کلاس‌ها در اسکریپت */
+  [data-catalog-filter] {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    border-radius: 9999px;
+    border: 1px solid rgb(203 213 225);
+    background: #fff;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--color-ink);
+    transition: border-color 160ms ease, background-color 160ms ease, color 160ms ease;
+  }
+  [data-catalog-filter]:hover {
+    border-color: var(--color-teal);
+    color: var(--color-teal);
+  }
+  [data-catalog-filter][aria-pressed='true'] {
+    border-color: var(--color-navy);
+    background: var(--color-navy);
+    color: #fff;
+  }
+</style>
+
+<script>
+  import { normalizeText } from '../../lib/search';
+
+  const toFa = (n: number) => String(n).replace(/[0-9]/g, (d) => '۰۱۲۳۴۵۶۷۸۹'[Number(d)]);
+
+  for (const section of document.querySelectorAll<HTMLElement>('[data-catalog]')) {
+    const groups = Array.from(section.querySelectorAll<HTMLElement>('[data-catalog-group]'));
+    const items = Array.from(section.querySelectorAll<HTMLElement>('[data-catalog-item]'));
+    const filters = Array.from(section.querySelectorAll<HTMLButtonElement>('[data-catalog-filter]'));
+    const searchInput = section.querySelector<HTMLInputElement>('[data-catalog-search]');
+    const status = section.querySelector<HTMLElement>('[data-catalog-status]');
+    const empty = section.querySelector<HTMLElement>('[data-catalog-empty]');
+    const count = section.querySelector<HTMLElement>('[data-catalog-count]');
+    const countWord = section.dataset.countWord ?? '';
+
+    let activeFilter = 'all';
+    let query = '';
+
+    function paint() {
+      const tokens = normalizeText(query).split(' ').filter(Boolean);
+      let visible = 0;
+
+      for (const item of items) {
+        const card = item.querySelector<HTMLElement>('[data-service-card]');
+        const inGroup = activeFilter === 'all' || card?.dataset.serviceCategory === activeFilter;
+        const haystack = normalizeText(card?.dataset.serviceSearch ?? '');
+        const match = tokens.length === 0 || tokens.every((tok) => haystack.includes(tok));
+        const show = inGroup && match;
+        item.classList.toggle('hidden', !show);
+        if (show) visible += 1;
+      }
+
+      for (const group of groups) {
+        const anyVisible = Array.from(group.querySelectorAll<HTMLElement>('[data-catalog-item]')).some(
+          (el) => !el.classList.contains('hidden')
+        );
+        group.classList.toggle('hidden', !anyVisible);
+      }
+
+      empty?.classList.toggle('hidden', visible !== 0);
+      if (count) count.textContent = toFa(visible);
+      if (status) {
+        status.textContent = visible === 0 ? (section.dataset.emptyText ?? '') : `${toFa(visible)} ${countWord}`;
+      }
+    }
+
+    for (const f of filters) {
+      f.addEventListener('click', () => {
+        activeFilter = f.dataset.catalogFilter ?? 'all';
+        paint();
+      });
+    }
+    searchInput?.addEventListener('input', () => {
+      query = searchInput.value;
+      paint();
+    });
+  }
+</script>

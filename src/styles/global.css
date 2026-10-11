@@ -16,6 +16,13 @@
   --color-success: #2d6a4f;
   --color-danger: #9d0208;
   --color-warning: #f48c06;
+  /* Health-services section (دفتر خدمات سلامت ۴۷۷) — extends the same palette:
+     navy headings, teal primary actions, health green for positive accents,
+     sky for light backgrounds. */
+  --color-sky: #eaf2fb;
+  --color-sky-deep: #d5e5f6;
+  --color-health: #0f9d76;
+  --color-health-soft: #e7f6f1;
   --font-fa: "Vazirmatn", "Tahoma", sans-serif;
   --font-en: "Inter Variable", "Inter", system-ui, sans-serif;
 }
@@ -45,5 +52,89 @@
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* بخش خدمات سلامت ۴۷۷ — الگوها و انیمیشن‌های ملایم                    */
+/* انیمیشن‌ها کوتاه هستند و با prefers-reduced-motion (بالا) خاموش       */
+/* می‌شوند. همه چیز CSS خالص است؛ هیچ JS اضافی بارگذاری نمی‌شود.         */
+/* ------------------------------------------------------------------ */
+@layer components {
+  /* پس‌زمینه شبکه‌ای ملایم برای هیروی بخش سلامت (بدون تصویر) */
+  .health-grid-bg {
+    background-image:
+      radial-gradient(circle at 1px 1px, rgb(10 31 68 / 0.08) 1px, transparent 0),
+      linear-gradient(180deg, var(--color-sky) 0%, #ffffff 78%);
+    background-size: 22px 22px, 100% 100%;
+  }
+
+  /* کارت خدمت: گوشه گرد، سایه نرم و بالا آمدن ملایم هنگام hover/focus */
+  .health-card {
+    transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+  }
+  .health-card:hover,
+  .health-card:focus-within {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 28px -14px rgb(10 31 68 / 0.35);
+    border-color: var(--color-teal);
+  }
+
+  /* ورود ملایم محتوا (فقط یک بار، کوتاه) */
+  .rise {
+    animation: rise 420ms ease-out both;
+  }
+  .rise-1 { animation-delay: 60ms; }
+  .rise-2 { animation-delay: 120ms; }
+  .rise-3 { animation-delay: 180ms; }
+}
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* برچسب «نیازمند تأیید مدیریت» — قابل تشخیص اما بدون ایجاد اضطراب بصری */
+.pending-badge {
+  background: color-mix(in srgb, var(--color-warning) 14%, white);
+  color: #8a5200;
+  border: 1px solid color-mix(in srgb, var(--color-warning) 35%, white);
+}
+
+/* افزایش تدریجی: کنترل‌هایی که فقط با JavaScript کار می‌کنند تا زمان اجرای
+   اسکریپت پنهان می‌مانند (خارج از layer تا بر utilities غلبه کنند). */
+/* !important استفاده نمی‌شود: این قواعد بدون layer هستند و طبق CSS Cascade
+   Layers بر utilities لایه‌شدهٔ Tailwind غلبه می‌کنند. */
+.js-only { display: none; }
+html[data-js] .js-only { display: flex; }
+html[data-js] .js-only.inline-flex { display: inline-flex; }
+
+/* چاپ: فقط کروم سایت پنهان می‌شود، محتوای صفحه سالم می‌ماند.
+   (سلکتورهای element-only استفاده نشده‌اند تا <header>/<footer> داخلی
+   صفحات محتوا پنهان نشوند.) */
+@media print {
+  body > header,
+  body > footer,
+  [data-share-row],
+  [data-catalog-filters],
+  .no-print {
+    display: none !important;
+  }
+  body {
+    background: #fff;
+  }
+  a {
+    text-decoration: none;
+  }
+  /* نشانی‌های تماس و نقشه در چاپ هم خوانا بمانند */
+  a[href^='tel:'],
+  a[href^='sms:'] {
+    font-weight: 600;
+  }
+  article,
+  section,
+  .health-card {
+    break-inside: avoid;
+    box-shadow: none !important;
   }
 }
